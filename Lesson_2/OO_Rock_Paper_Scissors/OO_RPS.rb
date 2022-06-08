@@ -67,7 +67,7 @@ end
 class Rule
   def initialize
     # not sure what the "state" of a rule object should be
-  endg
+  end
 end
 
 # not sure where "compare" goes yet
@@ -101,23 +101,37 @@ class RPSGame
     when 'rock'
       puts "It's a tie!" if computer.move == 'rock'
       puts "You won!" if computer.move == 'scissors'
-      pute "Computer won!" if computer.move == 'paper'
+      puts "Computer won!" if computer.move == 'paper'
     when 'paper'
       puts "It's a tie!" if computer.move == 'paper'
       puts "You won!" if computer.move == 'rock'
-      pute "Computer won!" if computer.move == 'scissors'
+      puts "Computer won!" if computer.move == 'scissors'
     when 'scissors'
       puts "It's a tie!" if computer.move == 'scissors'
       puts "You won!" if computer.move == 'paper'
-      pute "Computer won!" if computer.move == 'rock'
+      puts "Computer won!" if computer.move == 'rock'
     end
+  end
+
+  def play_again?
+    answer = nil
+    loop do
+      puts "Would you like to play again? (y/n)"
+      answer = gets.chomp
+      break if ['y', 'n'].include?(answer.downcase)
+      puts "Sorry, must be y or n."
+    end
+    answer.downcase == 'y'
   end
 
   def play
     display_welcome_message
-    human.choose
-    computer.choose
-    display_winner
+    loop do
+      human.choose
+      computer.choose
+      display_winner
+      break unless play_again?
+    end
     display_goodbye_message
   end
 end
