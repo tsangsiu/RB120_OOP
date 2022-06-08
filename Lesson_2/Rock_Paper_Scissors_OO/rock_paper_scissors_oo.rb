@@ -1,34 +1,3 @@
-=begin
-
-### Textual Description
-
-Rock, Paper, Scissors is a two-player game where each player chooses
-one of three possible moves: rock, paper, or scissors. The chosen moves
-will then be compared to see who wins, according to the following rules:
-
-- rock beats scissors
-- scissors beats paper
-- paper beats rock
-
-If the players chose the same move, then it's a tie.
-
-### Extract the major nouns and verbs from the description
-
-Nouns: player, move, rule
-Verbs: choose, compare
-
-### Organizing verbs with the nouns
-
-Player
-  - choose
-
-Move
-Rule
-
-  - compare
-
-=end
-
 class Player
   attr_accessor :move, :name
 
@@ -91,45 +60,20 @@ class Move
   end
 
   def >(other_move)
-    if rock?
-      return true if other_move.scissors?
-      return false
-    elsif paper?
-      return true if other_move.rock?
-      return false
-    elsif scissors?
-      return true if other_move.paper?
-      return false
-    end
+    (rock? && other_move.scissors?) ||
+      (paper? && other_move.rock?) ||
+      (scissors? && other_move.paper?)
   end
 
   def <(other_move)
-    if rock?
-      return true if other_move.paper?
-      return false
-    elsif paper?
-      return true if other_move.scissors?
-      return false
-    elsif scissors?
-      return true if other_move.rock?
-      return false
-    end
+    (rock? && other_move.paper?) ||
+      (paper? && other_move.scissors?) ||
+      (scissors? && other_move.rock?)
   end
 
   def to_s
     @value
   end
-end
-
-class Rule
-  def initialize
-    # not sure what the "state" of a rule object should be
-  end
-end
-
-# not sure where "compare" goes yet
-def compare(move1, move2)
-
 end
 
 ### Orchestration Engine
@@ -150,14 +94,16 @@ class RPSGame
     puts "Thanks for playing Rock, Paper, Scissors. Good bye!"
   end
 
-  def display_winner
+  def display_moves
     puts "#{human.name} chose #{human.move}."
     puts "#{computer.name} chose #{computer.move}."
+  end
 
+  def display_winner
     if human.move > computer.move
       puts "#{human.name} won!"
     elsif human.move < computer.move
-      puts "#{commputer.name} won!"
+      puts "#{computer.name} won!"
     else
       puts "It's a tie!"
     end
@@ -179,6 +125,7 @@ class RPSGame
     loop do
       human.choose
       computer.choose
+      display_moves
       display_winner
       break unless play_again?
     end
