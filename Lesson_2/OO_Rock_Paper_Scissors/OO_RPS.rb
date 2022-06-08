@@ -67,7 +67,7 @@ end
 class Rule
   def initialize
     # not sure what the "state" of a rule object should be
-  end
+  endg
 end
 
 # not sure where "compare" goes yet
@@ -93,11 +93,31 @@ class RPSGame
     puts "Thanks for playing Rock, Paper, Scissors. Good bye!"
   end
 
+  def display_winner
+    puts "You chose #{human.move}."
+    puts "The computer chose #{computer.move}."
+
+    case human.move
+    when 'rock'
+      puts "It's a tie!" if computer.move == 'rock'
+      puts "You won!" if computer.move == 'scissors'
+      pute "Computer won!" if computer.move == 'paper'
+    when 'paper'
+      puts "It's a tie!" if computer.move == 'paper'
+      puts "You won!" if computer.move == 'rock'
+      pute "Computer won!" if computer.move == 'scissors'
+    when 'scissors'
+      puts "It's a tie!" if computer.move == 'scissors'
+      puts "You won!" if computer.move == 'paper'
+      pute "Computer won!" if computer.move == 'rock'
+    end
+  end
+
   def play
     display_welcome_message
     human.choose
     computer.choose
-    # display_winner
+    display_winner
     display_goodbye_message
   end
 end
