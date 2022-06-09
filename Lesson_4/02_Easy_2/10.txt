@@ -1,0 +1,6 @@
+Benefits of using OOP in Ruby?
+
+- It mimics the objects in the real world
+- It lessens the ripple effect when there is a change in the code
+- It is easier the maintain
+- It is easier the debug
