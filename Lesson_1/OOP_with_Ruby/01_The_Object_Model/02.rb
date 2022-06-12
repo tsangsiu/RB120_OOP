@@ -1,22 +1,28 @@
 =begin
 
-A module contains methods that can be used by other classes.
+A module is a collection of behaviors that can be used in different classes
+through mixins.
 
-This is a way to achieve polymorphism.
+[Purpose] They allows us to group reusable code into one place. They can also be
+used as a namespace.
 
-To use methods in a module in a class, use the `include` method followed by the module name when defining a class
+Mixing in a module is a way to achieve polymorphism. This makes code reusable,
+and different classes can have its own refined methods of the same name.
+
+To mix in a module in our defined class, we invoke the method `include` with the
+module name as an argument.
 
 =end
 
-module Speak
-  def speak(sound)
-    puts "#{sound}"
+module Movable
+  def move
+    puts "start moving..."
   end
 end
 
-class Person
-  include Speak
+class Dog
+  include Movable
 end
 
-Jason = Person.new
-Jason.speak("Hi!")
+my_dog = Dog.new
+my_dog.move # => start moving...

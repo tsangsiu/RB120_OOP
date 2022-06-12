@@ -1,6 +1,11 @@
-# An object can be created by calling the class method `::new` on the class name.
+=begin
 
-class Person
+In Ruby, we create an object by calling the class method `::new` on the class
+name:
+
+=end
+
+class Dog
 end
 
-Jason = Person.new
+my_dog = Dog.new
