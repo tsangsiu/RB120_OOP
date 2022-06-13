@@ -22,6 +22,6 @@ class MyTruck < Vehicle
   NUMBER_OF_WHEEL = 6
 end
 
-my_car_1 = MyCar.new
-my_car_2 = MyTruck.new
+my_car = MyCar.new
+my_truck = MyTruck.new
 p Vehicle.number_of_vehicle

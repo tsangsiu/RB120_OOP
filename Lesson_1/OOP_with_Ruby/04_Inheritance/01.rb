@@ -1,14 +1,13 @@
 class Vehicle
   def self.gas_mileage(gallons, miles)
-    puts "#{miles / gallons} miles per gallon of gas"
+    miles / gallons
   end
 end
 
-
 class MyCar < Vehicle
-  NUMBER_OF_WHEEL = 4
+  NUMBER_OF_WHEELS = 4  
 end
 
 class MyTruck < Vehicle
-  NUMBER_OF_WHEEL = 6
+  NUMBER_OF_WHEELS = 8
 end
