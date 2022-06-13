@@ -1,32 +1,32 @@
 class MyCar
-  attr_reader :year, :color
+  attr_reader :color, :year
+  
+  def self.gas_mileage(gallons, miles)
+    miles / gallons
+  end
 
   def initialize(year, color, model)
     @year = year
     @color = color
     @model = model
-    current_speed = 0
+    @current_speed = 0
   end
-
-  def self.gas_mileage(gallons, miles)
-    puts "#{miles / gallons} miles per gallon of gas"
+  
+  def speed_up(speed)
+    @current_speed += speed
   end
-
-  def speed_up(number)
-    @speed += number
+  
+  def brake(speed)
+    @current_speed -= speed
   end
-
-  def brake(number)
-    @speed -= number
+  
+  def shut
+    @current_speed = 0
   end
-
-  def shut_down
-    @speed = 0
-  end
-
+  
   def spray_paint(color)
     @color = color
   end
 end
 
-MyCar.gas_mileage(13, 351)
+puts MyCar.gas_mileage(13, 351)

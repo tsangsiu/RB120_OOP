@@ -1,18 +1,10 @@
 =begin
 
-class Person
-  attr_reader :name
-  def initialize(name)
-    @name = name
-  end
-end
-
-bob = Person.new("Steve")
-bob.name = "Bob"
+We get the error because the setter method for the instance variable `@name` is
+not defined. We can get that back on top of the getter method using the method
+`attr_accessor`:
 
 =end
-
-# The above code raises an error because there is no setter method defined for the instance variable @name
 
 class Person
   attr_accessor :name
@@ -22,6 +14,5 @@ class Person
 end
 
 bob = Person.new("Steve")
-p bob.name
 bob.name = "Bob"
 p bob.name
