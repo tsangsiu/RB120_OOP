@@ -3,21 +3,18 @@ class MyCar
     @year = year
     @color = color
     @model = model
-    current_speed = 0
+    @current_speed = 0
   end
-
-  def speed_up(number)
-    @speed += number
+  
+  def speed_up(speed)
+    @current_speed += speed
   end
-
-  def brake(number)
-    @speed -= number
+  
+  def brake(speed)
+    @current_speed -= speed
   end
-
-  def shut_down
-    @speed = 0
+  
+  def shut
+    @current_speed = 0
   end
 end
-
-my_car = MyCar.new(2022, 'Red', 'JT')
-p my_car
