@@ -1,6 +1,6 @@
 class Person
   attr_accessor :first_name, :last_name
-
+  
   def initialize(full_name)
     parse_full_name(full_name)
   end
@@ -9,8 +9,8 @@ class Person
     "#{first_name} #{last_name}".strip
   end
 
-  def name=(full_name)
-    parse_full_name(full_name)
+  def name=(name)
+    parse_full_name(name)
   end
 
   def same_name?(other_person)
@@ -20,14 +20,14 @@ class Person
   private
 
   def parse_full_name(full_name)
-    name_parts = full_name.split
-    self.first_name = name_parts.first
-    self.last_name = name_parts.size > 1 ? name_parts.last : ''
+    parts = full_name.split
+    self.first_name = parts.first
+    self.last_name = parts.size > 1 ? parts.last : ''
   end
 end
 
 bob = Person.new('Robert Smith')
 rob = Person.new('Robert Smith')
 
-p bob.same_name?(rob) # alternative solution
-p bob.name == rob.name
+puts bob.name == rob.name
+puts bob.same_name?(rob)

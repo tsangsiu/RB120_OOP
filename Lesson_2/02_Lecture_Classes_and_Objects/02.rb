@@ -1,10 +1,10 @@
 class Person
   attr_accessor :first_name, :last_name
-
+  
   def initialize(full_name)
-    name_parts = full_name.split
-    self.first_name = name_parts.first
-    self.last_name = name_parts.size > 1 ? name_parts.last : ''
+    parts = full_name.split
+    self.first_name = parts.first
+    self.last_name = parts.size > 1 ? parts.last : ''
   end
 
   def name
@@ -13,8 +13,8 @@ class Person
 end
 
 bob = Person.new('Robert')
-p bob.name                  # => 'Robert'
-p bob.first_name            # => 'Robert'
-p bob.last_name             # => ''
+puts bob.name                  # => 'Robert'
+puts bob.first_name            # => 'Robert'
+puts bob.last_name             # => ''
 bob.last_name = 'Smith'
-p bob.name                  # => 'Robert Smith'
+puts bob.name                  # => 'Robert Smith'
