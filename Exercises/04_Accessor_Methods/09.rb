@@ -1,12 +1,12 @@
-class Person
-  def age=(age)
-    @age = age * 2
-  end
+# class Person
+#   def age=(age)
+#     @age = age * 2
+#   end
   
-  def age
-    @age * 2
-  end
-end
+#   def age
+#     @age * 2
+#   end
+# end
 
 class Person
   def age=(age)

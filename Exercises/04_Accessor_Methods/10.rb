@@ -1,16 +1,16 @@
-class Person
-  def name=(name)
-    self.first_name, self.last_name = name.split
-  end
+# class Person
+#   def name=(name)
+#     self.first_name, self.last_name = name.split
+#   end
   
-  def name
-    "#{first_name} #{last_name}"
-  end
+#   def name
+#     "#{first_name} #{last_name}"
+#   end
   
-  private
+#   private
   
-  attr_accessor :first_name, :last_name
-end
+#   attr_accessor :first_name, :last_name
+# end
 
 class Person
   def name=(name)

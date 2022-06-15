@@ -1,7 +1,3 @@
-# Using the following code, add the appropriate accessor methods. Keep in 
-# mind that the last_name getter shouldn't be visible outside the class, 
-# while the first_name getter should be visible outside the class.
-
 class Person
   attr_writer :first_name, :last_name
   attr_reader :first_name
