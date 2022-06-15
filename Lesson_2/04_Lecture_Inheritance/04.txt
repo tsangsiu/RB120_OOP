@@ -1,4 +1,7 @@
 What is the method lookup path and how is it important?
 
-The method lookup path is the order in which Ruby will traverse the class
-hierarchy to look for methods to invoke.
+The method lookup path is the order of classes or modules in which Ruby searches
+through when looking for a method.
+
+When Ruby finds a particular method in a class or modules, it looks no further
+and invoke it. Therefore, the order is important.
