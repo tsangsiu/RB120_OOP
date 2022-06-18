@@ -1,72 +1,70 @@
 class Player
   attr_accessor :move, :name
 
-	def initialize(player_type = :human)
-		@player_type = player_type
-    @move = nil
+  def initialize
     set_name
-	end
+  end
+end
 
+class Human < Player
   def set_name
-    if human?
-      name = ""
-      loop do
-        puts "What's your name?"
-        name = gets.chomp
-        break unless name.empty?
-        puts "Sorry, must enter a value."
-      end
-      self.name = name
-    else
-      self.name = ['R2D2', 'Hal', 'Chappie', 'Sonny', 'Number 5'].sample
+    name = ""
+    loop do
+      puts "What's your name?"
+      name = gets.chomp
+      break unless name.empty?
+      puts "Sorry, must enter a value."
     end
+    self.name = name
   end
 
-	def choose
-    if human?
-      choice = nil
-      loop do
-        puts "Please choose rock, paper, or scissors:"
-        choice = gets.chomp
-        break if ['rock', 'paper', 'scissors'].include?(choice)
-        puts "Sorry, invalid  choice."      
-      end
-      self.move = choice      
-    else
-      self.move = ['rock', 'paper', 'scissors'].sample
+  def choose
+    choice = nil
+    loop do
+      puts "Please choose rock, paper, or scissors:"
+      choice = gets.chomp
+      break if ['rock', 'paper', 'scissors'].include?(choice)
+      puts "Sorry, invalid  choice."      
     end
-	end
+    self.move = choice  
+  end
+end
 
-  def human?
-    @player_type == :human
+class Computer < Player
+  def set_name
+    self.name = ['R2D2', 'Hal', 'Chappie', 'Sonny', 'Number 5'].sample
+  end
+
+  def choose
+    self.move = ['rock', 'paper', 'scissors'].sample
   end
 end
 
 class Move
-	def initialize
-		# seems like we need something to keep track
-		# of the choice... a move object can be "paper", "rock", or "scissors"
-	end
+  def initialize
+    # seems like we need something to keep track
+    # of the choice... a move object can be "paper", "rock", or "scissors"
+  end
 
-	# not sure where to put this
-	def compare(move1, move2)
+  # not sure where to put this
+  def compare(move1, move2)
 
-	end
+  end
 end
 
 class Rule
-	def initialize
-		# not sure what the "state" of a rule object should be
-	end
+  def initialize
+    # not sure what the "state" of a rule object should be
+  end
 end
 
 class RPSGame
-	attr_accessor :human, :computer
+  attr_accessor :human, :computer
 
-	def initialize
-		@human = Player.new
-		@computer = Player.new(:computer)
-	end
+  def initialize
+    @human = Human.new
+    @computer = Computer.new
+  end
 
   def display_welcome_message
     puts "Welcome to Rock, Paper, Scissors!"
@@ -108,18 +106,18 @@ class RPSGame
     return false
   end
 
-	def play
-		display_welcome_message
+  def play
+    display_welcome_message
 
     loop do
-  		human.choose
-  		computer.choose
-  		display_winner
+      human.choose
+      computer.choose
+      display_winner
       break unless play_again?
     end
 
-		display_goodbye_message
-	end
+    display_goodbye_message
+  end
 end
 
 RPSGame.new.play
