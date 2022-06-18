@@ -3,17 +3,17 @@ class Person
     @first_name = first_name.capitalize
     @last_name = last_name.capitalize
   end
-  
-  def first_name=(first_name)
-    @first_name = first_name.capitalize
-  end
-  
-  def last_name=(last_name)
-    @last_name = last_name.capitalize
-  end
 
   def to_s
     "#{@first_name} #{@last_name}"
+  end
+
+  def first_name=(first_name)
+    @first_name = first_name.capitalize
+  end
+
+  def last_name=(last_name)
+    @last_name = last_name.capitalize
   end
 end
 
