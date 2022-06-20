@@ -27,7 +27,7 @@ class Human < Player
       puts "Please choose rock, paper, scissors, spock, or lizard:"
       choice = gets.chomp
       break if Move::VALUES.include?(choice)
-      puts "Sorry, invalid  choice."
+      puts "Sorry, invalid choice."
     end
     self.move = Move.create(choice)
   end
@@ -55,7 +55,7 @@ class Move
     when 'lizard'   then Lizard.new
     end
   end
-  
+
   def initialize(value)
     @value = value
   end
@@ -155,14 +155,21 @@ class Lizard < Move
   end
 end
 
-class RPSGame
-  attr_accessor :human, :computer
+class MoveHistory
+  def initialize
+    @move_history = []
+  end
+end
 
-  SCORE_TO_WIN = 10
+class RPSGame
+  attr_accessor :human, :computer, :move_history
+
+  SCORE_TO_WIN = 5
 
   def initialize
     @human = Human.new
     @computer = Computer.new
+    @move_history = []
   end
 
   def display_welcome_message
@@ -254,6 +261,8 @@ class RPSGame
         add_score
         display_round_winner
         display_score
+        add_move_history
+        display_move_history
       end
       determine_grand_winner
       display_grand_winner
@@ -278,6 +287,7 @@ class RPSGame
   def reset_game
     reset_score
     reset_grand_winner
+    reset_move_history
   end
 
   def reset_round_winner
@@ -287,6 +297,26 @@ class RPSGame
 
   def reset_round
     reset_round_winner
+  end
+
+  def add_move_history
+    move_history << { human.name => human.move, computer.name => computer.move }
+  end
+
+  def display_move_history
+    puts
+    puts " Move History"
+    puts "------------------"
+    move_history.each do |move|
+      puts "#{human.name}: #{move[human.name]}," \
+           "#{computer.name}: #{move[computer.name]}"
+    end
+    puts "------------------"
+    puts
+  end
+
+  def reset_move_history
+    @move_history = []
   end
 end
 
