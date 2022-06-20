@@ -26,7 +26,7 @@ class Human < Player
     loop do
       puts "Please choose rock, paper, scissors, spock, or lizard:"
       choice = gets.chomp
-      break if Move::VALUES.include?(choice)
+      break if Move.values.include?(choice)
       puts "Sorry, invalid choice."
     end
     self.move = Move.create(choice)
@@ -38,13 +38,24 @@ class Computer < Player
     self.name = ['R2D2', 'Hal', 'Chappie', 'Sonny', 'Number 5'].sample
   end
 
-  def choose
-    self.move = Move.create(Move::VALUES.sample)
+  def choose(name)
+    self.move = Move.create(Move.values(name).sample)
   end
 end
 
 class Move
-  VALUES = ['rock', 'paper', 'scissors', 'spock', 'lizard']
+  def self.values(name = nil)
+    case name
+    when 'R2D2' then ['rock']
+    when 'Hal'
+      ['rock', ['scissors'] * 4, ['spock'] * 2, ['lizard'] * 2].flatten
+    when 'Chappie'
+      [['paper'] * 4, 'scissors', ['spock'] * 2, ['lizard'] * 2].flatten
+    when 'Sonny'
+      [['rock'] * 4, 'paper', ['spock'] * 2, ['lizard'] * 2].flatten
+    else ['rock', 'paper', 'scissors', 'spock', 'lizard']
+    end
+  end
 
   def self.create(value)
     case value
@@ -255,7 +266,7 @@ class RPSGame
       until grand_winner?
         reset_round
         human.choose
-        computer.choose
+        computer.choose(computer.name)
         display_moves
         determine_round_winner
         add_score
