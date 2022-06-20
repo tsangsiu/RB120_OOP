@@ -55,6 +55,10 @@ class Move
     when 'lizard'   then Lizard.new
     end
   end
+  
+  def initialize(value)
+    @value = value
+  end
 
   def scissors?
     @value == 'scissors'
@@ -83,7 +87,7 @@ end
 
 class Rock < Move
   def initialize
-    @value = 'rock'
+    super('rock')
   end
 
   def >(other_move)
@@ -97,7 +101,7 @@ end
 
 class Scissors < Move
   def initialize
-    @value = 'scissors'
+    super('scissors')
   end
 
   def >(other_move)
@@ -111,7 +115,7 @@ end
 
 class Paper < Move
   def initialize
-    @value = 'paper'
+    super('paper')
   end
 
   def >(other_move)
@@ -125,7 +129,7 @@ end
 
 class Spock < Move
   def initialize
-    @value = 'spock'
+    super('spock')
   end
 
   def >(other_move)
@@ -139,7 +143,7 @@ end
 
 class Lizard < Move
   def initialize
-    @value = 'lizard'
+    super('lizard')
   end
 
   def >(other_move)
