@@ -9,15 +9,9 @@ end
 
 module Helpable
   TICK = "\xE2\x9C\x94"
-
-  def join_or(arr)
-    "#{arr[0...-1].join(', ')}, or #{arr[-1]}"
-  end
 end
 
 class Human < Player
-  include Helpable
-
   def set_name
     name = ""
     loop do
@@ -32,12 +26,12 @@ class Human < Player
   def choose
     choice = nil
     loop do
-      puts "Please choose #{join_or(Move.values)}:"
-      choice = gets.chomp.downcase
-      break if Move.values.include?(choice)
+      puts "Please choose [r]ock, [p]aper, [sc]issors, [l]izard, or [sp]ock:"
+      choice = gets.chomp.strip.downcase
+      break if Move::VALID_VALUES.keys.include?(choice)
       puts "Sorry, invalid choice."
     end
-    @move = Move.create(choice)
+    @move = Move.create(Move::VALID_VALUES[choice])
   end
 end
 
@@ -52,6 +46,13 @@ class Computer < Player
 end
 
 class Move
+  VALID_VALUES = {
+    'r' => 'rock', 'rock' => 'rock',
+    'p' => 'paper', 'paper' => 'paper',
+    'sc' => 'scissors', 'scissors' => 'scissors',
+    'l' => 'lizard', 'lizard' => 'lizard',
+    'sp' => 'spock', 'spock' => 'spock'
+  }
   VALUES = {
     "R2D2" => ['rock'],
     "Hal" => ['rock', ['scissors'] * 4, ['lizard'] * 2,
@@ -65,7 +66,7 @@ class Move
     if VALUES.key?(name)
       VALUES[name]
     else
-      ['rock', 'paper', 'scissors', 'lizard', 'spock']
+      VALID_VALUES.values.uniq
     end
   end
 
@@ -187,7 +188,10 @@ class RPSGame
 
   def play
     display_welcome_message
-    display_rules if read_rules?
+    if read_rules?
+      display_rules
+      prompt_to_continue
+    end
     main_game_loop
     display_goodbye_message
   end
@@ -218,6 +222,12 @@ Rock crushes Scissors
 
   def display_goodbye_message
     puts "Thanks for playing Rock, Paper, Scissors. Good bye!"
+  end
+
+  def prompt_to_continue
+    puts "Press [enter] to continue"
+    gets
+    system "clear"
   end
 
   def read_rules?
@@ -281,6 +291,7 @@ Rock crushes Scissors
   end
 
   def reset_game
+    system "clear"
     reset_round_number
     reset_score
     reset_move
@@ -329,7 +340,7 @@ Rock crushes Scissors
   end
 
   def display_round_number
-    puts ":: Round #{round_number} ::"
+    puts ":: Round #{round_number + 1} ::"
   end
 
   def display_moves
@@ -358,7 +369,7 @@ Rock crushes Scissors
     (0...round_number).each do |round_number|
       human_move = human.move_history[round_number]
       computer_move = computer.move_history[round_number]
-      puts "[Round #{round_number}] "\
+      puts "[Round #{round_number + 1}] "\
            "#{human.name}: #{human_move}" \
            "#{Helpable::TICK if human_move > computer_move}, " \
            "#{computer.name}: #{computer_move}" \
