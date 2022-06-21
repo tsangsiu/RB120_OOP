@@ -259,8 +259,8 @@ Rock crushes Scissors
         process_round
         display_round
       end
-      determine_grand_winner
-      display_grand_winner
+      process_game
+      display_game
       break unless play_again?
     end
   end
@@ -340,7 +340,7 @@ Rock crushes Scissors
   end
 
   def display_round_number
-    puts ":: Round #{round_number + 1} ::"
+    puts ":: Round #{round_number} ::"
   end
 
   def display_moves
@@ -384,8 +384,6 @@ Rock crushes Scissors
     display_moves
     display_round_winner
     puts
-    display_move_history
-    puts
     display_score
     puts '-' * PAGE_WIDTH
   end
@@ -409,6 +407,19 @@ Rock crushes Scissors
     puts "*" * msg.length
     puts msg
     puts "*" * msg.length
+    puts
+  end
+
+  def process_game
+    determine_grand_winner
+  end
+
+  def display_game
+    system "clear"
+    display_grand_winner
+    puts '-' * PAGE_WIDTH
+    display_move_history
+    puts '-' * PAGE_WIDTH
     puts
   end
 
