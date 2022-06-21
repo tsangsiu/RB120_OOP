@@ -1,59 +1,71 @@
 class Player
-  attr_accessor :name, :move, :winner, :score, :grand_winner
+  attr_accessor :name, :score, :move, :move_history,
+                :round_winner, :grand_winner
 
   def initialize
     set_name
-    @winner = false
-    @score = 0
-    @grand_winner = false
+  end
+end
+
+module Helpable
+  TICK = "\xE2\x9C\x94"
+
+  def join_or(arr)
+    "#{arr[0...-1].join(', ')}, or #{arr[-1]}"
   end
 end
 
 class Human < Player
+  include Helpable
+
   def set_name
     name = ""
     loop do
       puts "What's your name?"
-      name = gets.chomp
+      name = gets.chomp.strip
       break unless name.empty?
       puts "Sorry, must enter a value."
     end
-    self.name = name
+    @name = name
   end
 
   def choose
     choice = nil
     loop do
-      puts "Please choose rock, paper, scissors, spock, or lizard:"
-      choice = gets.chomp
+      puts "Please choose #{join_or(Move.values)}:"
+      choice = gets.chomp.downcase
       break if Move.values.include?(choice)
       puts "Sorry, invalid choice."
     end
-    self.move = Move.create(choice)
+    @move = Move.create(choice)
   end
 end
 
 class Computer < Player
   def set_name
-    self.name = ['R2D2', 'Hal', 'Chappie', 'Sonny', 'Number 5'].sample
+    @name = ['R2D2', 'Hal', 'Chappie', 'Sonny', 'Number 5'].sample
   end
 
   def choose(name)
-    self.move = Move.create(Move.values(name).sample)
+    @move = Move.create(Move.values(name).sample)
   end
 end
 
 class Move
+  VALUES = {
+    "R2D2" => ['rock'],
+    "Hal" => ['rock', ['scissors'] * 4, ['lizard'] * 2,
+              ['spock'] * 2].flatten,
+    "Chappie" => [['paper'] * 4, 'scissors', ['lizard'] * 2,
+                  ['spock'] * 2].flatten,
+    "Sonny" => [['rock'] * 4, 'paper', ['lizard'] * 2, ['spock'] * 2].flatten
+  }
+
   def self.values(name = nil)
-    case name
-    when 'R2D2' then ['rock']
-    when 'Hal'
-      ['rock', ['scissors'] * 4, ['spock'] * 2, ['lizard'] * 2].flatten
-    when 'Chappie'
-      [['paper'] * 4, 'scissors', ['spock'] * 2, ['lizard'] * 2].flatten
-    when 'Sonny'
-      [['rock'] * 4, 'paper', ['spock'] * 2, ['lizard'] * 2].flatten
-    else ['rock', 'paper', 'scissors', 'spock', 'lizard']
+    if VALUES.key?(name)
+      VALUES[name]
+    else
+      ['rock', 'paper', 'scissors', 'lizard', 'spock']
     end
   end
 
@@ -62,8 +74,8 @@ class Move
     when 'rock'     then Rock.new
     when 'scissors' then Scissors.new
     when 'paper'    then Paper.new
-    when 'spock'    then Spock.new
     when 'lizard'   then Lizard.new
+    when 'spock'    then Spock.new
     end
   end
 
@@ -83,16 +95,16 @@ class Move
     @value == 'paper'
   end
 
-  def spock?
-    @value == 'spock'
-  end
-
   def lizard?
     @value == 'lizard'
   end
 
+  def spock?
+    @value == 'spock'
+  end
+
   def to_s
-    @value
+    @value.capitalize
   end
 end
 
@@ -138,20 +150,6 @@ class Paper < Move
   end
 end
 
-class Spock < Move
-  def initialize
-    super('spock')
-  end
-
-  def >(other_move)
-    other_move.rock? || other_move.scissors?
-  end
-
-  def <(other_move)
-    other_move.paper? || other_move.lizard?
-  end
-end
-
 class Lizard < Move
   def initialize
     super('lizard')
@@ -166,65 +164,219 @@ class Lizard < Move
   end
 end
 
-class MoveHistory
+class Spock < Move
   def initialize
-    @move_history = []
+    super('spock')
+  end
+
+  def >(other_move)
+    other_move.rock? || other_move.scissors?
+  end
+
+  def <(other_move)
+    other_move.paper? || other_move.lizard?
   end
 end
 
 class RPSGame
-  attr_accessor :human, :computer, :move_history
-
-  SCORE_TO_WIN = 5
-
   def initialize
+    system "clear"
     @human = Human.new
     @computer = Computer.new
-    @move_history = []
   end
 
+  def play
+    display_welcome_message
+    display_rules if read_rules?
+    main_game_loop
+    display_goodbye_message
+  end
+
+  private
+
+  attr_accessor :round_number, :human, :computer
+
+  SCORE_TO_WIN = 10
+  PAGE_WIDTH = 50
+  RULES = <<-MSG
+Scissors cuts Paper
+Paper covers Rock
+Rock crushes Lizard
+Lizard poisons Spock
+Spock smashes Scissors
+Scissors decapitates Lizard
+Lizard eats Paper
+Paper disproves Spock
+Spock vaporizes Rock
+Rock crushes Scissors
+=> The first player reaches #{SCORE_TO_WIN} wins wins the game.
+  MSG
+
   def display_welcome_message
-    puts "Welcome to Rock, Paper, Scissors!"
+    puts "** Welcome to Rock, Paper, Scissors, #{human.name}! **"
   end
 
   def display_goodbye_message
     puts "Thanks for playing Rock, Paper, Scissors. Good bye!"
   end
 
-  def display_moves
-    puts "#{human.name} chose #{human.move}."
-    puts "#{computer.name} chose #{computer.move}."
+  def read_rules?
+    answer = nil
+    loop do
+      puts "Would you like to read the rules? [Y/N]"
+      answer = gets.chomp.downcase
+      break if %w(y n).include?(answer)
+      puts "Sorry, must be Y or N."
+    end
+    answer.downcase == 'y'
+  end
+
+  def display_rules
+    puts '-' * PAGE_WIDTH
+    puts '- Rules -'
+    puts RULES
+    puts '-' * PAGE_WIDTH
+  end
+
+  def reset_round_number
+    @round_number = 0
+  end
+
+  def main_game_loop
+    loop do
+      reset_game
+      until grand_winner?
+        process_round
+        display_round
+      end
+      determine_grand_winner
+      display_grand_winner
+      break unless play_again?
+    end
+  end
+
+  def reset_score
+    human.score = 0
+    computer.score = 0
+  end
+
+  def reset_move
+    human.move = nil
+    computer.move = nil
+  end
+
+  def reset_move_history
+    human.move_history = []
+    computer.move_history = []
+  end
+
+  def reset_round_winner
+    human.round_winner = false
+    computer.round_winner = false
+  end
+
+  def reset_grand_winner
+    human.grand_winner = false
+    computer.grand_winner = false
+  end
+
+  def reset_game
+    reset_round_number
+    reset_score
+    reset_move
+    reset_move_history
+    reset_round_winner
+    reset_grand_winner
+  end
+
+  def reset_round
+    @round_number += 1
+    reset_round_winner
+  end
+
+  def grand_winner?
+    human.score >= SCORE_TO_WIN || computer.score >= SCORE_TO_WIN
+  end
+
+  def add_move_history
+    human.move_history << human.move
+    computer.move_history << computer.move
   end
 
   def determine_round_winner
     if human.move > computer.move
-      human.winner = true
+      human.round_winner = true
     elsif human.move < computer.move
-      computer.winner = true
+      computer.round_winner = true
     end
   end
 
   def add_score
-    if human.winner
+    if human.round_winner
       human.score += 1
-    elsif computer.winner
+    elsif computer.round_winner
       computer.score += 1
     end
   end
 
+  def process_round
+    reset_round
+    human.choose
+    computer.choose(computer.name)
+    add_move_history
+    determine_round_winner
+    add_score
+  end
+
+  def display_round_number
+    puts ":: Round #{round_number} ::"
+  end
+
+  def display_moves
+    puts "#{human.name} chose #{human.move}, and " \
+         "#{computer.name} chose #{computer.move}."
+  end
+
   def display_round_winner
-    if human.winner
-      puts "#{human.name} won!"
-    elsif computer.winner
-      puts "#{computer.name} won!"
+    if human.round_winner
+      puts "#{human.name} won this round!"
+    elsif computer.round_winner
+      puts "#{computer.name} won this round!"
     else
       puts "It's a tie!"
     end
   end
 
   def display_score
-    puts "#{human.name}'s score: #{human.score}"
-    puts "#{computer.name}'s score: #{computer.score}"
+    puts "- Score -"
+    puts "#{human.name}'s Score: #{human.score}, " \
+         "#{computer.name}'s Score: #{computer.score}"
+  end
+
+  def display_move_history
+    puts "- Move History -"
+    (0...round_number).each do |round_number|
+      human_move = human.move_history[round_number]
+      computer_move = computer.move_history[round_number]
+      puts "[Round #{round_number}] "\
+           "#{human.name}: #{human_move}" \
+           "#{Helpable::TICK if human_move > computer_move}, " \
+           "#{computer.name}: #{computer_move}" \
+           "#{Helpable::TICK if computer_move > human_move}"
+    end
+  end
+
+  def display_round
+    system "clear"
+    puts '-' * PAGE_WIDTH
+    display_round_number
+    display_moves
+    display_round_winner
+    puts
+    display_move_history
+    puts
+    display_score
+    puts '-' * PAGE_WIDTH
   end
 
   def determine_grand_winner
@@ -236,98 +388,28 @@ class RPSGame
   end
 
   def display_grand_winner
-    if human.grand_winner
-      puts "#{human.name} is the grand winner!"
-    elsif computer.grand_winner
-      puts "#{computer.name} is the grand winner!"
-    end
-  end
+    msg = if human.grand_winner
+            "** #{human.name} is the grand winner! **"
+          elsif computer.grand_winner
+            "** #{computer.name} is the grand winner! **"
+          end
 
-  def grand_winner?
-    human.score >= SCORE_TO_WIN || computer.score >= SCORE_TO_WIN
+    puts
+    puts "*" * msg.length
+    puts msg
+    puts "*" * msg.length
+    puts
   end
 
   def play_again?
     answer = nil
     loop do
-      puts "Would you like to play again? (y/n)"
-      answer = gets.chomp
-      break if ['y', 'n'].include?(answer.downcase)
-      puts "Sorry, must be y or n."
+      puts "Would you like to play again? [Y/N]"
+      answer = gets.chomp.downcase
+      break if %w(y n).include?(answer)
+      puts "Sorry, must be Y or N."
     end
     answer.downcase == 'y'
-  end
-
-  def play
-    display_welcome_message
-
-    loop do
-      reset_game
-      until grand_winner?
-        reset_round
-        human.choose
-        computer.choose(computer.name)
-        display_moves
-        determine_round_winner
-        add_score
-        display_round_winner
-        display_score
-        add_move_history
-        display_move_history
-      end
-      determine_grand_winner
-      display_grand_winner
-      break unless play_again?
-    end
-
-    display_goodbye_message
-  end
-
-  private
-
-  def reset_score
-    human.score = 0
-    computer.score = 0
-  end
-
-  def reset_grand_winner
-    human.grand_winner = false
-    computer.grand_winner = false
-  end
-
-  def reset_game
-    reset_score
-    reset_grand_winner
-    reset_move_history
-  end
-
-  def reset_round_winner
-    human.winner = false
-    computer.winner = false
-  end
-
-  def reset_round
-    reset_round_winner
-  end
-
-  def add_move_history
-    move_history << { human.name => human.move, computer.name => computer.move }
-  end
-
-  def display_move_history
-    puts
-    puts " Move History"
-    puts "------------------"
-    move_history.each do |move|
-      puts "#{human.name}: #{move[human.name]}," \
-           "#{computer.name}: #{move[computer.name]}"
-    end
-    puts "------------------"
-    puts
-  end
-
-  def reset_move_history
-    @move_history = []
   end
 end
 
