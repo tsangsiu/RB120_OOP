@@ -7,8 +7,8 @@ class Player
   end
 end
 
-module Helpable
-  TICK = "\xE2\x9C\x94"
+module Constant
+  CHECK_MARK = "\xE2\x9C\x94"
 end
 
 class Human < Player
@@ -28,10 +28,10 @@ class Human < Player
     loop do
       puts "Please choose [r]ock, [p]aper, [sc]issors, [l]izard, or [sp]ock:"
       choice = gets.chomp.strip.downcase
-      break if Move::VALID_VALUES.keys.include?(choice)
+      break if Move::VALID_INPUTS.keys.include?(choice)
       puts "Sorry, invalid choice."
     end
-    @move = Move.create(Move::VALID_VALUES[choice])
+    @move = Move.create(Move::VALID_INPUTS[choice])
   end
 end
 
@@ -46,14 +46,15 @@ class Computer < Player
 end
 
 class Move
-  VALID_VALUES = {
+  VALID_INPUTS = {
     'r' => 'rock', 'rock' => 'rock',
     'p' => 'paper', 'paper' => 'paper',
     'sc' => 'scissors', 'scissors' => 'scissors',
     'l' => 'lizard', 'lizard' => 'lizard',
     'sp' => 'spock', 'spock' => 'spock'
   }
-  VALUES = {
+
+  PERSONLITIES = {
     "R2D2" => ['rock'],
     "Hal" => ['rock', ['scissors'] * 4, ['lizard'] * 2,
               ['spock'] * 2].flatten,
@@ -63,10 +64,10 @@ class Move
   }
 
   def self.values(name = nil)
-    if VALUES.key?(name)
-      VALUES[name]
+    if PERSONLITIES.key?(name)
+      PERSONLITIES[name]
     else
-      VALID_VALUES.values.uniq
+      VALID_INPUTS.values.uniq
     end
   end
 
@@ -117,10 +118,6 @@ class Rock < Move
   def >(other_move)
     other_move.scissors? || other_move.lizard?
   end
-
-  def <(other_move)
-    other_move.paper? || other_move.spock?
-  end
 end
 
 class Scissors < Move
@@ -130,10 +127,6 @@ class Scissors < Move
 
   def >(other_move)
     other_move.paper? || other_move.lizard?
-  end
-
-  def <(other_move)
-    other_move.rock? || other_move.spock?
   end
 end
 
@@ -145,10 +138,6 @@ class Paper < Move
   def >(other_move)
     other_move.rock? || other_move.spock?
   end
-
-  def <(other_move)
-    other_move.scissors? || other_move.lizard?
-  end
 end
 
 class Lizard < Move
@@ -159,10 +148,6 @@ class Lizard < Move
   def >(other_move)
     other_move.paper? || other_move.spock?
   end
-
-  def <(other_move)
-    other_move.rock? || other_move.scissors?
-  end
 end
 
 class Spock < Move
@@ -172,10 +157,6 @@ class Spock < Move
 
   def >(other_move)
     other_move.rock? || other_move.scissors?
-  end
-
-  def <(other_move)
-    other_move.paper? || other_move.lizard?
   end
 end
 
@@ -234,7 +215,7 @@ Rock crushes Scissors
     answer = nil
     loop do
       puts "Would you like to read the rules? [Y/N]"
-      answer = gets.chomp.downcase
+      answer = gets.chomp.strip.downcase
       break if %w(y n).include?(answer)
       puts "Sorry, must be Y or N."
     end
@@ -317,7 +298,7 @@ Rock crushes Scissors
   def determine_round_winner
     if human.move > computer.move
       human.round_winner = true
-    elsif human.move < computer.move
+    elsif computer.move > human.move
       computer.round_winner = true
     end
   end
@@ -371,9 +352,9 @@ Rock crushes Scissors
       computer_move = computer.move_history[round_number]
       puts "[Round #{round_number + 1}] "\
            "#{human.name}: #{human_move}" \
-           "#{Helpable::TICK if human_move > computer_move}, " \
+           "#{Constant::CHECK_MARK if human_move > computer_move}, " \
            "#{computer.name}: #{computer_move}" \
-           "#{Helpable::TICK if computer_move > human_move}"
+           "#{Constant::CHECK_MARK if computer_move > human_move}"
     end
   end
 
@@ -427,7 +408,7 @@ Rock crushes Scissors
     answer = nil
     loop do
       puts "Would you like to play again? [Y/N]"
-      answer = gets.chomp.downcase
+      answer = gets.chomp.strip.downcase
       break if %w(y n).include?(answer)
       puts "Sorry, must be Y or N."
     end
