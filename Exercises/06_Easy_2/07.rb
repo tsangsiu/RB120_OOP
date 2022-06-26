@@ -7,36 +7,47 @@ class Pet
   end
 
   def to_s
-    "a #{@type} named #{@name}"
+    "a #{type} named #{name}"
   end
 end
 
 class Owner
-  attr_reader :name
-  attr_accessor :number_of_pets
+  attr_reader :name, :pets
 
   def initialize(name)
     @name = name
-    @number_of_pets = 0
+    @pets = []
+  end
+
+  def add_pet(pet)
+    pets << pet
+  end
+
+  def number_of_pets
+    pets.size
+  end
+
+  def print_pets
+    puts pets
   end
 end
 
 class Shelter
+  attr_accessor :adopters
+
   def initialize
-    @owners = Hash.new(nil)
+    @adopters = []
   end
 
   def adopt(owner, pet)
-    @owners.key?(owner) ? @owners[owner] << pet : @owners[owner] = [pet]
-    owner.number_of_pets += 1
+    adopters << owner unless adopters.include?(owner)
+    owner.add_pet(pet)
   end
 
   def print_adoptions
-    @owners.each do |owner, pets|
-      puts "#{owner.name} has adopted the following pets:"
-      pets.each do |pet|
-        puts "a #{pet.type} named #{pet.name}"
-      end
+    adopters.each do |adopter|
+      puts "#{adopter.name} has adopted the following pets:"
+      adopter.print_pets
       puts
     end
   end
