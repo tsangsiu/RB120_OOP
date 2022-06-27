@@ -1,13 +1,22 @@
 class Pet
   attr_reader :type, :name
+  attr_accessor :adopted
+  
+  @@pets = []
 
   def initialize(type, name)
     @type = type
     @name = name
+    @adopted = false
+    @@pets << self
   end
 
   def to_s
     "a #{type} named #{name}"
+  end
+  
+  def self.all_pets
+    @@pets
   end
 end
 
@@ -33,15 +42,17 @@ class Owner
 end
 
 class Shelter
-  attr_accessor :adopters
+  attr_accessor :pets, :adopters
 
   def initialize
+    @pets = Pet.all_pets
     @adopters = []
   end
 
   def adopt(owner, pet)
     adopters << owner unless adopters.include?(owner)
     owner.add_pet(pet)
+    pet.adopted = true
   end
 
   def print_adoptions
@@ -50,6 +61,22 @@ class Shelter
       adopter.print_pets
       puts
     end
+  end
+  
+  def unadopted_pets
+    Pet.all_pets.select { |pet| pet.adopted == false }
+  end
+  
+  def print_unadopted_pets
+    puts "The Animal Shelter has the following unadopted pets:"
+    unadopted_pets.each do |unadopted_pet|
+      puts unadopted_pet
+    end
+    puts
+  end
+  
+  def number_of_unadopted_pets
+    unadopted_pets.size
   end
 end
 
@@ -60,6 +87,13 @@ kennedy      = Pet.new('dog', 'Kennedy')
 sweetie      = Pet.new('parakeet', 'Sweetie Pie')
 molly        = Pet.new('dog', 'Molly')
 chester      = Pet.new('fish', 'Chester')
+asta         = Pet.new('dog', 'Asta')
+laddie       = Pet.new('dog', 'Laddie')
+fluffy       = Pet.new('cat', 'Fluffy')
+kat          = Pet.new('cat', 'Kat')
+ben          = Pet.new('cat', 'Ben')
+chatterbox   = Pet.new('parakeet', 'Chatterbox')
+bluebell     = Pet.new('parakeet', 'Bluebell')
 
 phanson = Owner.new('P Hanson')
 bholmes = Owner.new('B Holmes')
@@ -72,20 +106,17 @@ shelter.adopt(bholmes, kennedy)
 shelter.adopt(bholmes, sweetie)
 shelter.adopt(bholmes, molly)
 shelter.adopt(bholmes, chester)
+
+shelter.print_unadopted_pets
 shelter.print_adoptions
 puts "#{phanson.name} has #{phanson.number_of_pets} adopted pets."
 puts "#{bholmes.name} has #{bholmes.number_of_pets} adopted pets."
+puts "The Animal Shelter has #{shelter.number_of_unadopted_pets} unadopted pets."
 
-# P Hanson has adopted the following pets:
-# a cat named Butterscotch
-# a cat named Pudding
-# a bearded dragon named Darwin
+=begin
 
-# B Holmes has adopted the following pets:
-# a dog named Molly
-# a parakeet named Sweetie Pie
-# a dog named Kennedy
-# a fish named Chester
+# Further Exploration
 
-# P Hanson has 3 adopted pets.
-# B Holmes has 4 adopted pets.
+I only modified the interface `Shelter#adopt`.
+
+=end
