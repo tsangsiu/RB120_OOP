@@ -12,6 +12,8 @@ class Cat
 end
 
 =begin
-The `self` on line 10 refers to the instance that calls the `make_one_year_older`
-method.
+
+As `make_one_year_older` is an instance method, the `self` on line 10 refers
+to the instance that calls the method.
+
 =end

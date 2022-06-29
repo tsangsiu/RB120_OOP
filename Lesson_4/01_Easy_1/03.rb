@@ -15,7 +15,15 @@ small_car = Car.new
 small_car.go_fast # => "I am a Car and going super fast!"
 
 =begin
-Upon the method invocation of `go_fast` on the `Car` object that the local 
-variable `small_car` references, the class of `small_car`, which is `Car` is 
-interpolated to the output string.
+
+The `self` in the `go_fast` method represents the calling object.
+
+In the example, the method `go_fast` is called on the object which `small_car`
+references, which is a `Car` object. Hence `self.class` returns `Car`.
+
+`Car` is then interpolated inside of a String.
+
+Therefore, when `go_fast` is called on `small_car`, it outputs `I am a Car and
+going super fast!` to the console.
+
 =end
