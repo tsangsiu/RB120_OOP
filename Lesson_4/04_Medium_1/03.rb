@@ -15,7 +15,7 @@ end
 
 That could be a problem. Because by doing so, we can bypass the
 `update_quantity` method, and update the quantity directly by
-`instance.quantity = <new value>`. That means the new value would go through the
-logic check in `update_quantity`.
+`instance.quantity = <new value>`. That means the new value would not go through
+the logic check in `update_quantity`.
 
 =end

@@ -12,9 +12,10 @@ end
 
 =begin
   
-Ben is correct.
+Ben is right.
 
-`balance` on line 9 is actually is getter method as a result of line 2. The 
-getter method returns the instance variable `@balance`.
+`balance` on line 9 refers to the getter method of the instance variable
+`@balance`. The method returns the instance variable `@balance`, and is provided
+by the `attr_reader` on line 2.
 
 =end

@@ -24,16 +24,17 @@ end
 
 =begin
 
-What is the difference in the way the code works?
+Function-wise, both class defintions are identical.
 
-The first difference is in the `create_template` method. In the first one, the 
-instance variable is assigned to the value directly, while in the second one,
-the instance variable is assigned through the setter method.
+Syntax-wise, there are subtle differences:
 
-The second difference is in the `show_template` method. One with `self`, while 
-the other without. They are identical in terms of what they do. They are both
-the getter method of the `template` instance variable. Just that the latter is
-more explicit that the `template` method is called on a `Computer` object. The
-`self` is not necessary in this case.
+Considering the `create_template` methods, both assign the String `"template 14231"`
+to the instance variable `@template`. However, the first one do the assignment
+directly to the instance variable, while the second one do so by calling the
+setter method of `@template` provided by `attr_accessor :template`.
+
+Considering the `show_template` methods, both are the same, where both refer to
+the getter method of `@template` provided by `attr_accessor :template`. Just
+that the `self.` in not necessary here.
 
 =end
