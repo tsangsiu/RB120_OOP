@@ -10,8 +10,8 @@ end
 
 =begin
 
-Class methods in Ruby start with `self`, so `Television::manufacturer` is a
-class method.
+`manufacturer` is a class method. Methods that are defined with a prefix `self.`
+are class methods.
 
 We call a class method by calling the method on the class name:
 Television.manufacturer

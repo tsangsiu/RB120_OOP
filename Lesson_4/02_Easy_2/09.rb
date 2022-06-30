@@ -12,7 +12,8 @@ end
 
 =begin
 
-If we added a `play` method to the `Bingo` class, the method will override the
-`play` method in the `Game` class.
+If we added a `play` method to the `Bingo` class, when we call `play` on a
+`Bingo` object, `Bingo#play` is invoked instead of `Game#play`, because
+`Bingo#play` overrides `Bingo#play`.
 
 =end

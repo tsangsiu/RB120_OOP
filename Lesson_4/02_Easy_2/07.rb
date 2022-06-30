@@ -14,14 +14,16 @@ end
 
 =begin
 
-The class variable `@@cats_count` counts the number of instances instantiated 
-from the `Cat` class.
+`@@cats_count` is a class variable that counts the number of `Cat` object
+instantiated.
 
-Every time a new object is instantiated from the `Cat` class, the `initialize`
-method is called, and hence `@@cats_count` is incremented by 1.
+When a new `Cat` object is instantiated, it triggers the method invocation of 
+`initialize`. Inside it, the class variable `@@cats_count` is incremented by 1.
+
+To test it, we can do the following:
 
 =end
 
-my_cat_1 = Cat.new('Birman')
-my_cat_2 = Cat.new('Bombay')
+Cat.new('ringtail')
+Cat.new('shorthair')
 p Cat.cats_count # => 2
