@@ -6,8 +6,7 @@ end
 
 class Hello < Greeting
   def self.hi
-    greeting = Greeting.new
-    greeting.greet("Hello")
+    self.new.greet("Hello")
   end
 end
 
