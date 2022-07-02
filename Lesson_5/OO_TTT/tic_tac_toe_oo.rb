@@ -8,6 +8,10 @@ class Board
     reset
   end
 
+  def reset
+    (1..9).each { |key| @squares[key] = Square.new }
+  end
+
   def []=(key, marker)
     @squares[key].marker = marker
   end
@@ -32,23 +36,23 @@ class Board
     nil
   end
 
-  def reset
-    (1..9).each { |key| @squares[key] = Square.new }
-  end
-
+  # rubocop:disable Metrics/AbcSize
+  # rubocop:disable Metrics/MethodLength
   def display
-    puts "     |     |"
+    puts '     |     |'
     puts "  #{@squares[1]}  |  #{@squares[2]}  |  #{@squares[3]}"
-    puts "     |     |"
-    puts "-----+-----+-----"
-    puts "     |     |"
+    puts '     |     |'
+    puts '-----+-----+-----'
+    puts '     |     |'
     puts "  #{@squares[4]}  |  #{@squares[5]}  |  #{@squares[6]}"
-    puts "     |     |"
-    puts "-----+-----+-----"
-    puts "     |     |"
+    puts '     |     |'
+    puts '-----+-----+-----'
+    puts '     |     |'
     puts "  #{@squares[7]}  |  #{@squares[8]}  |  #{@squares[9]}"
-    puts "     |     |"
+    puts '     |     |'
   end
+  # rubocop:enable Metrics/AbcSize
+  # rubocop:enable Metrics/MethodLength
 
   private
 
@@ -62,7 +66,7 @@ end
 class Square
   attr_accessor :marker
 
-  INITIAL_MARKER = " "
+  INITIAL_MARKER = ' '
 
   def initialize(marker = INITIAL_MARKER)
     @marker = marker
@@ -106,39 +110,37 @@ class TTTGame
   def play
     clear_screen
     display_welcome_message
-
-    loop do
-      display_board
-
-      loop do
-        current_player_moves
-        alternate_player
-        break if board.someone_won? || board.full?
-        clear_screen_and_display_board if human_turn?
-      end
-      display_result
-      break unless play_again?
-      reset
-      display_play_again_message
-    end
-
+    main_game
     display_goodbye_message
   end
 
   private
 
-  def current_player_moves
-    if human_turn?
-      human_moves
-    else
-      computer_moves
+  def main_game
+    loop do
+      display_board
+      player_move      
+      display_result
+      break unless play_again?
+      reset
+      display_play_again_message
     end
   end
 
-  def alternate_player
+  def player_move
+    loop do
+      current_player_moves
+      break if board.someone_won? || board.full?
+      clear_screen_and_display_board if human_turn?
+    end
+  end
+
+  def current_player_moves
     if human_turn?
+      human_moves
       @current_player = COMPUTER_MARKER
     else
+      computer_moves
       @current_player = HUMAN_MARKER
     end
   end
@@ -166,10 +168,10 @@ class TTTGame
   def play_again?
     answer = nil
     loop do
-      puts "Would you like to play again? (y/n)"
+      puts 'Would you like to play again? (y/n)'
       answer = gets.chomp.strip.downcase
       break if %w(y n).include?(answer)
-      puts "Sorry, must be y or n"
+      puts 'Sorry, must be y or n'
     end
     answer == 'y'
   end
@@ -190,21 +192,21 @@ class TTTGame
 
     case board.winning_marker
     when human.marker
-      puts "You won!"
+      puts 'You won!'
     when computer.marker
-      puts "Computer won!"
+      puts 'Computer won!'
     else
       puts "It's a tie!"
     end
   end
 
   def display_welcome_message
-    puts "Welcome to Tic Tac Toe!"
+    puts 'Welcome to Tic Tac Toe!'
     puts
   end
 
   def display_goodbye_message
-    puts "Thanks for playing Tic Tac Toe! Goodbye!"
+    puts 'Thanks for playing Tic Tac Toe! Goodbye!'
   end
 
   def display_board
