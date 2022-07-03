@@ -1,3 +1,15 @@
+module HelperMethod
+  def join_or(arr, delimiter = ', ', join_word = 'or')
+    case arr.size
+    when 0 then ''
+    when 1 then arr.first
+    when 2 then arr.join(" #{join_word} ")
+    else
+      "#{arr[0...-1].join(delimiter)}#{delimiter}#{join_word} #{arr[-1]}"
+    end
+  end
+end
+
 class Board
   WINNING_LINES = [[1, 2, 3], [4, 5, 6], [7, 8, 9]] + # rows
                   [[1, 4, 7], [2, 5, 8], [3, 6, 9]] + # columns
@@ -94,11 +106,12 @@ class Player
 end
 
 class TTTGame
+  include HelperMethod
+  attr_reader :board, :human, :computer
+
   HUMAN_MARKER = 'X'
   COMPUTER_MARKER = 'O'
   FIRST_TO_MOVE = HUMAN_MARKER
-
-  attr_reader :board, :human, :computer
 
   def initialize
     @board = Board.new
@@ -150,7 +163,7 @@ class TTTGame
   end
 
   def human_moves
-    puts "Choose a square (#{board.unmarked_keys.join(', ')}): "
+    puts "Choose a square: #{join_or(board.unmarked_keys)}"
     square = nil
     loop do
       square = gets.chomp.to_i
