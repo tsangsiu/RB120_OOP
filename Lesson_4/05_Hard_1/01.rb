@@ -1,5 +1,6 @@
 module Movable
   attr_accessor :speed, :heading
+  # these are the instance variables that shared between the classes which include the Movable module
   attr_writer :fuel_capacity, :fuel_efficiency
   
   def range
