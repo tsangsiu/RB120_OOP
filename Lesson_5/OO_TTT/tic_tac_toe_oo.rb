@@ -99,9 +99,11 @@ end
 
 class Player
   attr_reader :marker
+  attr_accessor :score
 
   def initialize(marker)
     @marker = marker
+    @score = 0
   end
 end
 
@@ -112,6 +114,8 @@ class TTTGame
   HUMAN_MARKER = 'X'
   COMPUTER_MARKER = 'O'
   FIRST_TO_MOVE = HUMAN_MARKER
+  INFO_BOARD_WIDTH = 40
+  SCORE_TO_WIN = 3
 
   def initialize
     @board = Board.new
@@ -123,6 +127,7 @@ class TTTGame
   def play
     clear_screen
     display_welcome_message
+    prompt_to_continue
     main_game
     display_goodbye_message
   end
@@ -131,20 +136,42 @@ class TTTGame
 
   def main_game
     loop do
+      display_info_board
       display_board
-      player_move      
-      display_result
+      loop do
+        player_move
+        increment_score
+        display_info_board
+        display_board
+        prompt_to_continue
+        break if grand_winner?
+        board.reset
+        clear_screen
+        display_info_board
+        display_board
+      end
+      display_info_board
+      display_board
       break unless play_again?
-      reset
       display_play_again_message
+      reset
     end
+  end
+
+  def prompt_to_continue
+    puts "Press [enter] to continue"
+    gets
   end
 
   def player_move
     loop do
       current_player_moves
       break if board.someone_won? || board.full?
-      clear_screen_and_display_board if human_turn?
+      if human_turn?
+        clear_screen
+        display_info_board
+        display_board
+      end
     end
   end
 
@@ -191,6 +218,8 @@ class TTTGame
 
   def reset
     board.reset
+    human.score = 0
+    computer.score = 0
     @current_player = FIRST_TO_MOVE
     clear_screen
   end
@@ -200,16 +229,37 @@ class TTTGame
     puts
   end
 
-  def display_result
-    clear_screen_and_display_board
-
+  def display_round_winner
     case board.winning_marker
     when human.marker
-      puts 'You won!'
+      puts '**You won this round!**'
     when computer.marker
-      puts 'Computer won!'
+      puts 'Computer won this round!'
     else
       puts "It's a tie!"
+    end
+    puts   
+  end
+
+  def grand_winner?
+    human.score >= SCORE_TO_WIN || computer.score >= SCORE_TO_WIN
+  end
+
+  def display_grand_winner
+    if human.score >= SCORE_TO_WIN
+      puts '**You are the grand winner!'
+    elsif computer.score >= SCORE_TO_WIN
+      puts 'Computer is the grand winner!'
+    end
+    puts
+  end
+
+  def increment_score
+    case board.winning_marker
+    when human.marker
+      human.score += 1
+    when computer.marker
+      computer.score += 1
     end
   end
 
@@ -219,19 +269,29 @@ class TTTGame
   end
 
   def display_goodbye_message
+    clear_screen
     puts 'Thanks for playing Tic Tac Toe! Goodbye!'
   end
 
-  def display_board
+  def display_info_board
+    clear_screen
+    puts '-' * INFO_BOARD_WIDTH
     puts "You're a #{human.marker}. Computer is a #{computer.marker}."
     puts
-    board.display
+    if board.someone_won? || board.full?
+      display_round_winner
+    end
+    if grand_winner?
+      display_grand_winner
+    end
+    puts "Your score: #{human.score}; Computer's score: #{computer.score}"
+    puts '-' * INFO_BOARD_WIDTH
     puts
   end
 
-  def clear_screen_and_display_board
-    clear_screen
-    display_board
+  def display_board
+    board.display
+    puts
   end
 
   def clear_screen
