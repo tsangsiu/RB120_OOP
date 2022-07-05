@@ -50,21 +50,34 @@ class Board
 
   # rubocop:disable Metrics/AbcSize
   # rubocop:disable Metrics/MethodLength
+  # rubocop:disable Metrics/CyclomaticComplexity
+  # rubocop:disable Metrics/PerceivedComplexity
   def display
-    puts '     |     |'
-    puts "  #{@squares[1]}  |  #{@squares[2]}  |  #{@squares[3]}"
-    puts '     |     |'
-    puts '-----+-----+-----'
-    puts '     |     |'
-    puts "  #{@squares[4]}  |  #{@squares[5]}  |  #{@squares[6]}"
-    puts '     |     |'
-    puts '-----+-----+-----'
-    puts '     |     |'
-    puts "  #{@squares[7]}  |  #{@squares[8]}  |  #{@squares[9]}"
-    puts '     |     |'
+    puts '     |     |               |     |'
+    puts "  #{@squares[7]}  |  #{@squares[8]}  |  #{@squares[9]}       " \
+         "  #{@squares[7].marked? ? ' ' : '7'}  |" \
+         "  #{@squares[8].marked? ? ' ' : '8'}  |" \
+         "  #{@squares[9].marked? ? ' ' : '9'}"
+    puts '     |     |               |     |'
+    puts '-----+-----+-----     -----+-----+-----'
+    puts '     |     |               |     |'
+    puts "  #{@squares[4]}  |  #{@squares[5]}  |  #{@squares[6]}       " \
+         "  #{@squares[4].marked? ? ' ' : '4'}  |" \
+         "  #{@squares[5].marked? ? ' ' : '5'}  |" \
+         "  #{@squares[6].marked? ? ' ' : '6'}"
+    puts '     |     |               |     |'
+    puts '-----+-----+-----     -----+-----+-----'
+    puts '     |     |               |     |'
+    puts "  #{@squares[1]}  |  #{@squares[2]}  |  #{@squares[3]}       " \
+         "  #{@squares[1].marked? ? ' ' : '1'}  |" \
+         "  #{@squares[2].marked? ? ' ' : '2'}  |" \
+         "  #{@squares[3].marked? ? ' ' : '3'}"
+    puts '     |     |               |     |'
   end
   # rubocop:enable Metrics/AbcSize
   # rubocop:enable Metrics/MethodLength
+  # rubocop:enable Metrics/CyclomaticComplexity
+  # rubocop:enable Metrics/PerceivedComplexity
 
   private
 
@@ -220,7 +233,7 @@ class TTTGame
     human.score = 0
     computer.score = 0
     @current_player = FIRST_TO_MOVE
-    @round = 0
+    @round = 1
   end
 
   def increment_score
