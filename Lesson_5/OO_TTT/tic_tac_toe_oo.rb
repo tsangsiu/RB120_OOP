@@ -1,3 +1,5 @@
+require 'pry'
+
 module HelperMethod
   def join_or(arr, delimiter = ', ', join_word = 'or')
     case arr.size
@@ -24,6 +26,10 @@ class Board
     (1..9).each { |key| @squares[key] = Square.new }
   end
 
+  def [](key)
+    @squares[key]
+  end
+
   def []=(key, marker)
     @squares[key].marker = marker
   end
@@ -46,6 +52,10 @@ class Board
       return squares.first.marker if three_identical_markers?(squares)
     end
     nil
+  end
+
+  def count_marker(*keys, marker)
+    keys.count { |key| @squares[key].marker == marker }
   end
 
   # rubocop:disable Metrics/AbcSize
@@ -210,7 +220,27 @@ class TTTGame
   end
 
   def computer_moves
-    board[board.unmarked_keys.sample] = computer.marker
+    square = computer_defense
+    square ||= board.unmarked_keys.sample
+    board[square].marker = computer.marker
+  end
+
+  def threat?(*line)
+    board.count_marker(*line, human.marker) == 2 &&
+      board.count_marker(*line, Square::INITIAL_MARKER) == 1
+  end
+
+  def computer_defense
+    square = nil
+    Board::WINNING_LINES.each do |line|
+      if threat?(*line)
+        square = line
+                 .select { |key| board[key].marker == Square::INITIAL_MARKER }
+                 .first
+        break
+      end
+    end
+    square
   end
 
   def play_again?
