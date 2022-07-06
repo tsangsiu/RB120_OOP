@@ -220,23 +220,24 @@ class TTTGame
   end
 
   def computer_moves
-    square = computer_defense
+    square = 5 if board[5].unmarked?
+    square ||= square_at_risk(:offense)
+    square ||= square_at_risk(:defense)
     square ||= board.unmarked_keys.sample
     board[square].marker = computer.marker
   end
 
-  def threat?(*line)
-    board.count_marker(*line, human.marker) == 2 &&
+  def at_risk?(*line, marker)
+    board.count_marker(*line, marker) == 2 &&
       board.count_marker(*line, Square::INITIAL_MARKER) == 1
   end
 
-  def computer_defense
+  def square_at_risk(move)
     square = nil
+    marker = move == :offense ? computer.marker : human.marker
     Board::WINNING_LINES.each do |line|
-      if threat?(*line)
-        square = line
-                 .select { |key| board[key].marker == Square::INITIAL_MARKER }
-                 .first
+      if at_risk?(*line, marker)
+        square = line.select { |key| board[key].unmarked? }.first
         break
       end
     end
