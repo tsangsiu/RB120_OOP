@@ -10,6 +10,10 @@ module HelperMethod
       "#{arr[0...-1].join(delimiter)}#{delimiter}#{join_word} #{arr[-1]}"
     end
   end
+
+  def prompt(message)
+    puts "=> #{message}"
+  end
 end
 
 class Board
@@ -136,22 +140,20 @@ class TTTGame
 
   HUMAN_MARKER = 'X'
   COMPUTER_MARKER = 'O'
-  FIRST_TO_MOVE = HUMAN_MARKER
   INFO_BOARD_WIDTH = 50
-  SCORE_TO_WIN = 5
+  SCORE_TO_WIN = 2
 
   def initialize
     @board = Board.new
     @human = Player.new(HUMAN_MARKER)
     @computer = Player.new(COMPUTER_MARKER)
-    @current_player = FIRST_TO_MOVE
     @round = 1
   end
 
   def play
     clear_screen
     display_welcome_message
-    prompt_to_continue
+    choose_and_determine_first_player
     main_game
     display_goodbye_message
   end
@@ -175,32 +177,76 @@ class TTTGame
       display_info_and_board
       prompt_to_continue
       break if grand_winner?
-      reset_board
-      increment_round_number
-      display_info_and_board
+      reset_round
     end
   end
 
+  def reset_round
+    reset_board
+    increment_round_number
+    alternate_round_first_player
+    display_info_and_board
+  end
+
+  def choose_and_determine_first_player
+    choose_first_player
+    determine_first_player
+  end
+
+  def choose_first_player
+    prompt "Who would you like to go first?"
+    prompt "Please choose [m]e, [c]omputer, or [r]andom:"
+    loop do
+      @round_first_player = gets.chomp.strip.downcase
+      break if %w(m c r me computer random).include?(@round_first_player)
+      prompt "Sorry, that's not a valid choice."
+    end
+  end
+
+  def determine_first_player
+    @round_first_player = case @round_first_player
+                          when 'm', 'me'
+                            HUMAN_MARKER
+                          when 'c', 'computer'
+                            COMPUTER_MARKER
+                          else
+                            [HUMAN_MARKER, COMPUTER_MARKER].sample
+                          end
+    @current_player = @round_first_player
+  end
+
+  def alternate_round_first_player
+    @round_first_player = if @round_first_player == HUMAN_MARKER
+                            COMPUTER_MARKER
+                          else
+                            HUMAN_MARKER
+                          end
+    @current_player = @round_first_player
+  end
+
   def prompt_to_continue
-    puts "Press [enter] to continue."
+    prompt "Press [enter] to continue."
     gets
   end
 
   def player_move
     loop do
       current_player_moves
+      alternate_player
       break if board.someone_won? || board.full?
       display_info_and_board if human_turn?
     end
   end
 
+  def alternate_player
+    @current_player = human_turn? ? COMPUTER_MARKER : HUMAN_MARKER
+  end
+
   def current_player_moves
     if human_turn?
       human_moves
-      @current_player = COMPUTER_MARKER
     else
       computer_moves
-      @current_player = HUMAN_MARKER
     end
   end
 
@@ -209,12 +255,12 @@ class TTTGame
   end
 
   def human_moves
-    puts "Choose a square: #{join_or(board.unmarked_keys)}"
+    prompt "Choose a square: #{join_or(board.unmarked_keys)}"
     square = nil
     loop do
       square = gets.chomp.to_i
       break if board.unmarked_keys.include?(square)
-      puts "Sorry, that's not a valid choice."
+      prompt "Sorry, that's not a valid choice."
     end
     board[square] = human.marker
   end
@@ -247,10 +293,10 @@ class TTTGame
   def play_again?
     answer = nil
     loop do
-      puts 'Would you like to play again? [Y/N]'
+      prompt 'Would you like to play again? [Y/N]'
       answer = gets.chomp.strip.downcase
       break if %w(y n).include?(answer)
-      puts 'Sorry, must be Y or N'
+      prompt 'Sorry, must be Y or N'
     end
     answer == 'y'
   end
@@ -263,8 +309,8 @@ class TTTGame
     reset_board
     human.score = 0
     computer.score = 0
-    @current_player = FIRST_TO_MOVE
     @round = 1
+    @current_player = choose_and_determine_first_player
   end
 
   def increment_score
@@ -288,7 +334,7 @@ class TTTGame
 
   def display_goodbye_message
     clear_screen
-    puts 'Thanks for playing Tic Tac Toe! Goodbye!'
+    prompt 'Thanks for playing Tic Tac Toe! Goodbye!'
     puts
   end
 
