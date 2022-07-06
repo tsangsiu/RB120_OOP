@@ -125,12 +125,18 @@ class Square
 end
 
 class Player
+  include HelperMethod
+
   attr_reader :marker
-  attr_accessor :score
+  attr_accessor :score, :name
 
   def initialize(marker)
-    @marker = marker
+    self.marker = marker
     @score = 0
+  end
+
+  def marker=(marker)
+    @marker = marker[0]
   end
 end
 
@@ -138,14 +144,16 @@ class TTTGame
   include HelperMethod
   attr_reader :board, :human, :computer, :round
 
-  HUMAN_MARKER = 'X'
-  COMPUTER_MARKER = 'O'
+  HUMAN_MARKER_DEFAULT = 'O'
+  COMPUTER_MARKER = 'X'
   INFO_BOARD_WIDTH = 50
   SCORE_TO_WIN = 2
+  COMPUTER_NAMES = ['Whale', 'Anahit', 'Curio', 'Mastermind', 'Gorilla',
+                    'Pinnacle', 'Optimum', 'Anaconda', 'Freyr', 'Theropod']
 
   def initialize
     @board = Board.new
-    @human = Player.new(HUMAN_MARKER)
+    @human = Player.new(HUMAN_MARKER_DEFAULT)
     @computer = Player.new(COMPUTER_MARKER)
     @round = 1
   end
@@ -153,12 +161,23 @@ class TTTGame
   def play
     clear_screen
     display_welcome_message
-    choose_and_determine_first_player
+    prompt_to_continue
+    do_preparatory_work
     main_game
     display_goodbye_message
   end
 
   private
+
+  def do_preparatory_work
+    clear_screen
+    ask_player_name
+    greet_player
+    determine_computer_name
+    display_computer_name
+    choose_marker
+    choose_and_determine_first_player
+  end
 
   def main_game
     loop do
@@ -188,6 +207,51 @@ class TTTGame
     display_info_and_board
   end
 
+  def ask_player_name
+    prompt "What is your name?"
+    loop do
+      human.name = gets.chomp.strip
+      break if human.name.length > 0
+      prompt "Please enter a name."
+    end
+  end
+
+  def determine_computer_name
+    computer.name = COMPUTER_NAMES.sample
+  end
+
+  def display_computer_name
+    prompt "Your opponent's name is #{computer.name}."
+  end
+
+  def greet_player
+    prompt "Hi, #{human.name}!"
+  end
+
+  def choose_marker
+    prompt "Please choose your marker by inputting a single character:"
+    loop do
+      marker = gets.chomp.strip
+      if accepted_markers?(marker)
+        human.marker = marker.length == 1 ? marker : HUMAN_MARKER_DEFAULT
+        break
+      end
+      display_message_for_unaccepted_markers(marker)
+    end
+  end
+
+  def accepted_markers?(marker)
+    marker.length <= 1 && marker != computer.marker
+  end
+
+  def display_message_for_unaccepted_markers(marker)
+    if marker == computer.marker
+      prompt "Sorry, that's computer's marker."
+    elsif marker.length != 1
+      prompt "Sorry, please enter a single character."
+    end
+  end
+
   def choose_and_determine_first_player
     choose_first_player
     determine_first_player
@@ -195,10 +259,10 @@ class TTTGame
 
   def choose_first_player
     prompt "Who would you like to go first?"
-    prompt "Please choose [m]e, [c]omputer, or [r]andom:"
+    prompt "Please choose [m]e, [o]pponent, or [r]andom:"
     loop do
       @round_first_player = gets.chomp.strip.downcase
-      break if %w(m c r me computer random).include?(@round_first_player)
+      break if %w(m o r me opponent random).include?(@round_first_player)
       prompt "Sorry, that's not a valid choice."
     end
   end
@@ -206,20 +270,20 @@ class TTTGame
   def determine_first_player
     @round_first_player = case @round_first_player
                           when 'm', 'me'
-                            HUMAN_MARKER
-                          when 'c', 'computer'
-                            COMPUTER_MARKER
+                            human.marker
+                          when 'o', 'opponent'
+                            computer.marker
                           else
-                            [HUMAN_MARKER, COMPUTER_MARKER].sample
+                            [human.marker, computer.marker].sample
                           end
     @current_player = @round_first_player
   end
 
   def alternate_round_first_player
-    @round_first_player = if @round_first_player == HUMAN_MARKER
-                            COMPUTER_MARKER
+    @round_first_player = if @round_first_player == human.marker
+                            computer.marker
                           else
-                            HUMAN_MARKER
+                            human.marker
                           end
     @current_player = @round_first_player
   end
@@ -239,7 +303,7 @@ class TTTGame
   end
 
   def alternate_player
-    @current_player = human_turn? ? COMPUTER_MARKER : HUMAN_MARKER
+    @current_player = human_turn? ? computer.marker : human.marker
   end
 
   def current_player_moves
@@ -251,7 +315,7 @@ class TTTGame
   end
 
   def human_turn?
-    @current_player == HUMAN_MARKER
+    @current_player == human.marker
   end
 
   def human_moves
@@ -293,10 +357,10 @@ class TTTGame
   def play_again?
     answer = nil
     loop do
-      prompt 'Would you like to play again? [Y/N]'
+      prompt 'Would you like to play again [Y/N]?'
       answer = gets.chomp.strip.downcase
       break if %w(y n).include?(answer)
-      prompt 'Sorry, must be Y or N'
+      prompt 'Sorry, it must be Y or N.'
     end
     answer == 'y'
   end
@@ -328,7 +392,11 @@ class TTTGame
 
   def display_welcome_message
     clear_screen
-    puts 'Welcome to Tic Tac Toe!'
+    puts '-' * INFO_BOARD_WIDTH
+    puts
+    puts 'Welcome to Tic Tac Toe!'.center(INFO_BOARD_WIDTH)
+    puts
+    puts '-' * INFO_BOARD_WIDTH
     puts
   end
 
@@ -359,9 +427,9 @@ class TTTGame
   def display_round_winner
     case board.winning_marker
     when human.marker
-      puts '** You won this round! **'
+      puts "** #{human.name} won this round! **"
     when computer.marker
-      puts 'Computer won this round!'
+      puts "#{computer.name} won this round!"
     else
       puts "It's a tie!"
     end
@@ -374,9 +442,9 @@ class TTTGame
 
   def display_grand_winner
     if human.score >= SCORE_TO_WIN
-      puts '** You are the grand winner! **'
+      puts "** #{human.name} are the grand winner! **"
     elsif computer.score >= SCORE_TO_WIN
-      puts 'Computer is the grand winner!'
+      puts "#{computer.name} is the grand winner!"
     end
     puts
   end
@@ -387,12 +455,14 @@ class TTTGame
   end
 
   def display_player_marker
-    puts "You're a #{human.marker}. Computer is a #{computer.marker}."
+    puts "#{human.name}'s marker is '#{human.marker}'. " \
+         "#{computer.name} is '#{computer.marker}'."
     puts
   end
 
   def display_player_score
-    puts "Your score: #{human.score}; Computer's score: #{computer.score}"
+    puts "#{human.name}'s score: #{human.score}; " \
+         "#{computer.name}'s score: #{computer.score}"
     puts
   end
 
