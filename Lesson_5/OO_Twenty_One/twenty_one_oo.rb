@@ -104,6 +104,8 @@ end
 class Game
   include HelperMethod
 
+  INFO_BOARD_WIDTH = 50
+
   def initialize
     @deck = Deck.new
     @player = Player.new
@@ -111,11 +113,15 @@ class Game
   end
 
   def start
+    system 'clear'
+    display_welcome_message
+    prompt_to_continue
     deal_cards
     show_initial_cards
     # player_turn
     # dealer_turn
     # display_result
+    # display_goodbye_message
   end
 
   private
@@ -130,6 +136,31 @@ class Game
   def show_initial_cards
     prompt "Your cards at hand are #{join_or(player.cards, ', ', 'and')}"
     prompt "Dealer's cards at hand are #{join_or(dealer.cards, ', ', 'and')}"
+  end
+
+  def clear_screen
+    system 'clear'
+  end
+
+  def display_welcome_message
+    clear_screen
+    puts '-' * INFO_BOARD_WIDTH
+    puts
+    puts 'Welcome to Twenty-One!'.center(INFO_BOARD_WIDTH)
+    puts
+    puts '-' * INFO_BOARD_WIDTH
+    puts
+  end
+
+  def prompt_to_continue
+    prompt "Press [enter] to continue"
+    gets
+  end
+
+  def display_goodbye_message
+    clear_screen
+    prompt 'Thanks for playing Twenty-One! Goodbye!'
+    puts
   end
 end
 
