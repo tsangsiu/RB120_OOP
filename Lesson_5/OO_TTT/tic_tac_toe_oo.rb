@@ -1,5 +1,3 @@
-require 'pry'
-
 module HelperMethod
   def join_or(arr, delimiter = ', ', join_word = 'or')
     case arr.size
@@ -131,7 +129,7 @@ class Player
   attr_accessor :score, :name
 
   def initialize(marker)
-    self.marker = marker
+    @marker = marker
     @score = 0
   end
 
@@ -147,7 +145,7 @@ class TTTGame
   HUMAN_MARKER_DEFAULT = 'O'
   COMPUTER_MARKER = 'X'
   INFO_BOARD_WIDTH = 50
-  SCORE_TO_WIN = 2
+  SCORE_TO_WIN = 5
   COMPUTER_NAMES = ['Whale', 'Anahit', 'Curio', 'Mastermind', 'Gorilla',
                     'Pinnacle', 'Optimum', 'Anaconda', 'Freyr', 'Theropod']
 
@@ -211,7 +209,7 @@ class TTTGame
     prompt "What is your name?"
     loop do
       human.name = gets.chomp.strip
-      break if human.name.length > 0
+      break unless human.name.empty?
       prompt "Please enter a name."
     end
   end
@@ -230,6 +228,7 @@ class TTTGame
 
   def choose_marker
     prompt "Please choose your marker by inputting a single character:"
+    prompt "Or you can choose to use the defaut one by pressing [enter]."
     loop do
       marker = gets.chomp.strip
       if accepted_markers?(marker)
@@ -330,9 +329,9 @@ class TTTGame
   end
 
   def computer_moves
-    square = 5 if board[5].unmarked?
     square ||= square_at_risk(:offense)
     square ||= square_at_risk(:defense)
+    square = 5 if square.nil? && board[5].unmarked?
     square ||= board.unmarked_keys.sample
     board[square].marker = computer.marker
   end
@@ -358,11 +357,11 @@ class TTTGame
     answer = nil
     loop do
       prompt 'Would you like to play again [Y/N]?'
-      answer = gets.chomp.strip.downcase
-      break if %w(y n).include?(answer)
+      answer = gets.chomp.strip.upcase
+      break if %w(Y N).include?(answer)
       prompt 'Sorry, it must be Y or N.'
     end
-    answer == 'y'
+    answer == 'Y'
   end
 
   def reset_board
@@ -456,7 +455,7 @@ class TTTGame
 
   def display_player_marker
     puts "#{human.name}'s marker is '#{human.marker}'. " \
-         "#{computer.name} is '#{computer.marker}'."
+         "#{computer.name}'s marker is '#{computer.marker}'."
     puts
   end
 
