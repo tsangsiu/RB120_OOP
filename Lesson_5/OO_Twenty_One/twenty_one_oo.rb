@@ -69,9 +69,7 @@ class Deck
   ACE = 'A'
   FACES = ['J', 'Q', 'K']
   RANKS = [('2'..'9').to_a, '10', FACES, ACE].flatten
-  SUITS = ['Club', 'Diamond', 'Heart', 'Spade']
-  WORD_TO_SUIT = { 'Club' => '♣', 'Diamond' => '♦',
-                   'Heart' => '♥', 'Spade' => '♠' }
+  SUITS = ['♣', '♦', '♥', '♠']
 
   def initialize
     @deck = []
@@ -91,7 +89,7 @@ class Deck
   def reset
     SUITS.each do |suit|
       RANKS.each do |rank|
-        @deck << Card.new(WORD_TO_SUIT[suit], rank)
+        @deck << Card.new(suit, rank)
       end
     end
   end
@@ -99,15 +97,15 @@ end
 
 class Card
   def initialize(suit, rank)
-    @card = [suit, rank]
+    @card = { suit: suit, rank: rank }
   end
 
   def to_s
-    "[#{@card.first}, #{@card.last}]"
+    "[#{@card[:suit]}, #{@card[:rank]}]"
   end
 
   def rank
-    @card.last
+    @card[:rank]
   end
 
   def to_num
