@@ -118,7 +118,7 @@ class Game
     prompt_to_continue
     deal_cards
     show_initial_cards
-    # player_turn
+    player_turn
     # dealer_turn
     # display_result
     # display_goodbye_message
@@ -136,6 +136,26 @@ class Game
   def show_initial_cards
     prompt "Your cards at hand are #{join_or(player.cards, ', ', 'and')}"
     prompt "Dealer's cards at hand are #{join_or(dealer.cards, ', ', 'and')}"
+  end
+
+  def hit?
+    prompt "Would you like to [h]it or [s]tay?"
+    hit = nil
+    loop do
+      hit = gets.chomp.strip.downcase
+      break if %w(h s hit stay).include?(hit)
+      prompt "Sorry, that's not a valid choice."
+    end
+    %w(h hit).include?(hit)
+  end
+
+  def player_turn
+    while hit?
+      prompt "You chose to hit!"
+      deck.deal(player, 1)
+      show_initial_cards
+    end
+    prompt "You chose to stay!"
   end
 
   def clear_screen
