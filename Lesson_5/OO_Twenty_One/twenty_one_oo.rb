@@ -45,11 +45,17 @@ class Participant
   end
 
   def busted?
-    # total > 21
+    total > 21
   end
 
   def total
-    # we need to know player's cards to calculate the total
+    total = @cards.map(&:to_num).sum
+    number_of_ace = @cards.count { |card| card.rank == 'A' }
+    until total <= 21 || number_of_ace == 0
+      total -= 10
+      number_of_ace -= 1
+    end
+    total
   end
 end
 
@@ -99,6 +105,18 @@ class Card
   def to_s
     "[#{@card.first}, #{@card.last}]"
   end
+
+  def rank
+    @card.last
+  end
+
+  def to_num
+    case rank
+    when '2'..'9'            then rank.to_i
+    when '10', 'J', 'Q', 'K' then 10
+    when 'A'                 then 11
+    end
+  end
 end
 
 class Game
@@ -113,15 +131,17 @@ class Game
   end
 
   def start
-    system 'clear'
+    clear_screen
     display_welcome_message
     prompt_to_continue
     deal_cards
     show_initial_cards
     player_turn
-    # dealer_turn
-    # display_result
-    # display_goodbye_message
+    dealer_turn
+    show_initial_cards
+    display_result
+    prompt_to_continue
+    display_goodbye_message
   end
 
   private
@@ -139,23 +159,47 @@ class Game
   end
 
   def hit?
-    prompt "Would you like to [h]it or [s]tay?"
-    hit = nil
+    answer = nil
     loop do
-      hit = gets.chomp.strip.downcase
-      break if %w(h s hit stay).include?(hit)
+      prompt 'Would you like to [h]it or [s]tay?'
+      answer = gets.chomp.strip.downcase
+      break if %w(h s hit stay).include?(answer)
       prompt "Sorry, that's not a valid choice."
     end
-    %w(h hit).include?(hit)
+    %w(h hit).include?(answer)
   end
 
   def player_turn
-    while hit?
-      prompt "You chose to hit!"
-      deck.deal(player, 1)
-      show_initial_cards
+    loop do
+      if hit?
+        prompt "You chose to hit!"
+        deck.deal(player, 1)
+        show_initial_cards
+        prompt "Total = #{player.total}"
+      else
+        prompt "You chose to stay!"
+        break
+      end
+      break if player.busted?
     end
-    prompt "You chose to stay!"
+  end
+
+  def dealer_turn
+    deck.deal(dealer, 1) until dealer.total >= 17
+  end
+
+  def display_result
+    if player.busted?
+      prompt "Dealer won!"
+    elsif dealer.busted?
+      prompt "You won!"
+    elsif player.total > dealer.total
+      prompt "You won!"
+    elsif dealer.total > player.total
+      prompt "Dealer won!"
+    else
+      prompt "It's a tie!"
+    end
   end
 
   def clear_screen
