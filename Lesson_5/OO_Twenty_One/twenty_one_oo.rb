@@ -137,16 +137,16 @@ class Deck
 end
 
 class Card
-  def initialize(suit, rank, mask = false)
-    @card = { suit: suit, rank: rank, mask: mask }
+  attr_reader :rank
+
+  def initialize(suit, rank, masked = true)
+    @suit = suit
+    @rank = rank
+    @masked = mask
   end
 
   def to_s
-    @card[:mask] ? "[ ? ]" : "[#{@card[:suit]} #{@card[:rank]}]"
-  end
-
-  def rank
-    @card[:rank]
+    @masked ? "[ ? ]" : "[#{@suit} #{@rank}]"
   end
 
   def to_num
@@ -158,7 +158,11 @@ class Card
   end
 
   def mask
-    @card[:mask] = true
+    @masked = true
+  end
+
+  def unmark
+    @masked = false
   end
 end
 
