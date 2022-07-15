@@ -15,6 +15,8 @@ Here is an overview of the game:
 =end
 
 module Displayable
+  PROMPT = '=>'
+
   def join_or(arr, join_word = 'or', delimiter = ', ')
     case arr.size
     when 0 then ''
@@ -26,7 +28,16 @@ module Displayable
   end
 
   def prompt(message)
-    puts "=> #{message}"
+    puts "#{PROMPT} #{message}"
+  end
+
+  def loading(message)
+    0.upto(3) do |i|
+      print "\r#{PROMPT} #{message}#{'.' * i}"
+      $stdout.flush
+      sleep 0.6
+    end
+    print "\n"
   end
 
   def clear_screen
@@ -35,6 +46,8 @@ module Displayable
 end
 
 class Participant
+  include Displayable
+
   attr_reader :cards
 
   def initialize(game)
@@ -60,6 +73,10 @@ class Participant
     all_unmasked? ? total : '?'
   end
 
+  def win?(other_participant)
+    other_participant.busted? || (!busted? && total > other_participant.total)
+  end
+
   private
 
   attr_reader :game
@@ -75,11 +92,9 @@ class Player < Participant
   def move
     loop do
       if hit?
-        prompt "You chose to hit!"
-        game.deck.deal(self, masked: false)
-        game.show_cards
+        hit
       else
-        prompt "You chose to stay!"
+        stay
         break
       end
       break if busted?
@@ -87,6 +102,17 @@ class Player < Participant
   end
 
   private
+
+  def hit
+    prompt 'You chose to hit!'
+    loading 'Dealing cards'
+    game.deck.deal(self, masked: false)
+    game.show_cards
+  end
+
+  def stay
+    prompt 'You chose to stay!'
+  end
 
   def hit?
     answer = nil
@@ -102,7 +128,21 @@ end
 
 class Dealer < Participant
   def move
-    game.deck.deal(self, masked: true) until total >= 17
+    hit until total >= 17
+    stay
+  end
+
+  private
+
+  def hit
+    prompt 'Dealer chose to hit!'
+    loading 'Dealing cards'
+    game.deck.deal(self, masked: true)
+    game.show_cards
+  end
+
+  def stay
+    prompt 'Dealer chose to stay!'
   end
 end
 
@@ -175,8 +215,6 @@ class Game
 
   attr_reader :deck
 
-  INFO_BOARD_WIDTH = 50
-
   def initialize
     @deck = Deck.new
     @player = Player.new(self)
@@ -190,8 +228,12 @@ class Game
     deal_cards
     show_cards
     player_turn
-    dealer_turn
+    unless player.busted?
+      prompt_to_continue
+      dealer_turn
+    end
     reveal_dealer_cards
+    prompt_to_continue
     show_cards
     display_result
     prompt_to_continue
@@ -199,10 +241,12 @@ class Game
   end
 
   def show_cards
+    clear_screen
     prompt "Your cards at hand are #{join_or(player.cards, 'and')}, " \
            "with a total of #{player.display_total}."
     prompt "Dealer's cards at hand are #{join_or(dealer.cards, 'and')}, " \
            "with a total of #{dealer.display_total}."
+    puts
   end
 
   private
@@ -228,6 +272,8 @@ class Game
   end
 
   def dealer_turn
+    clear_screen
+    show_cards
     dealer.move
   end
 
@@ -235,27 +281,19 @@ class Game
     dealer.cards.each(&:unmask!)
   end
 
-  # display, not for the info board
+  # display
 
   def display_welcome_message
     clear_screen
-    puts '-' * INFO_BOARD_WIDTH
-    puts
-    puts 'Welcome to Twenty-One!'.center(INFO_BOARD_WIDTH)
-    puts
-    puts '-' * INFO_BOARD_WIDTH
+    prompt 'Welcome to Twenty-One!'
     puts
   end
 
   def display_result
-    if player.busted?
+    if dealer.win?(player)
       prompt "Dealer won!"
-    elsif dealer.busted?
+    elsif player.win?(dealer)
       prompt "You won!"
-    elsif player.total > dealer.total
-      prompt "You won!"
-    elsif dealer.total > player.total
-      prompt "Dealer won!"
     else
       prompt "It's a tie!"
     end
