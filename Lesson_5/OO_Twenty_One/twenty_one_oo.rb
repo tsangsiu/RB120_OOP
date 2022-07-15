@@ -38,24 +38,13 @@ class Participant
   attr_reader :cards
 
   def initialize(game)
-    @game = game  # participants need to be aware of the game status
+    @game = game # participants need to be aware of the game status
     @cards = []
   end
 
-  def hit
-    # should know about what cards are left in the deck
-  end
-
-  def stay
-  end
-
-  def busted?
-    total > 21
-  end
-
   def total
-    total = @cards.map(&:to_num).sum
-    number_of_ace = @cards.count { |card| card.rank == 'A' }
+    total = cards.map(&:to_num).sum
+    number_of_ace = cards.count { |card| card.rank == 'A' }
     until total <= 21 || number_of_ace == 0
       total -= 10
       number_of_ace -= 1
@@ -63,9 +52,21 @@ class Participant
     total
   end
 
+  def busted?
+    total > 21
+  end
+
+  def display_total
+    all_unmasked? ? total : '?'
+  end
+
   private
 
   attr_reader :game
+
+  def all_unmasked?
+    cards.all? { |card| card.masked == false }
+  end
 end
 
 class Player < Participant
@@ -75,7 +76,7 @@ class Player < Participant
     loop do
       if hit?
         prompt "You chose to hit!"
-        game.deck.deal(self)
+        game.deck.deal(self, masked: false)
         game.show_cards
       else
         prompt "You chose to stay!"
@@ -101,7 +102,7 @@ end
 
 class Dealer < Participant
   def move
-    game.deck.deal(self) until total >= 17
+    game.deck.deal(self, masked: true) until total >= 17
   end
 end
 
@@ -116,8 +117,9 @@ class Deck
     reset
   end
 
-  def deal(person, number_of_cards = 1)
-    number_of_cards.times { |_| person.cards << @deck.pop }
+  def deal(person, masked: true)
+    card = masked ? @deck.pop.mask! : @deck.pop.unmask!
+    person.cards << card
   end
 
   def to_s
@@ -137,16 +139,16 @@ class Deck
 end
 
 class Card
-  attr_reader :rank
+  attr_reader :suit, :rank, :masked
 
-  def initialize(suit, rank, masked = true)
+  def initialize(suit, rank, masked: true)
     @suit = suit
     @rank = rank
-    @masked = mask
+    @masked = masked
   end
 
   def to_s
-    @masked ? "[ ? ]" : "[#{@suit} #{@rank}]"
+    @masked ? "[ ? ]" : "[#{suit} #{rank}]"
   end
 
   def to_num
@@ -157,12 +159,14 @@ class Card
     end
   end
 
-  def mask
+  def mask!
     @masked = true
+    self
   end
 
-  def unmark
+  def unmask!
     @masked = false
+    self
   end
 end
 
@@ -187,10 +191,60 @@ class Game
     show_cards
     player_turn
     dealer_turn
+    reveal_dealer_cards
     show_cards
-    # display_result
-    # prompt_to_continue
-    # display_goodbye_message
+    display_result
+    prompt_to_continue
+    display_goodbye_message
+  end
+
+  def show_cards
+    prompt "Your cards at hand are #{join_or(player.cards, 'and')}, " \
+           "with a total of #{player.display_total}."
+    prompt "Dealer's cards at hand are #{join_or(dealer.cards, 'and')}, " \
+           "with a total of #{dealer.display_total}."
+  end
+
+  private
+
+  attr_reader :player, :dealer
+
+  # game logistics
+
+  def prompt_to_continue
+    prompt "Press [enter] to continue"
+    gets
+  end
+
+  def deal_cards
+    deck.deal(player, masked: false)
+    deck.deal(dealer, masked: false)
+    deck.deal(player, masked: false)
+    deck.deal(dealer)
+  end
+
+  def player_turn
+    player.move
+  end
+
+  def dealer_turn
+    dealer.move
+  end
+
+  def reveal_dealer_cards
+    dealer.cards.each(&:unmask!)
+  end
+
+  # display, not for the info board
+
+  def display_welcome_message
+    clear_screen
+    puts '-' * INFO_BOARD_WIDTH
+    puts
+    puts 'Welcome to Twenty-One!'.center(INFO_BOARD_WIDTH)
+    puts
+    puts '-' * INFO_BOARD_WIDTH
+    puts
   end
 
   def display_result
@@ -210,58 +264,6 @@ class Game
   def display_goodbye_message
     clear_screen
     prompt 'Thanks for playing Twenty-One! Goodbye!'
-    puts
-  end
-
-  ##### #####
-
-  def show_cards
-    prompt "Your cards at hand are #{join_or(player.cards, 'and')}, " \
-           "with a total of #{player.total}."
-    prompt "Dealer's cards at hand are #{join_or(mask(dealer.cards), 'and')}."
-  end
-
-  private
-
-  attr_reader :player, :dealer
-
-  # game logistics
-
-  def prompt_to_continue
-    prompt "Press [enter] to continue"
-    gets
-  end
-
-  def mask(cards)
-    cards.each.with_index do |card, index|
-      card.mask if index != 0
-    end
-  end
-
-  def deal_cards
-    2.times do
-      deck.deal(player)
-      deck.deal(dealer)
-    end
-  end
-
-  def player_turn
-    player.move
-  end
-
-  def dealer_turn
-    dealer.move
-  end
-
-  # display, not for the info board
-
-  def display_welcome_message
-    clear_screen
-    puts '-' * INFO_BOARD_WIDTH
-    puts
-    puts 'Welcome to Twenty-One!'.center(INFO_BOARD_WIDTH)
-    puts
-    puts '-' * INFO_BOARD_WIDTH
     puts
   end
 end
