@@ -14,8 +14,8 @@ Here is an overview of the game:
 
 =end
 
-module HelperMethod
-  def join_or(arr, delimiter = ', ', join_word = 'or')
+module Displayable
+  def join_or(arr, join_word = 'or', delimiter = ', ')
     case arr.size
     when 0 then ''
     when 1 then arr.first
@@ -27,6 +27,10 @@ module HelperMethod
 
   def prompt(message)
     puts "=> #{message}"
+  end
+
+  def clear_screen
+    system 'clear'
   end
 end
 
@@ -76,8 +80,8 @@ class Deck
     reset
   end
 
-  def deal(person, number_of_cards)
-    number_of_cards.times { |_| person.cards << @deck.shuffle.pop }
+  def deal(person, number_of_cards = 1)
+    number_of_cards.times { |_| person.cards << @deck.pop }
   end
 
   def to_s
@@ -92,16 +96,17 @@ class Deck
         @deck << Card.new(suit, rank)
       end
     end
+    @deck.shuffle!
   end
 end
 
 class Card
-  def initialize(suit, rank)
-    @card = { suit: suit, rank: rank }
+  def initialize(suit, rank, mask = false)
+    @card = { suit: suit, rank: rank, mask: mask }
   end
 
   def to_s
-    "[#{@card[:suit]}, #{@card[:rank]}]"
+    @card[:mask] ? "[ ? ]" : "[#{@card[:suit]} #{@card[:rank]}]"
   end
 
   def rank
@@ -115,10 +120,14 @@ class Card
     when 'A'                 then 11
     end
   end
+
+  def mask
+    @card[:mask] = true
+  end
 end
 
 class Game
-  include HelperMethod
+  include Displayable
 
   INFO_BOARD_WIDTH = 50
 
@@ -133,28 +142,18 @@ class Game
     display_welcome_message
     prompt_to_continue
     deal_cards
-    show_initial_cards
-    player_turn
-    dealer_turn
-    show_initial_cards
-    display_result
-    prompt_to_continue
-    display_goodbye_message
+    show_cards
+    # player_turn
+    # dealer_turn
+    # show_initial_cards
+    # display_result
+    # prompt_to_continue
+    # display_goodbye_message
   end
 
   private
 
   attr_reader :deck, :player, :dealer
-
-  def deal_cards
-    deck.deal(player, 2)
-    deck.deal(dealer, 2)
-  end
-
-  def show_initial_cards
-    prompt "Your cards at hand are #{join_or(player.cards, ', ', 'and')}"
-    prompt "Dealer's cards at hand are #{join_or(dealer.cards, ', ', 'and')}"
-  end
 
   def hit?
     answer = nil
@@ -171,7 +170,7 @@ class Game
     loop do
       if hit?
         prompt "You chose to hit!"
-        deck.deal(player, 1)
+        deck.deal(player)
         show_initial_cards
         prompt "Total = #{player.total}"
       else
@@ -183,7 +182,7 @@ class Game
   end
 
   def dealer_turn
-    deck.deal(dealer, 1) until dealer.total >= 17
+    deck.deal(dealer) until dealer.total >= 17
   end
 
   def display_result
@@ -200,9 +199,33 @@ class Game
     end
   end
 
-  def clear_screen
-    system 'clear'
+  def display_goodbye_message
+    clear_screen
+    prompt 'Thanks for playing Twenty-One! Goodbye!'
+    puts
   end
+  
+  # game logistics
+
+  def prompt_to_continue
+    prompt "Press [enter] to continue"
+    gets
+  end
+
+  def deal_cards
+    2.times do
+      deck.deal(player)
+      deck.deal(dealer)
+    end
+  end
+
+  def show_cards
+    prompt "Your cards at hand are #{join_or(player.cards, 'and')}, " \
+           "with a total of #{player.total}."
+    prompt "Dealer's cards at hand are #{join_or(mask(dealer.cards), 'and')}."
+  end
+
+  # display, not for the info board
 
   def display_welcome_message
     clear_screen
@@ -214,15 +237,12 @@ class Game
     puts
   end
 
-  def prompt_to_continue
-    prompt "Press [enter] to continue"
-    gets
-  end
+  private
 
-  def display_goodbye_message
-    clear_screen
-    prompt 'Thanks for playing Twenty-One! Goodbye!'
-    puts
+  def mask(cards)
+    cards.each.with_index do |card, index|
+      card.mask if index != 0
+    end
   end
 end
 
