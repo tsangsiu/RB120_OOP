@@ -37,7 +37,8 @@ end
 class Participant
   attr_reader :cards
 
-  def initialize
+  def initialize(game)
+    @game = game  # participants need to be aware of the game status
     @cards = []
   end
 
@@ -61,12 +62,47 @@ class Participant
     end
     total
   end
+
+  private
+
+  attr_reader :game
 end
 
 class Player < Participant
+  include Displayable
+
+  def move
+    loop do
+      if hit?
+        prompt "You chose to hit!"
+        game.deck.deal(self)
+        game.show_cards
+      else
+        prompt "You chose to stay!"
+        break
+      end
+      break if busted?
+    end
+  end
+
+  private
+
+  def hit?
+    answer = nil
+    loop do
+      prompt 'Would you like to [h]it or [s]tay?'
+      answer = gets.chomp.strip.downcase
+      break if %w(h s hit stay).include?(answer)
+      prompt "Sorry, that's not a valid choice."
+    end
+    %w(h hit).include?(answer)
+  end
 end
 
 class Dealer < Participant
+  def move
+    game.deck.deal(self) until total >= 17
+  end
 end
 
 class Deck
@@ -129,12 +165,14 @@ end
 class Game
   include Displayable
 
+  attr_reader :deck
+
   INFO_BOARD_WIDTH = 50
 
   def initialize
     @deck = Deck.new
-    @player = Player.new
-    @dealer = Dealer.new
+    @player = Player.new(self)
+    @dealer = Dealer.new(self)
   end
 
   def start
@@ -143,46 +181,12 @@ class Game
     prompt_to_continue
     deal_cards
     show_cards
-    # player_turn
-    # dealer_turn
-    # show_initial_cards
+    player_turn
+    dealer_turn
+    show_cards
     # display_result
     # prompt_to_continue
     # display_goodbye_message
-  end
-
-  private
-
-  attr_reader :deck, :player, :dealer
-
-  def hit?
-    answer = nil
-    loop do
-      prompt 'Would you like to [h]it or [s]tay?'
-      answer = gets.chomp.strip.downcase
-      break if %w(h s hit stay).include?(answer)
-      prompt "Sorry, that's not a valid choice."
-    end
-    %w(h hit).include?(answer)
-  end
-
-  def player_turn
-    loop do
-      if hit?
-        prompt "You chose to hit!"
-        deck.deal(player)
-        show_initial_cards
-        prompt "Total = #{player.total}"
-      else
-        prompt "You chose to stay!"
-        break
-      end
-      break if player.busted?
-    end
-  end
-
-  def dealer_turn
-    deck.deal(dealer) until dealer.total >= 17
   end
 
   def display_result
@@ -204,12 +208,30 @@ class Game
     prompt 'Thanks for playing Twenty-One! Goodbye!'
     puts
   end
-  
+
+  ##### #####
+
+  def show_cards
+    prompt "Your cards at hand are #{join_or(player.cards, 'and')}, " \
+           "with a total of #{player.total}."
+    prompt "Dealer's cards at hand are #{join_or(mask(dealer.cards), 'and')}."
+  end
+
+  private
+
+  attr_reader :player, :dealer
+
   # game logistics
 
   def prompt_to_continue
     prompt "Press [enter] to continue"
     gets
+  end
+
+  def mask(cards)
+    cards.each.with_index do |card, index|
+      card.mask if index != 0
+    end
   end
 
   def deal_cards
@@ -219,10 +241,12 @@ class Game
     end
   end
 
-  def show_cards
-    prompt "Your cards at hand are #{join_or(player.cards, 'and')}, " \
-           "with a total of #{player.total}."
-    prompt "Dealer's cards at hand are #{join_or(mask(dealer.cards), 'and')}."
+  def player_turn
+    player.move
+  end
+
+  def dealer_turn
+    dealer.move
   end
 
   # display, not for the info board
@@ -235,14 +259,6 @@ class Game
     puts
     puts '-' * INFO_BOARD_WIDTH
     puts
-  end
-
-  private
-
-  def mask(cards)
-    cards.each.with_index do |card, index|
-      card.mask if index != 0
-    end
   end
 end
 
