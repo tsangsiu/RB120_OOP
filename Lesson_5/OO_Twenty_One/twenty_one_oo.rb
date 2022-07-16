@@ -35,13 +35,17 @@ module Displayable
     0.upto(3) do |i|
       print "\r#{PROMPT} #{message}#{'.' * i}"
       $stdout.flush
-      sleep 0.6
+      pause
     end
     print "\n"
   end
 
   def clear_screen
     system 'clear'
+  end
+
+  def pause
+    sleep 0.8
   end
 end
 
@@ -105,6 +109,7 @@ class Player < Participant
 
   def hit
     prompt 'You chose to hit!'
+    pause
     loading 'Dealing cards'
     game.deck.deal(self, masked: false)
     game.show_cards
@@ -112,6 +117,7 @@ class Player < Participant
 
   def stay
     prompt 'You chose to stay!'
+    pause
   end
 
   def hit?
@@ -136,6 +142,7 @@ class Dealer < Participant
 
   def hit
     prompt 'Dealer chose to hit!'
+    pause
     loading 'Dealing cards'
     game.deck.deal(self, masked: true)
     game.show_cards
@@ -143,6 +150,7 @@ class Dealer < Participant
 
   def stay
     prompt 'Dealer chose to stay!'
+    pause
   end
 end
 
@@ -222,18 +230,10 @@ class Game
   end
 
   def start
-    clear_screen
-    display_welcome_message
-    prompt_to_continue
-    deal_cards
-    show_cards
+    do_preparatory_work
     player_turn
-    unless player.busted?
-      prompt_to_continue
-      dealer_turn
-    end
+    dealer_turn unless player.busted?
     reveal_dealer_cards
-    prompt_to_continue
     show_cards
     display_result
     prompt_to_continue
@@ -255,6 +255,14 @@ class Game
 
   # game logistics
 
+  def do_preparatory_work
+    clear_screen
+    display_welcome_message
+    prompt_to_continue
+    deal_cards
+    show_cards
+  end
+
   def prompt_to_continue
     prompt "Press [enter] to continue"
     gets
@@ -274,10 +282,13 @@ class Game
   def dealer_turn
     clear_screen
     show_cards
+    display_dealer_turn
+    pause
     dealer.move
   end
 
   def reveal_dealer_cards
+    display_reveal_cards_message unless player.busted?
     dealer.cards.each(&:unmask!)
   end
 
@@ -289,14 +300,23 @@ class Game
     puts
   end
 
+  def display_dealer_turn
+    prompt "It's dealer's turn!"
+  end
+
+  def display_reveal_cards_message
+    loading "Revealing dealer's cards"
+  end
+
   def display_result
     if dealer.win?(player)
       prompt "Dealer won!"
     elsif player.win?(dealer)
-      prompt "You won!"
+      prompt "**You won!**"
     else
       prompt "It's a tie!"
     end
+    pause
   end
 
   def display_goodbye_message
