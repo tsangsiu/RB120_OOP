@@ -56,7 +56,7 @@ class Participant
 
   def initialize(game)
     @game = game # participants need to be aware of the game status
-    @cards = []
+    reset
   end
 
   def total
@@ -79,6 +79,10 @@ class Participant
 
   def win?(other_participant)
     other_participant.busted? || (!busted? && total > other_participant.total)
+  end
+
+  def reset
+    @cards = []
   end
 
   private
@@ -163,17 +167,6 @@ class Deck
     reset
   end
 
-  def deal(person, masked: true)
-    card = masked ? @deck.pop.mask! : @deck.pop.unmask!
-    person.cards << card
-  end
-
-  def to_s
-    @deck.map(&:to_s).to_s
-  end
-
-  private
-
   def reset
     SUITS.each do |suit|
       RANKS.each do |rank|
@@ -181,6 +174,15 @@ class Deck
       end
     end
     @deck.shuffle!
+  end
+
+  def deal(person, masked: true)
+    card = masked ? @deck.pop.mask! : @deck.pop.unmask!
+    person.cards << card
+  end
+
+  def to_s
+    @deck.map(&:to_s).to_s
   end
 end
 
@@ -230,13 +232,8 @@ class Game
   end
 
   def start
-    do_preparatory_work
-    player_turn
-    dealer_turn unless player.busted?
-    reveal_dealer_cards
-    dispaly_cards
-    display_result
-    prompt_to_continue
+    display_welcome_message
+    main_game
     display_goodbye_message
   end
 
@@ -255,10 +252,27 @@ class Game
 
   # game logistics
 
+  def reset_game
+    deck.reset
+    player.reset
+    dealer.reset
+  end
+
+  def main_game
+    loop do
+      do_preparatory_work
+      player_turn
+      dealer_turn unless player.busted?
+      reveal_dealer_cards
+      dispaly_cards
+      display_result
+      prompt_to_continue
+      break unless play_again?
+    end
+  end
+
   def do_preparatory_work
-    clear_screen
-    display_welcome_message
-    prompt_to_continue
+    reset_game
     deal_cards
     dispaly_cards
   end
@@ -292,12 +306,24 @@ class Game
     dealer.cards.each(&:unmask!)
   end
 
+  def play_again?
+    answer = nil
+    loop do
+      prompt 'Would you like to play again [Y/N]?'
+      answer = gets.chomp.strip.downcase
+      break if %w(y n).include?(answer)
+      prompt 'Sorry, it must be Y or N.'
+    end
+    answer == 'y'
+  end
+
   # display
 
   def display_welcome_message
     clear_screen
     prompt 'Welcome to Twenty-One!'
     puts
+    prompt_to_continue
   end
 
   def display_dealer_turn
