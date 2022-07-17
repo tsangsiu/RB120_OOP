@@ -62,7 +62,7 @@ class Participant
   def total
     total = cards.map(&:to_num).sum
     number_of_ace = cards.count { |card| card.rank == 'A' }
-    until total <= 21 || number_of_ace == 0
+    until total <= Game::LIMIT || number_of_ace == 0
       total -= 10
       number_of_ace -= 1
     end
@@ -70,7 +70,7 @@ class Participant
   end
 
   def busted?
-    total > 21
+    total > Game::LIMIT
   end
 
   def display_total
@@ -91,8 +91,6 @@ class Participant
 end
 
 class Player < Participant
-  include Displayable
-
   def move
     loop do
       if hit?
@@ -112,7 +110,7 @@ class Player < Participant
     pause
     loading 'Dealing cards'
     game.deck.deal(self, masked: false)
-    game.show_cards
+    game.dispaly_cards
   end
 
   def stay
@@ -134,7 +132,7 @@ end
 
 class Dealer < Participant
   def move
-    hit until total >= 17
+    hit until total >= Game::LIMIT - 4
     stay
   end
 
@@ -145,7 +143,7 @@ class Dealer < Participant
     pause
     loading 'Dealing cards'
     game.deck.deal(self, masked: true)
-    game.show_cards
+    game.dispaly_cards
   end
 
   def stay
@@ -223,6 +221,8 @@ class Game
 
   attr_reader :deck
 
+  LIMIT = 21
+
   def initialize
     @deck = Deck.new
     @player = Player.new(self)
@@ -234,18 +234,18 @@ class Game
     player_turn
     dealer_turn unless player.busted?
     reveal_dealer_cards
-    show_cards
+    dispaly_cards
     display_result
     prompt_to_continue
     display_goodbye_message
   end
 
-  def show_cards
+  def dispaly_cards
     clear_screen
     prompt "Your cards at hand are #{join_or(player.cards, 'and')}, " \
-           "with a total of #{player.display_total}."
+           "for a total of #{player.display_total}."
     prompt "Dealer's cards at hand are #{join_or(dealer.cards, 'and')}, " \
-           "with a total of #{dealer.display_total}."
+           "for a total of #{dealer.display_total}."
     puts
   end
 
@@ -260,7 +260,7 @@ class Game
     display_welcome_message
     prompt_to_continue
     deal_cards
-    show_cards
+    dispaly_cards
   end
 
   def prompt_to_continue
@@ -281,7 +281,7 @@ class Game
 
   def dealer_turn
     clear_screen
-    show_cards
+    dispaly_cards
     display_dealer_turn
     pause
     dealer.move
