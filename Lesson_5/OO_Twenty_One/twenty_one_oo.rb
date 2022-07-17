@@ -1,19 +1,3 @@
-=begin
-
-Twenty-One is a card game consisting of a dealer and a player, where the
-participants try to get as close to 21 as possible without going over.
-
-Here is an overview of the game:
-- Both participants are initially dealt 2 cards from a 52-card deck.
-- The player takes the first turn, and can "hit" or "stay".
-- If the player busts, he loses. If he stays, it's the dealer's turn.
-- The dealer must hit until his cards add up to at least 17.
-- If he busts, the player wins. If both player and dealer stays, then the
-  highest total wins.
-- If both totals are equal, then it's a tie, and nobody wins.
-
-=end
-
 module Displayable
   PROMPT = '=>'
 
@@ -31,6 +15,10 @@ module Displayable
     puts "#{PROMPT} #{message}"
   end
 
+  def heading(title)
+    "=== #{title} ==="
+  end
+
   def loading(message)
     0.upto(3) do |i|
       print "\r#{PROMPT} #{message}#{'.' * i}"
@@ -45,7 +33,7 @@ module Displayable
   end
 
   def pause
-    sleep 0 ## 0.8
+    sleep 0.8
   end
 end
 
@@ -223,6 +211,21 @@ class InfoBoard
   include Displayable
 
   INFO_BOARD_WIDTH = 80
+  RULES = <<-MSG
+- Both player and dealer are initially dealt 2 cards from a 52-card deck.
+- The player takes the first turn, and can "hit" or "stay".
+- If the player busts, i.e., total exceeds 21, he loses. If he stays, it's the
+  dealer's turn.
+- If the dealer busts, the player wins. If both player and dealer stay, then
+  the highest total wins.
+- If both totals are equal, then it's a tie.
+
+- The total is calculated by the following conversion:
+    Card                  Value
+    2 - 10                Face Value
+    Jack, Queen, King     10
+    Ace                   1 or 11
+  MSG
 
   def initialize(game)
     @game = game
@@ -264,6 +267,19 @@ class InfoBoard
     puts
   end
 
+  def display_rules
+    clear_screen
+    puts '-' * INFO_BOARD_WIDTH
+    puts
+    puts heading 'Rules'
+    puts
+    puts RULES
+    puts
+    puts '-' * INFO_BOARD_WIDTH
+    puts
+    game.prompt_to_continue
+  end
+
   private
 
   attr_reader :game, :player, :dealer
@@ -275,7 +291,7 @@ class InfoBoard
   end
 
   def display_round_number
-    puts "=== Round #{game.round} ==="
+    puts heading "Round #{game.round}"
     puts
   end
 
@@ -320,6 +336,7 @@ class InfoBoard
     return unless game.grand_winner?
     if player.score >= Game::SCORE_TO_WIN
       puts "** You are the grand winner! **"
+
     elsif dealer.score >= Game::SCORE_TO_WIN
       puts "Dealer is the grand winner!"
     end
@@ -334,7 +351,7 @@ class Game
   attr_accessor :dealer_turn
 
   LIMIT = 21
-  SCORE_TO_WIN = 3 ##
+  SCORE_TO_WIN = 5
 
   def initialize
     @round = 0
@@ -347,6 +364,7 @@ class Game
 
   def start
     display_welcome_message
+    display_rules
     main_game
     display_goodbye_message
   end
@@ -391,7 +409,6 @@ class Game
     loop do
       display_info_board
       rounds
-      display_info_board
       break unless play_again?
       reset_game
     end
@@ -407,6 +424,17 @@ class Game
       prompt_to_continue
       break if grand_winner?
     end
+  end
+
+  def read_rules?
+    answer = nil
+    loop do
+      prompt 'Would you like to read the rules [Y/N]?'
+      answer = gets.chomp.strip.downcase
+      break if %w(y n).include?(answer)
+      prompt "Sorry, must be Y or N."
+    end
+    answer == 'y'
   end
 
   def do_preparatory_work
@@ -471,6 +499,10 @@ class Game
 
   def display_reveal_cards_message
     loading "Revealing dealer's cards"
+  end
+
+  def display_rules
+    info_board.display_rules if read_rules?
   end
 
   def display_welcome_message
