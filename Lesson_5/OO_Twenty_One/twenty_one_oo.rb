@@ -45,18 +45,20 @@ module Displayable
   end
 
   def pause
-    sleep 0.8
+    sleep 0 ## 0.8
   end
 end
 
 class Participant
   include Displayable
 
-  attr_reader :cards
+  attr_reader :game, :cards
+  attr_accessor :score
 
   def initialize(game)
     @game = game # participants need to be aware of the game status
-    reset
+    @score = 0
+    reset_cards
   end
 
   def total
@@ -81,13 +83,11 @@ class Participant
     other_participant.busted? || (!busted? && total > other_participant.total)
   end
 
-  def reset
+  def reset_cards
     @cards = []
   end
 
   private
-
-  attr_reader :game
 
   def all_unmasked?
     cards.all? { |card| card.masked == false }
@@ -114,11 +114,12 @@ class Player < Participant
     pause
     loading 'Dealing cards'
     game.deck.deal(self, masked: false)
-    game.dispaly_cards
+    game.display_info_board
   end
 
   def stay
     prompt 'You chose to stay!'
+    game.dealer_turn = true
     pause
   end
 
@@ -147,7 +148,7 @@ class Dealer < Participant
     pause
     loading 'Dealing cards'
     game.deck.deal(self, masked: true)
-    game.dispaly_cards
+    game.display_info_board
   end
 
   def stay
@@ -218,17 +219,130 @@ class Card
   end
 end
 
+class InfoBoard
+  include Displayable
+
+  INFO_BOARD_WIDTH = 80
+
+  def initialize(game)
+    @game = game
+    @player = game.player
+    @dealer = game.dealer
+  end
+
+  def display
+    clear_screen
+    puts '-' * INFO_BOARD_WIDTH
+    puts
+    display_game_info
+    display_cards
+    display_dealer_turn
+    display_round_winner
+    display_grand_winner
+    puts '-' * INFO_BOARD_WIDTH
+    puts
+  end
+
+  def display_welcome_message
+    clear_screen
+    puts '-' * INFO_BOARD_WIDTH
+    puts
+    puts 'Welcome to Twenty-One!'.center(INFO_BOARD_WIDTH)
+    puts
+    puts '-' * INFO_BOARD_WIDTH
+    puts
+    game.prompt_to_continue
+  end
+
+  def display_goodbye_message
+    clear_screen
+    puts '-' * INFO_BOARD_WIDTH
+    puts
+    puts 'Thanks for playing Twenty-One! Goodbye!'.center(INFO_BOARD_WIDTH)
+    puts
+    puts '-' * INFO_BOARD_WIDTH
+    puts
+  end
+
+  private
+
+  attr_reader :game, :player, :dealer
+
+  def display_game_info
+    display_round_number
+    display_win_condition
+    display_player_score
+  end
+
+  def display_round_number
+    puts "=== Round #{game.round} ==="
+    puts
+  end
+
+  def display_win_condition
+    puts "The first player to win #{Game::SCORE_TO_WIN} rounds " \
+         "wins the game!"
+  end
+
+  def display_player_score
+    puts "Player's score: #{player.score}; " \
+         "Dealer's score: #{dealer.score}"
+    puts
+  end
+
+  def display_cards
+    puts "Your cards at hand are #{join_or(game.player.cards, 'and')}, " \
+         "for a total of #{game.player.display_total}."
+    puts "Dealer's cards at hand are #{join_or(game.dealer.cards, 'and')}, " \
+         "for a total of #{game.dealer.display_total}."
+    puts
+  end
+
+  def display_dealer_turn
+    return unless game.dealer_turn && !game.total_revealed?
+    puts "It's dealer's turn!"
+    puts
+  end
+
+  def display_round_winner
+    return unless game.total_revealed?
+    if dealer.win?(player)
+      puts "Dealer won this round!"
+    elsif player.win?(dealer)
+      puts "You won this round!"
+    else
+      puts "It's a tie!"
+    end
+    puts
+  end
+
+  def display_grand_winner
+    return unless game.grand_winner?
+    if player.score >= Game::SCORE_TO_WIN
+      puts "** You are the grand winner! **"
+    elsif dealer.score >= Game::SCORE_TO_WIN
+      puts "Dealer is the grand winner!"
+    end
+    puts
+  end
+end
+
 class Game
   include Displayable
 
-  attr_reader :deck
+  attr_reader :deck, :player, :dealer, :info_board, :round
+  attr_accessor :dealer_turn
 
   LIMIT = 21
+  SCORE_TO_WIN = 3 ##
 
   def initialize
+    @round = 0
     @deck = Deck.new
     @player = Player.new(self)
     @dealer = Dealer.new(self)
+    @dealer_turn = false
+    @info_board = InfoBoard.new(self)
   end
 
   def start
@@ -237,49 +351,69 @@ class Game
     display_goodbye_message
   end
 
-  def dispaly_cards
-    clear_screen
-    prompt "Your cards at hand are #{join_or(player.cards, 'and')}, " \
-           "for a total of #{player.display_total}."
-    prompt "Dealer's cards at hand are #{join_or(dealer.cards, 'and')}, " \
-           "for a total of #{dealer.display_total}."
-    puts
+  def prompt_to_continue
+    prompt "Press [enter] to continue"
+    gets
+  end
+
+  def total_revealed?
+    player.display_total.class == Integer &&
+      dealer.display_total.class == Integer
+  end
+
+  def grand_winner?
+    player.score >= SCORE_TO_WIN || dealer.score >= SCORE_TO_WIN
+  end
+
+  def display_info_board
+    info_board.display
   end
 
   private
 
-  attr_reader :player, :dealer
-
   # game logistics
 
-  def reset_game
+  def reset_round
     deck.reset
-    player.reset
-    dealer.reset
+    player.reset_cards
+    dealer.reset_cards
+    @dealer_turn = false
+  end
+
+  def reset_game
+    reset_round
+    @round = 0
+    player.score = 0
+    dealer.score = 0
   end
 
   def main_game
     loop do
-      do_preparatory_work
-      player_turn
-      dealer_turn unless player.busted?
-      reveal_dealer_cards
-      dispaly_cards
-      display_result
-      prompt_to_continue
+      display_info_board
+      rounds
+      display_info_board
       break unless play_again?
+      reset_game
+    end
+  end
+
+  def rounds
+    loop do
+      do_preparatory_work
+      players_move
+      reveal_dealer_cards
+      increment_score
+      display_info_board
+      prompt_to_continue
+      break if grand_winner?
     end
   end
 
   def do_preparatory_work
-    reset_game
+    reset_round
+    increment_round_number
     deal_cards
-    dispaly_cards
-  end
-
-  def prompt_to_continue
-    prompt "Press [enter] to continue"
-    gets
+    display_info_board
   end
 
   def deal_cards
@@ -289,14 +423,18 @@ class Game
     deck.deal(dealer)
   end
 
-  def player_turn
+  def players_move
+    player_move
+    dealer_move unless player.busted?
+  end
+
+  def player_move
     player.move
   end
 
-  def dealer_turn
+  def dealer_move
     clear_screen
-    dispaly_cards
-    display_dealer_turn
+    display_info_board
     pause
     dealer.move
   end
@@ -304,6 +442,18 @@ class Game
   def reveal_dealer_cards
     display_reveal_cards_message unless player.busted?
     dealer.cards.each(&:unmask!)
+  end
+
+  def increment_score
+    if dealer.win?(player)
+      dealer.score += 1
+    elsif player.win?(dealer)
+      player.score += 1
+    end
+  end
+
+  def increment_round_number
+    @round += 1
   end
 
   def play_again?
@@ -319,36 +469,16 @@ class Game
 
   # display
 
-  def display_welcome_message
-    clear_screen
-    prompt 'Welcome to Twenty-One!'
-    puts
-    prompt_to_continue
-  end
-
-  def display_dealer_turn
-    prompt "It's dealer's turn!"
-  end
-
   def display_reveal_cards_message
     loading "Revealing dealer's cards"
   end
 
-  def display_result
-    if dealer.win?(player)
-      prompt "Dealer won!"
-    elsif player.win?(dealer)
-      prompt "**You won!**"
-    else
-      prompt "It's a tie!"
-    end
-    pause
+  def display_welcome_message
+    info_board.display_welcome_message
   end
 
   def display_goodbye_message
-    clear_screen
-    prompt 'Thanks for playing Twenty-One! Goodbye!'
-    puts
+    info_board.display_goodbye_message
   end
 end
 
