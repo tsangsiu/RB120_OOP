@@ -70,7 +70,7 @@ class GuessingGame
 
   def valid_number?(guess)
     guess =~ /\A[-+]?\d+\z/ &&
-      guess.to_i >= 1 && guess.to_i <= 100
+      guess.to_i >= RANGE.first && guess.to_i <= RANGE.last
   end
 
   def check_guess(guess)
