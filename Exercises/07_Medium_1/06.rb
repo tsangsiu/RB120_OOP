@@ -90,3 +90,12 @@ end
 
 game = GuessingGame.new
 game.play
+
+=begin
+
+# Further Exploration
+
+The number guessing game is simple and self-contained. I think it should be
+stayed that way, and no `Player` class is needed.
+
+=end
