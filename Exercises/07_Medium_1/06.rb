@@ -1,50 +1,90 @@
 class GuessingGame
+  MAX_GUESSES = 7
+  RANGE = 1..100
+
+  ROUND_RESULT_MESSAGE = {
+    high: 'Your guess is too high.',
+    low: 'Your guess is too low.',
+    match: "That's the number!"
+  }.freeze
+
+  WIN_OR_LOSE = {
+    high: :lose,
+    low: :lose,
+    match: :win
+  }.freeze
+
+  GAME_END_MESSAGE = {
+    lose: 'You have no more guesses. You lost!',
+    win: 'You won!'
+  }.freeze
+
   def initialize
-    @number_to_guess = (1..100).to_a.sample
-    @guess_remaining = 7
-    @win = false
+    @number_to_guess = nil
   end
-  
+
   def play
-    until @win || @guess_remaining == 0
-      puts "You have #{@guess_remaining} guesses remaining."
-      number = get_player_guess
+    reset
+    result = play_game
+    display_game_end_message(result)
+  end
 
-      if number > @number_to_guess
-        puts 'Your guess is too high.'
-      elsif number < @number_to_guess
-        puts 'Your guess is too low.'
-      else
-        puts "That's the number!"
-        @win = true
-      end
+  private
 
-      @guess_remaining -= 1
+  def reset
+    @number_to_guess = rand(RANGE)
+  end
 
-      puts
-      if @win
-        puts 'You won!'
-      elsif @guess_remaining == 0
-        puts 'You have no more guesses. You lost!'
-      end
+  # return a symbol indicating if the player wins
+  def play_game
+    result = nil
+    MAX_GUESSES.downto(1) do |remaining_guesses|
+      display_guesses_remaining(remaining_guesses)
+      guess = player_guess
+      result = check_guess(guess)
+      puts ROUND_RESULT_MESSAGE[result]
+      break if result == :match
+    end
+    WIN_OR_LOSE[result]
+  end
+
+  def display_guesses_remaining(remaining_guesses)
+    puts
+    if remaining_guesses == 1
+      puts 'You have 1 guess remaining.'
+    else
+      puts "You have #{remaining_guesses} guesses remaining."
     end
   end
-  
-  private
-  
-  def get_player_guess
-    number = nil
+
+  def player_guess
+    guess = nil
     loop do
-      print 'Enter a number between 1 and 100: '
-      number = gets.chomp.strip.to_i
-      break if valid_number?(number)
+      print "Enter a number between #{RANGE.first} and #{RANGE.last}: "
+      guess = gets.chomp.strip
+      break if valid_number?(guess)
       print 'Invalid guess. '
     end
-    number
+    guess.to_i
   end
 
-  def valid_number?(number)
-    number >= 1 && number <= 100
+  def valid_number?(guess)
+    guess =~ /\A[-+]?\d+\z/ &&
+      guess.to_i >= 1 && guess.to_i <= 100
+  end
+
+  def check_guess(guess)
+    if guess > @number_to_guess
+      :high
+    elsif guess < @number_to_guess
+      :low
+    else
+      :match
+    end
+  end
+
+  def display_game_end_message(result)
+    puts '', GAME_END_MESSAGE[result]
   end
 end
 
