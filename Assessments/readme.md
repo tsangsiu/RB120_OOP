@@ -6,7 +6,8 @@
 
 | # | Remark |
 | --- | --- |
-| 1 | :white_check_mark: |
+| [1](https://github.com/tsangsiu/RB120_OOP/blob/main/Assessments/Practice_Problems/practice_problems.md#1) | :white_check_mark: |
+| [2](https://github.com/tsangsiu/RB120_OOP/blob/main/Assessments/Practice_Problems/practice_problems.md#2) | :white_check_mark: |
 
 ## Resources
 
