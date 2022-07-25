@@ -47,3 +47,69 @@ p teddy.swim                     # 16
 The line 16 outputs `nil` to the console.
 
 On line 15, a new `Dog` object is instantiated and assigned to the local variable `teddy`. The `Dog` class has an instance variable `@can_swim` defined. However, it is not initialized until the instance method `enable_swimming` is invoked. Ruby treats the uninitialized `@can_swim` as if it references `nil`. Therefore, when the instance method `#swim` is called on the `Dog` object that `teddy` references, it returns `nil` to the console.
+
+## 5
+
+We expect the code below to output `"Spartacus weighs 45 lbs and is 24 inches tall."` Why does our `change_info` method not work as expected?
+
+````ruby
+class GoodDog                                                # 1
+  attr_accessor :name, :height, :weight                      # 2
+                                                             # 3
+  def initialize(n, h, w)                                    # 4
+    @name = n                                                # 5
+    @height = h                                              # 6
+    @weight = w                                              # 7
+  end                                                        # 8
+                                                             # 9
+  def change_info(n, h, w)                                   # 10
+    name = n                                                 # 11
+    height = h                                               # 12
+    weight = w                                               # 13
+  end                                                        # 14
+                                                             # 15
+  def info                                                   # 16
+    "#{name} weighs #{weight} and is #{height} tall."        # 17
+  end                                                        # 18
+end                                                          # 19
+                                                             # 20
+sparky = GoodDog.new('Spartacus', '12 inches', '10 lbs')     # 21
+sparky.change_info('Spartacus', '24 inches', '45 lbs')       # 22
+puts sparky.info                                             # 23
+# => Spartacus weighs 10 lbs and is 12 inches tall.
+````
+
+The intention of the lines of code on lines 11 to 13 is to reassign the data referenced by the instance variables `@name`, `@height` and `@weight` by using their respective setter methods. However, without the prefix `self.`, Ruby will regard it as local variable initialization. Therefore the data referenced by those instance variables are unaltered.
+
+To reassign the data referenced by those instance variables, we should rewrite the `change_info` method as follow:
+
+````ruby
+def change_info(n, h, w)
+  self.name = n
+  self.height = h
+  self.weight = w
+end
+````
+
+## 6
+
+In the code below, we hope to output `'BOB'` on line 16. Instead, it raises an error. Why? How could we adjust this code to output `'BOB'`?
+
+````ruby
+class Person                # 1
+  attr_accessor :name       # 2
+                            # 3
+  def initialize(name)      # 4
+    @name = name            # 5
+  end                       # 6
+                            # 7
+  def change_name           # 8
+    name = name.upcase      # 9
+  end                       # 10
+end                         # 11
+                            # 12
+bob = Person.new('Bob')     # 13
+p bob.name                  # 14
+bob.change_name             # 15
+p bob.name                  # 16
+````
