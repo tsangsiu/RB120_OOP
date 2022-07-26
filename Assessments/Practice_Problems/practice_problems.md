@@ -113,3 +113,15 @@ p bob.name                  # 14
 bob.change_name             # 15
 p bob.name                  # 16
 ````
+
+On line 13, a `Person` object with the attribute `@name` references `'Bob'` is instantiated. The new `Person` object is then assigned to the local variable `bob`.
+
+On line 15, the `change_name` method is invoked on the `Person` object that `bob` references. The intention of the method is to alter the value that `@name` references to upper case. However, without the `self.` prefix, Ruby will regard `name` as a local variable instead of the setter for `@name`. Therefore, `@name` is remain unaltered.
+
+To adjust the code to output `'BOB'`, we should implement the `change_name` method as follows:
+
+````ruby
+def change_name
+  self.name = name.upcase
+end
+````
