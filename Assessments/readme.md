@@ -16,6 +16,9 @@
 | [8](https://github.com/tsangsiu/RB120_OOP/blob/main/Assessments/Practice_Problems/practice_problems.md#8) | :white_check_mark: |
 | [9](https://github.com/tsangsiu/RB120_OOP/blob/main/Assessments/Practice_Problems/practice_problems.md#9) | :white_check_mark: |
 | [10](https://github.com/tsangsiu/RB120_OOP/blob/main/Assessments/Practice_Problems/practice_problems.md#10) | :white_check_mark: |
+| [11](https://github.com/tsangsiu/RB120_OOP/blob/main/Assessments/Practice_Problems/practice_problems.md#11) | :white_check_mark: |
+| 12 | |
+| [13](https://github.com/tsangsiu/RB120_OOP/blob/main/Assessments/Practice_Problems/practice_problems.md#13) | :white_check_mark: |
 
 ## Resources
 

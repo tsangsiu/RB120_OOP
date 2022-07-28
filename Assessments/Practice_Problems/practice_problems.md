@@ -292,3 +292,84 @@ p good_dog.walk
 
 The method lookup path used when invoking `#walk` on `good_dog` is:
 `GoodAnimals::GoodDog`, `Danceable`, `Swimmable`, `Animal`, `Walkable`, `Object`, `Kernel`, `BasicObject`
+
+## 11
+
+What is the output and why? How does this code demonstrate polymorphism?
+
+````ruby
+class Animal                                           # 1
+  def eat                                              # 2
+    puts "I eat."                                      # 3
+  end                                                  # 4
+end                                                    # 5
+                                                       # 6
+class Fish < Animal                                    # 7
+  def eat                                              # 8
+    puts "I eat plankton."                             # 9
+  end                                                  # 10
+end                                                    # 11
+                                                       # 12
+class Dog < Animal                                     # 13
+  def eat                                              # 14
+     puts "I eat kibble."                              # 15
+  end                                                  # 16
+end                                                    # 17
+                                                       # 18
+def feed_animal(animal)                                # 19
+  animal.eat                                           # 20
+end                                                    # 21
+                                                       # 22
+array_of_animals = [Animal.new, Fish.new, Dog.new]     # 23
+array_of_animals.each do |animal|                      # 24
+  feed_animal(animal)                                  # 25
+end                                                    # 26
+````
+
+The above code will output:
+````ruby
+I eat.
+I eat plankton.
+I eat kibble.
+````
+
+On line 23, the local variable `array_of_animals` is initialized and assigned to an array of `Animal`, `Fish` and `Dog` objects.
+
+The `Array#each` is then invoked on `array_of_animals`. Each object in the array is passed into the `feed_animal` as an argument.
+
+Considering the implementation of `feed_animal`, it calls the `eat` method to the given argument. For each of the object in `array_of_animals`, they are of different class and each has a different implementation of `#eat`.
+
+For `Animal` objects, the `#eat` method outputs `I eat.` to the console. While for the `Fish` and `Dog` objects, the `#eat` method outputs `I eat plankton.` and `I eat kibble.` to the console respectively.
+
+Hence the result follows.
+
+This code demonstrates polymorphism through inheritance. In the superclass `Animal`, a generic `#eat` method is defined. For the subclasses `Fish` and `Dog`, they override the generic `#eat` method with a more specific `#eat` method. Objects of these three types respond differently to the same method call `#eat`. That's polymorphism.
+
+## 13
+
+What is the output and why?
+
+````ruby
+class Animal                               # 1
+  def initialize(name)                     # 2
+    @name = name                           # 3
+  end                                      # 4
+end                                        # 5
+                                           # 6
+class Dog < Animal                         # 7
+  def initialize(name); end                # 8
+                                           # 9
+  def dog_name                             # 10
+    "bark! bark! #{@name} bark! bark!"     # 11
+  end                                      # 12
+end                                        # 13
+                                           # 14
+teddy = Dog.new("Teddy")                   # 15
+puts teddy.dog_name                        # 16
+````
+
+The above code will output `bark! bark!  bark! bark!`.
+
+On line 15, a new `Dog` object is instantiated and assigned to the local variable `teddy`.
+
+On line 16, the `dog_name` method is called on the `Dog` object that `teddy` references. However, as the instance variable `@name` is never initialized, it references `nil` at the moment. Therefore the line 16 will output `bark! bark!  bark! bark!` to the console.
