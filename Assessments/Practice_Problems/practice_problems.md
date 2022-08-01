@@ -98,6 +98,65 @@ Consider the method calls on lines 25 and 26, both instruct Ruby to look for the
 
 On lines 3 and 15, both `self` refer to the calling object of the method. While on 11, the `self` refers to the class.
 
+## 4
+
+What is the output? Is this what we would expect when using `AnimalClass#+`? If not, how could we adjust the implementation of `AnimalClass#+` to be more in line with what we'd expect the method to return?
+
+````ruby
+class AnimalClass                         # 1
+  attr_accessor :name, :animals           # 2
+                                          # 3
+  def initialize(name)                    # 4
+    @name = name                          # 5
+    @animals = []                         # 6
+  end                                     # 7
+                                          # 8
+  def <<(animal)                          # 9
+    animals << animal                     # 10
+  end                                     # 11
+                                          # 12
+  def +(other_class)                      # 13
+    animals + other_class.animals         # 14
+  end                                     # 15
+end                                       # 16
+                                          # 17
+class Animal                              # 18
+  attr_reader :name                       # 19
+                                          # 20
+  def initialize(name)                    # 21
+    @name = name                          # 22
+  end                                     # 23
+end                                       # 24
+                                          # 25
+mammals = AnimalClass.new('Mammals')      # 26
+mammals << Animal.new('Human')            # 27
+mammals << Animal.new('Dog')              # 28
+mammals << Animal.new('Cat')              # 29
+                                          # 30
+birds = AnimalClass.new('Birds')          # 31
+birds << Animal.new('Eagle')              # 32
+birds << Animal.new('Blue Jay')           # 33
+birds << Animal.new('Penguin')            # 34
+                                          # 35
+some_animal_classes = mammals + birds     # 36
+                                          # 37
+p some_animal_classes                     # 38
+````
+
+The line 38 will outputs an array of `Animal` objects of size 6. The `Animal` objects have the `@name` attributes: `'Human'`, `'Dog'`, `'Cat'`, `'Eagle'`, `'Blue Jay'` and `'Penguin'` (in the same order).
+
+That is not what we would expect when using `AnimalClass#+`. It is because when we use the `+` method, we would expect it to return an object of the same type as the calling object and the argument, just like the built-in Ruby set-up. In the above code, the calling object (the object that `mammals` refers to) and the object that `birds` refers to are both `AnimalClass` objects, but the `AnimalClass#+` method returns an `Array` object.
+
+To be more in line with what we'd expect, we could adjust the implementation of `AnimalClass#+` as follows:
+
+````ruby
+def +(other_class)
+  result_obj = AnimalClass.new('Result')
+  result_obj.animals = self.animals + other_class.animals
+  result_obj
+end
+````
+
 ## 5
 
 We expect the code below to output `"Spartacus weighs 45 lbs and is 24 inches tall."` Why does our `change_info` method not work as expected?

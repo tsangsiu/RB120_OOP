@@ -8,8 +8,8 @@
 | --- | --- |
 | [1](https://github.com/tsangsiu/RB120_OOP/blob/main/Assessments/Practice_Problems/practice_problems.md#1) | :white_check_mark: |
 | [2](https://github.com/tsangsiu/RB120_OOP/blob/main/Assessments/Practice_Problems/practice_problems.md#2) | :white_check_mark: |
-| 3 | |
-| 4 | |
+| [3](https://github.com/tsangsiu/RB120_OOP/blob/main/Assessments/Practice_Problems/practice_problems.md#3) | :white_check_mark: |
+| [4](https://github.com/tsangsiu/RB120_OOP/blob/main/Assessments/Practice_Problems/practice_problems.md#4) | :white_check_mark: |
 | [5](https://github.com/tsangsiu/RB120_OOP/blob/main/Assessments/Practice_Problems/practice_problems.md#5) | :white_check_mark: |
 | [6](https://github.com/tsangsiu/RB120_OOP/blob/main/Assessments/Practice_Problems/practice_problems.md#6) | :white_check_mark: |
 | [7](https://github.com/tsangsiu/RB120_OOP/blob/main/Assessments/Practice_Problems/practice_problems.md#7) | :white_check_mark: |
