@@ -48,6 +48,56 @@ The line 16 outputs `nil` to the console.
 
 On line 15, a new `Dog` object is instantiated and assigned to the local variable `teddy`. The `Dog` class has an instance variable `@can_swim` defined. However, it is not initialized until the instance method `enable_swimming` is invoked. Ruby treats the uninitialized `@can_swim` as if it references `nil`. Therefore, when the instance method `#swim` is called on the `Dog` object that `teddy` references, it returns `nil` to the console.
 
+## 3
+
+What is the output and why? What does it demonstrate about constant scope? What does `self` refer to in each of the three methods below?
+
+````ruby
+module Describable                                      # 1
+  def describe_shape                                    # 2
+    "I am a #{self.class} and have #{SIDES} sides."     # 3
+  end                                                   # 4
+end                                                     # 5
+                                                        # 6
+class Shape                                             # 7
+  include Describable                                   # 8
+                                                        # 9
+  def self.sides                                        # 10
+    self::SIDES                                         # 11
+  end                                                   # 12
+                                                        # 13
+  def sides                                             # 14
+    self.class::SIDES                                   # 15
+  end                                                   # 16
+end                                                     # 17
+                                                        # 18
+class Quadrilateral < Shape                             # 19
+  SIDES = 4                                             # 20
+end                                                     # 21
+                                                        # 22
+class Square < Quadrilateral; end                       # 23
+                                                        # 24
+p Square.sides                                          # 25
+p Square.new.sides                                      # 26
+p Square.new.describe_shape                             # 27
+````
+
+The above code outputs the following to the console:
+
+````text
+4
+4
+throws a NameError
+````
+
+The above code demonstrates that constants have a lexical scope. Ruby tries to resolve a constant by searching the enclosing class or module (i.e., lexical scope) of the constant reference, then by inheritance of the encolsing class/module, and finally the top level.
+
+Consider the constant reference `SIDES` on line 3, there is no constant definition of `SIDES` in the enclosing module `Describable`, so Ruby will then look for the constant at the top level (as there is no inheritance involved). As the constant is not found either at the top level, Ruby throws a `NameError`.
+
+Consider the method calls on lines 25 and 26, both instruct Ruby to look for the constant in the `Square` class. As `Square` is a subclass of `Quadrilateral` where the constant `SIDES` is defined. Both lines 25 and 26 output `4` to the console.
+
+On lines 3 and 15, both `self` refer to the calling object of the method. While on 11, the `self` refers to the class.
+
 ## 5
 
 We expect the code below to output `"Spartacus weighs 45 lbs and is 24 inches tall."` Why does our `change_info` method not work as expected?
@@ -157,7 +207,7 @@ p Car.wheels                   # 22
 
 The above code will output:
 
-````ruby
+````text
 4
 2
 2
@@ -327,7 +377,7 @@ end                                                    # 26
 ````
 
 The above code will output:
-````ruby
+````text
 I eat.
 I eat plankton.
 I eat kibble.
