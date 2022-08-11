@@ -19,7 +19,11 @@ p bob.name              # 10
 
 The line 10 outputs `nil` to the console.
 
-On line 9, a new `Person` object is instantiated and assigned to the local variable `bob`. The `Person` class has an instance variable `@name` defined for all its instances. However, it is not initialized upon instantiation. Unlike local variables, Ruby treats the uninitialized `@name` as if it points to the value `nil`. For local varables, a `NameError` will be thrown when called if it is uninitialized.
+On line 9, a new `Person` object is instantiated and assigned to the local variable `bob`.
+
+On line 10, the getter method of the instance variable `@name` is invoked on the `Person` object just created. As `@name` is not initialized until `#set_name` is invoked, line 10 outputs `nil` to the console.
+
+This demonstrates that **Ruby treats uninitialized instance variables as if they point to `nil`. Unlike local variables, they throw a `NameError` when an uninitialized local variable is called.**
 
 ## 2
 
@@ -46,7 +50,9 @@ p teddy.swim                     # 16
 
 The line 16 outputs `nil` to the console.
 
-On line 15, a new `Dog` object is instantiated and assigned to the local variable `teddy`. The `Dog` class has an instance variable `@can_swim` defined. However, it is not initialized until the instance method `enable_swimming` is invoked. Ruby treats the uninitialized `@can_swim` as if it references `nil`. Therefore, when the instance method `#swim` is called on the `Dog` object that `teddy` references, it returns `nil` to the console.
+On line 15, a new `Dog` object is instantiated and assigned to the local variable `teddy`. The instance method `swim` is then called on the object. As the instance variable `@can_swim` is not initialized until `#enable_swimming` is invoked, Ruby treats it as if it points to `nil`, which is falsy. Hence `teddy.swim` returns `nil` and line 16 outputs `nil` to the console.
+
+This demonstrates that **Ruby treats uninitialized instance variables as if they point to `nil`. Unlike local variables, they throw a `NameError` when an uninitialized one is called.**
 
 ## 3
 
