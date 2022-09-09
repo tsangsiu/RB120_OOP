@@ -1,5 +1,36 @@
 # Lecture Problems
 
+## Reading OO Code
+
+## Classes and Objects, Encapsulation, Collaborator Objects, Public/Private/Protected Methods
+
+### 1
+
+If we're trying to determine whether the two objects contain the same name, how can we compare the two objects?
+
+````ruby
+bob = Person.new('Robert Smith')
+rob = Person.new('Robert Smith')
+````
+
+We can do so by `bob.name == rob.name`.
+
+### 2
+
+Create an empty class named Cat.
+
+````ruby
+class Cat; end
+````
+
+### 3
+
+Using the code from the previous exercise, create an instance of `Cat` and assign it to a variable named `kitty`.
+
+````ruby
+kitty = Cat.new
+````
+
 ## Polymorphism, Inheritance, Modules and Method Lookup Path
 
 ### 1

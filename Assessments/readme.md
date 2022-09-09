@@ -1,6 +1,6 @@
 # Assessments
 
-## Lecture Problems
+## [Lecture Problems](https://github.com/tsangsiu/RB120_OOP/blob/main/Assessments/Lecture_Problems/lecture_problems.md)
 
 - [Lecture Problems](https://docs.google.com/document/d/1Oyp7LaIggM2YU2jAWl58eq3W-S1PlfUOa3OdoRMK09A/edit)
 
