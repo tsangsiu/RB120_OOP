@@ -1,5 +1,9 @@
 # Assessments
 
+## Lecture Problems
+
+- [Lecture Problems](https://docs.google.com/document/d/1Oyp7LaIggM2YU2jAWl58eq3W-S1PlfUOa3OdoRMK09A/edit)
+
 ## Practice Problems
 
 - [Practice Problems](https://docs.google.com/document/d/10JvX-ArkfF8fIWQu8wPaYt7JJHrv_5E0gM0I2uPirwI/edit#)
