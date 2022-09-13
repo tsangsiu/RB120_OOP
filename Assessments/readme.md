@@ -4,9 +4,13 @@
 
 - [Lecture Problems](https://docs.google.com/document/d/1Oyp7LaIggM2YU2jAWl58eq3W-S1PlfUOa3OdoRMK09A/edit)
 
+## [Open-Ended Questions](https://github.com/tsangsiu/RB120_OOP/blob/main/Assessments/Open_Ended_Questions/open_ended_questions.md)
+
+- [Open-Ended Questions](https://docs.google.com/document/d/10Lg5TfMMqtADcHlPKiDUBqPDMB6Q63_Fs_uVGQG3ybQ/edit)
+
 ## Practice Problems
 
-- [Practice Problems](https://docs.google.com/document/d/10JvX-ArkfF8fIWQu8wPaYt7JJHrv_5E0gM0I2uPirwI/edit#)
+- [Practice Problems](https://docs.google.com/document/d/10JvX-ArkfF8fIWQu8wPaYt7JJHrv_5E0gM0I2uPirwI/edit)
 
 | # | Done? | Remark |
 | --- | --- | --- |
