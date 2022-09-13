@@ -165,3 +165,151 @@ On line 16, a new `GoodDog` object is instantiated and assigned to the local var
 Upon instantiation, the constructor `GoodDog#initialize` is invoked with an argument `"brown"`. When `super` is invoked on line 11, it **forwards** all arguments that are passed to `GoodDog#initialize` to `Animal#initialize` and invokes it, which creates the attribute `@name = "brown"`.
 
 Therefore, when we call the getter of the instance variable `@name` on the `GoodDog` object that `bruno` references, it returns `"brown"`, and hence line 17 outputs `"brown"` to the console.
+
+## `attr_*`, Getters and Setters, and Referencing and Setting Instance Variables
+
+### 5
+
+Given the below usage of the `Person` class, code the class definition.
+
+````ruby
+bob = Person.new('bob')
+bob.name                  # => 'bob'
+bob.name = 'Robert'
+bob.name                  # => 'Robert'
+````
+
+````ruby
+class Person(name)
+  attr_accessor :name
+  
+  def initialize(name)
+    @name = name
+  end
+end
+````
+
+### 6
+
+Modify the class definition from above to facilitate the following methods. Note that there is no `name=` setter method now.
+
+````ruby
+bob = Person.new('Robert')
+bob.name                  # => 'Robert'
+bob.first_name            # => 'Robert'
+bob.last_name             # => ''
+bob.last_name = 'Smith'
+bob.name                  # => 'Robert Smith'
+````
+
+````ruby
+class Person
+  attr_accessor :first_name, :last_name
+  
+  def initialize(name)
+    @name = name
+    
+    name_parts = @name.split
+    if name_parts.size == 1
+      @first_name, @last_name = name_parts.first, ' '
+    elsif name_parts.size == 2
+      @first_name, @last_name = name_parts.first, name_parts.last
+    end
+  end
+  
+  def name
+    "#{first_name} #{last_name}".strip
+  end
+end
+````
+
+### 7
+
+Now create a smart `name= method that can take just a first name or a full name, and knows how to set the `first_name` and `last_name` appropriately.
+
+````ruby
+bob = Person.new('Robert')
+bob.name                  # => 'Robert'
+bob.first_name            # => 'Robert'
+bob.last_name             # => ''
+bob.last_name = 'Smith'
+bob.name                  # => 'Robert Smith'
+
+bob.name = "John Adams"
+bob.first_name            # => 'John'
+bob.last_name             # => 'Adams'
+````
+
+````ruby
+class Person
+  attr_accessor :first_name, :last_name
+  
+  def initialize(name)
+    self.name = name
+  end
+  
+  def name
+    "#{first_name} #{last_name}".strip
+  end
+  
+  def name=(name)
+    name_parts = name.split
+    @first_name = name_parts.first
+    @last_name = name_parts.size > 1 ? name_parts.last : ' '
+  end
+end
+````
+
+## Instance/Class Methods, `self` and `to_s`
+
+### 2
+
+Given the `Person` class definition below, what does the below print out?
+
+````ruby
+class Person
+  attr_accessor :first_name, :last_name
+  
+  def initialize(name)
+    self.name = name
+  end
+  
+  def name
+    "#{first_name} #{last_name}".strip
+  end
+  
+  def name=(name)
+    name_parts = name.split
+    @first_name = name_parts.first
+    @last_name = name_parts.size > 1 ? name_parts.last : ' '
+  end
+end
+
+bob = Person.new("Robert Smith")
+puts "The person's name is: #{bob}"
+````
+
+The output is `The person's name is #<Person:0x0000000001e8e878>`.
+
+### 3
+
+Let's add a `to_s` method to the above `Person` class:
+
+````ruby
+class Person
+  # ... rest of class omitted for brevity
+
+  def to_s
+    name
+  end
+end
+````
+
+Now, what does the below output?
+
+````ruby
+bob = Person.new("Robert Smith")
+puts "The person's name is: #{bob}"
+````
+
+The output is `The person's name is Robert Smith`.
