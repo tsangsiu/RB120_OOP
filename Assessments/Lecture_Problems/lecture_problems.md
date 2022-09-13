@@ -262,6 +262,28 @@ end
 
 ## Instance/Class Methods, `self` and `to_s`
 
+### 1
+
+On which lines in the following code does `self` refer to the instance of the `MeMyselfAndI` class referenced by `i` rather than the class itself? Select all that apply.
+
+````ruby
+class MeMyselfAndI       # 1
+  self                   # 2
+                         # 3
+  def self.me            # 4
+    self                 # 5
+  end                    # 6
+                         # 7
+  def myself             # 8
+    self                 # 9
+  end                    # 10
+end                      # 11
+                         # 12
+i = MeMyselfAndI.new     # 13
+````
+
+On lines 5 and 9, the `self` refers to the `MeMyselfAndI` object referenced by `i`.
+
 ### 2
 
 Given the `Person` class definition below, what does the below print out?
@@ -313,3 +335,24 @@ puts "The person's name is: #{bob}"
 ````
 
 The output is `The person's name is Robert Smith`.
+
+### 4
+
+Why does the code below do not have the expected return value?
+
+````ruby
+class Student                                                        # 1
+  attr_accessor :grade                                               # 2
+                                                                     # 3
+  def initialize(name, grade = nil)                                  # 4
+    @name = name                                                     # 5
+  end                                                                # 6
+end                                                                  # 7
+                                                                     # 8
+ade = Student.new('Adewale')                                         # 9
+ade # => #<Student:0x00000002a88ef8 @grade=nil, @name="Adewale">     # 10
+````
+
+On line 9, a new `Student` object is instantiated and is then assigned to the local variable `ade`.
+
+Upon the instantiation, the method `Student#initialize` is invoked with arguments `name` (which points to the string `Adewale`) and `grade` (which points to the default value `nil`). Upon the invocation of `Student#initialize`, the instance variable `@name` is assigned to `Adewale`, and the instance variable `@grade` is never initialized. Therefore the `Student` object referenced by `ade` only has the attribute `@name = "Adewale"`.
