@@ -136,6 +136,85 @@ At this point, the local variable `name` points to the integer `43`. Therefore, 
 
 ### 1
 
+What will the following code output?
+
+````ruby
+class Animal                     # 1
+  def initialize(name)           # 2
+    @name = name                 # 3
+  end                            # 4
+                                 # 5
+  def speak                      # 6
+    puts sound                   # 7
+  end                            # 8
+                                 # 9
+  def sound                      # 10
+    "#{@name} says "             # 11
+  end                            # 12
+end                              # 13
+                                 # 14
+class Cow < Animal               # 15
+  def sound                      # 16
+    super + "moooooooooooo!"     # 17
+  end                            # 18
+end                              # 19
+                                 # 20
+daisy = Cow.new("Daisy")         # 21
+daisy.speak                      # 22
+````
+
+The above code outputs `"Daisy says moooooooooooo!"` to the console.
+
+On line 21, a new `Cow` object with an attribute `@name = 'Daisy'` is instantiated and assigned to the local variable `daisy`.
+
+On line 22, the `speak` method is invoked on the `Cow` object that `daisy` references. As the `Cow` class does not have the `speak` method defined, Ruby looks for it in the next class according to the method lookup path of the class `Cow`, which is `Animal`, and invokes it.
+
+Upon the invocation of `Animal#speak`, the statement `puts sound` is executed. Ruby first looks for the local variable `sound`, which is not available. Ruby then looks for the method `sound`. Ruby looks for it according to the method lookup path again (which is `[Cow, Animal, Object, Kernel, BasicObject]`). It finds it in the `Cow` class and invokes it.
+
+Upon the invocation of `Cow#sound`, the statement `super + "moooooooooooo!"` is executed. The `super` keyword triggers the invocation of the method with the same name one level up in the hierarchy, which is the `Animal#speak` method which returns `"Daisy says "`. Therefore the invocation of `Cow#sound` returns the string `"Daisy says moooooooooooo!"` and thus `daisy.speak` outputs `"Daisy says moooooooooooo!"` to the console.
+
+### 2
+
+### 3
+
+What change(s) do you need to make to the code below in order to get the expected output?
+
+````ruby
+class Character                                       # 1
+  attr_accessor :name                                 # 2
+                                                      # 3
+  def initialize(name)                                # 4
+    @name = name                                      # 5
+  end                                                 # 6
+                                                      # 7
+  def speak                                           # 8
+    "#{@name} is speaking."                           # 9
+  end                                                 # 10
+end                                                   # 11
+                                                      # 12
+class Knight < Character                              # 13
+  def name                                            # 14
+    "Sir " + super                                    # 15
+  end                                                 # 16
+end                                                   # 17
+                                                      # 18
+sir_gallant = Knight.new("Gallant")                   # 19
+sir_gallant.name # => "Sir Gallant"                   # 20
+sir_gallant.speak # => "Sir Gallant is speaking."     # 21
+````
+
+The output by line 21 is unexpected.
+
+In order to get the expected output, we should change line 9 to `"#{name} is speaking".`.
+
+On line 19, a new `Knight` object with an attribute `@name = "Gallant"` is instantiated and assigned to the local variable `sir_gallant`.
+
+On line 21, the `speak` method is called on the `Knight` object that `sir_gallant` references. As there is no `speak` method defined in the `Knight` class, Ruby looks for the method in the next class up in the hierarchy, which is `Character`. Ruby finds `Character#speak` and invokes it.
+
+Upon the invocation of `Character#speak`, it returns the string `"Gallant is speaking."`. Instead of the string referenced by `@name` (`"Gallant"`), we want the return value of `Knight#name` (`"Sir Gallant"`), so we should change `@name` to `name` on line 9.
+
+### 4
+
 What will line 17 output, and why?
 
 ````ruby
@@ -165,6 +244,97 @@ On line 16, a new `GoodDog` object is instantiated and assigned to the local var
 Upon instantiation, the constructor `GoodDog#initialize` is invoked with an argument `"brown"`. When `super` is invoked on line 11, it **forwards** all arguments that are passed to `GoodDog#initialize` to `Animal#initialize` and invokes it, which creates the attribute `@name = "brown"`.
 
 Therefore, when we call the getter of the instance variable `@name` on the `GoodDog` object that `bruno` references, it returns `"brown"`, and hence line 17 outputs `"brown"` to the console.
+
+### 5
+
+Make necessary changes to the below code so as to return the expected values.
+
+````ruby
+class FarmAnimal                                  # 1
+  def speak                                       # 2
+    "#{self} says "                               # 3
+  end                                             # 4
+end                                               # 5
+                                                  # 6
+class Sheep < FarmAnimal                          # 7
+  def speak                                       # 8
+    super + "baa!"                                # 9
+  end                                             # 10
+end                                               # 11
+                                                  # 12
+class Lamb < Sheep                                # 13
+  def speak                                       # 14
+    "baaaaaaa!"                                   # 15
+  end                                             # 16
+end                                               # 17
+                                                  # 18
+class Cow                                         # 19
+  def speak                                       # 20
+    super + "mooooooo!"                           # 21
+  end                                             # 22
+end                                               # 23
+                                                  # 24
+Sheep.new.speak # => "Sheep says baa!"            # 25
+Lamb.new.speak # => "Lamb says baa!baaaaaaa!"     # 26
+Cow.new.speak # => "Cow says mooooooo!"           # 27
+````
+
+Line 3 should change to `"#{self.class} says "`.
+
+Line 15 should change to `super + "baaaaaaa!"`.
+
+Line 19 should change to `class Cow < FarmAnimal`.
+
+### 6
+
+What is the return value of the last line, and why?
+
+````ruby
+class Person         # 1
+  def get_name       # 2
+    @name            # 3
+  end                # 4
+end                  # 5
+                     # 6
+bob = Person.new     # 7
+bob.get_name         # 8
+````
+
+On line 7, a new `Person` object is instantiated and assigned to the local variable `bob`.
+
+When we invoke the `get_name` method on `bob`, it returns `@name`. As the instance variable `@name` is never initialized to any value. Ruby treats it as if it points to `nil`. Therefore the last line returns `nil`.
+
+### 7
+
+How do you get this code to return `"swimming"`? What does this demonstrate about instance variables?
+
+````ruby
+module Swim                      # 1
+  def enable_swimming            # 2
+    @can_swim = true             # 3
+  end                            # 4
+end                              # 5
+                                 # 6
+class Dog                        # 7
+  include Swim                   # 8
+                                 # 9
+  def swim                       # 10
+    "swimming!" if @can_swim     # 11
+  end                            # 12
+end                              # 13
+                                 # 14
+teddy = Dog.new                  # 15
+teddy.swim                       # 16                        
+````
+
+On line 16, the `swim` method is invoked on the `Dog` object that `teddy` references.
+
+Upon the invocation of `Dog#swim`, it returns `"swimming"` if the value referenced by `@can_swim` is truthy. However, at this point, the instance variable `@can_swim` is never initialized to any value. By default, Ruby treats any uninitialized instance variables as if they point to `nil`, which is falsy.
+
+In order to get the above code to return `"swimming"`, we should first initialize `@can_swim` to `true`. Invoking the `Dog#enable_swimming` method can do the job.
+
+Therefore, before line 16, we should first execute the statement `teddy.enable_swimming`.
+
 
 ## `attr_*`, Getters and Setters, and Referencing and Setting Instance Variables
 
