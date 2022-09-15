@@ -335,6 +335,176 @@ In order to get the above code to return `"swimming"`, we should first initializ
 
 Therefore, before line 16, we should first execute the statement `teddy.enable_swimming`.
 
+### 8
+
+### 9
+
+### 10
+
+Using the following code, allow `Truck` to accept a second argument upon instantiation. Name the parameter `bed_type` and implement the modification so that `Car` continues to only accept one argument.
+
+````ruby
+class Vehicle
+  attr_reader :year
+
+  def initialize(year)
+    @year = year
+  end
+end
+
+class Truck < Vehicle
+end
+
+class Car < Vehicle
+end
+
+truck1 = Truck.new(1994, 'Short')
+puts truck1.year
+puts truck1.bed_type
+````
+
+````ruby
+class Vehicle
+  attr_reader :year
+
+  def initialize(year)
+    @year = year
+  end
+end
+
+class Truck < Vehicle
+  attr_reader :bed_type
+
+  def initialize(year, bed_type)
+    super(year)
+    @bed_type = bed_type
+  end
+end
+
+class Car < Vehicle
+end
+
+truck1 = Truck.new(1994, 'Short')
+puts truck1.year
+puts truck1.bed_type
+````
+
+### 11
+
+Given the following code, modify `start_engine` in `Truck` by appending `'Drive fast, please!'` to the return value of `start_engine` in Vehicle. The `'fast'` in `'Drive fast, please!'`` should be the value of `speed`.
+
+````ruby
+class Vehicle
+  def start_engine
+    'Ready to go!'
+  end
+end
+
+class Truck < Vehicle
+  def start_engine(speed)
+  end
+end
+
+truck1 = Truck.new
+puts truck1.start_engine('fast')
+````
+
+````ruby
+class Vehicle
+  def start_engine
+    'Ready to go!'
+  end
+end
+
+class Truck < Vehicle
+  def start_engine(speed)
+    super() + " Drive #{speed}, please!"
+  end
+end
+
+truck1 = Truck.new
+puts truck1.start_engine('fast') # => "Ready to go! Drive fast, please!"
+````
+
+### 12
+
+When we call the `go_fast` method on an instance of the `Car` class (as shown below), you might have noticed that the string printed includes the name of the type of vehicle we are using. How is this be done?
+
+
+````ruby
+module Speed
+  def go_fast
+    puts "I am a #{self.class} and going super fast!"
+  end
+end
+
+class Car
+  include Speed
+  def go_slow
+    puts "I am safe and driving slow."
+  end
+end
+````
+
+The `Speed` module is mixed into the `Car` class, so the `go_fast` method is available to the `Car` class as an instance method.
+
+Inside the `Car#go_fast` method, `self` refers to the calling object. Therefore `self.class` would return `Car`.
+
+That's why the string printed includes the name of the vehicle type on which the `go_fast` method is invoked.
+
+### 13
+
+What will this return? Why?
+
+````ruby
+module Drivable
+  def self.drive
+    "is this possible"
+  end
+end
+
+class Car
+  include Drivable
+end
+
+p Car.drive
+````
+
+The above code will raise `NoMethodError`.
+
+Inside the module definition of `Drivable`, the method `drive` is defined with a prefix `self.`. The `drive` method will become a module method, which can only be called by `Drivable::drive` or `Drivable.drive`. Therefore, `Car.drive` will raise `NoMethodError`.
+
+### 14
+
+Note: Not sure what the question is.
+
+````ruby
+module EmailFormatter
+  def email
+    "#{first_name}.#{last_name}@#{domain}"
+  end
+end
+
+module EmailSender
+  def email(msg, sender, recipient)
+    # contrived implementation for now
+    puts "Delivering email to #{recipient} from #{sender} with message: #{msg}"
+  end
+end
+
+class User
+  attr_accessor :first_name, :last_name, :domain
+  include EmailFormatter
+  include EmailSender
+end
+
+u = User.new
+u.first_name = "John"
+u.last_name = "Smith"
+u.domain = "example.com"
+
+p u.email
+````
 
 ## `attr_*`, Getters and Setters, and Referencing and Setting Instance Variables
 
@@ -395,7 +565,7 @@ end
 
 ### 7
 
-Now create a smart `name= method that can take just a first name or a full name, and knows how to set the `first_name` and `last_name` appropriately.
+Now create a smart `name=` method that can take just a first name or a full name, and knows how to set the `first_name` and `last_name` appropriately.
 
 ````ruby
 bob = Person.new('Robert')
