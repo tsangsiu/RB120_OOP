@@ -12,11 +12,25 @@ Refer to the code below, if a method in a mixin module is defined with `self.` i
 
 ```ruby
 module Swimmable
-	def self.swim; end
+  def self.swim; end
 end
 ```
 
 ## `attr_*`, Getters and Setters, and Referencing and Setting Instance Variables
+
+## Instance/Class Methods, `self` and `to_s`
+
+### When would you call a method with `self`?
+
+Inside an instance method, when we want to call a setter, we would call it with `self` so as to disambiguate that from local variable initialization.
+
+### What are class methods?
+
+Class methods are functionalities that are related to the class, instead of its instances. They are invoked on the class name, without instantiating any objects. To define a class method, we would prepend the method name with `self.` in class definition.
+
+### What is the purpose of a class variable?
+
+Class variables are used to keep track of a class's information as a whole, instead of its instances.
 
 ### What is the default `to_s` method that comes with Ruby, and how do you override this? What are some important attributes of the `to_s` method?
 
