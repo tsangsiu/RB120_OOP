@@ -508,6 +508,111 @@ p u.email
 
 ## `attr_*`, Getters and Setters, and Referencing and Setting Instance Variables
 
+### 1
+
+Why does the `change_info` method not work as expected here?
+
+````ruby
+class GoodDog
+  attr_accessor :name, :height, :weight
+
+  def initialize(n, h, w)
+    @name = n
+    @height = h
+    @weight = w
+  end
+
+  def speak
+    "#{name} says arf!"
+  end
+
+  def change_info(n, h, w)
+    name = n
+    height = h
+    weight = w
+  end
+
+  def info
+    "#{name} weighs #{weight} and is #{height} tall."
+  end
+end
+
+sparky.change_info('Spartacus', '24 inches', '45 lbs')
+puts sparky.info # => Sparky weighs 10 lbs and is 12 inches tall.
+````
+
+In the above code, its intention is to change the attributes of the `GoodDog` object referenced by `sparky` by calling the setters in the `change_info` method.
+
+However, the setters are invoked without the explicit caller `self.`. Ruby will regard that as local variable initialization. To disambiguate from that, the `change_info` should be defined like this :
+
+````ruby
+def change_info(n, h, w)
+  self.name = n
+  self.height = h
+  self.weight = w
+end
+````
+
+### 2
+
+What code snippet can replace the "omitted code" comment to produce the indicated result?
+
+````ruby
+class Person
+  attr_writer :first_name, :last_name
+
+  def full_name
+    # omitted code
+  end
+end
+
+mike = Person.new
+mike.first_name = 'Michael'
+mike.last_name = 'Garcia'
+mike.full_name # => 'Michael Garcia'
+````
+
+`"#{@first_name} #{@last_name}"`
+
+### 3
+
+The last line in the below code should return `"A"``. Which method(s) can we add to the Student class so the code works as expected?
+
+````ruby
+class Student
+  attr_accessor :name, :grade
+
+  def initialize(name)
+    @name = name
+    @grade = nil
+  end
+end
+
+priya = Student.new("Priya")
+priya.change_grade('A')
+priya.grade # => "A"
+````
+
+We can add the following method to the `Student` class:
+
+````ruby
+def change_grade(grade)
+  self.grade = grade
+end
+````
+
+### 4
+
+Following the above question, why would the following not work?
+
+````ruby
+def change_grade(new_grade)
+  grade = new_grade
+end
+````
+
+The intention of the `change_grade` method is to change the value referenced by the instance variable `@grade` by calling its setter. However, the setter `#grade` does not prepended with `self.`. Ruby will regards it as local variable initialization. That's why the above method does not work.
+
 ### 5
 
 Given the below usage of the `Person` class, code the class definition.
@@ -599,6 +704,85 @@ class Person
   end
 end
 ````
+
+### 8
+
+What will the following code output? Why?
+
+````ruby
+class Animal                               # 1
+  def initialize(name)                     # 2
+    @name = name                           # 3
+  end                                      # 4
+end                                        # 5
+                                           # 6
+class Dog < Animal                         # 7
+  def initialize(name); end                # 8
+                                           # 9
+  def dog_name                             # 10
+    "bark! bark! #{@name} bark! bark!"     # 11
+  end                                      # 12
+end                                        # 13
+                                           # 14
+teddy = Dog.new("Teddy")                   # 15
+puts teddy.dog_name                        # 16
+````
+
+The above code will output `"bark! bark!  bark! bark!"` to the console.
+
+On line 15, a new `Dog` object is instantiated. This triggers the invocation of `Dog#initialize`, which takes the argument `name = "Teddy"`. Nothing is done in this constructor. At this point, the instance variable `@name` is not initialized, and thus Ruby treats it as if it points to `nil`.
+
+Therefore, when we call the `dog_name` method on `teddy`, it returns `"bark! bark!  bark! bark!"`, which is what is printed to the console.
+
+### 9
+
+What is wrong with the following code? Why? What principle about getter/setter methods does this demonstrate?
+
+````ruby
+class Cat                     # 1
+  attr_accessor :name         # 2
+                              # 3
+  def initialize(name)        # 4
+    @name = name              # 5
+  end                         # 6
+                              # 7
+  def rename(new_name)        # 8
+    name = new_name           # 9
+  end                         # 10
+end                           # 11
+                              # 12
+kitty = Cat.new('Sophie')     # 13
+p kitty.name # "Sophie"       # 14
+kitty.rename('Chloe')         # 15
+p kitty.name # "Chloe"        # 16
+````
+
+The `rename` method in the `Cat` class is problematic.
+
+The intention of the `Cat#rename` method is to change the name attribute of a `Cat` object by calling the setter method of the instance variable `@name`. However, inside the `rename` method, the setter method `name` is invoked without an explicit caller `self`. Ruby will regard that as local variable initialzation. The name attribute of a `Cat` object therefore remains unchanged after invoking the `rename` method. That's why line 16 outputs an unexpected result.
+
+In principle, if we want to invoke a setter method inside an instance method, the setter method should be prepended with `self.`.
+
+### 10
+
+You can see in the `make_one_year_older` method we have used `self`. What does self refer to here?
+
+````ruby
+class Cat
+  attr_accessor :type, :age
+
+  def initialize(type)
+    @type = type
+    @age  = 0
+  end
+
+  def make_one_year_older
+    self.age += 1
+  end
+end
+````
+
+Inside an instance method, `self` refers to the calling object.
 
 ## Instance/Class Methods, `self` and `to_s`
 
