@@ -4,6 +4,44 @@
 
 ## Classes and Objects, Encapsulation, Collaborator Objects and Public/Private/Protected Methods
 
+### What is encapsulation? How does encapsulation relate to the public interface of a class?
+
+Encapsulation is to restrict access to certain instance methods, and only expose functionalities that users of the object need.
+
+Instance methods are encapsulated in an object by making them private. Instance methods that are public are what we called the public interfaces of a class. They are the channels through which users interact with the objects.
+
+### What is an object? How do you initialize a new object/How do you create an instance of a class? What is instantiation? What is a constructor method? What is an instance variable, and how is it related to an object? What is an instance method? What is the scoping rule for instance variables?
+
+An object is an instance of a class which defines what attributes and functionalities an object has.
+
+To initialize a new object, we can invoke the class method `::new` on the class name.
+
+Instantiation is the process of creating an object from a class definition.
+
+A constructor method is the method that is invoked every time when we instantiate a new object. In Ruby, it is the private `#initialize` method.
+
+Instance variables are used to store data inside an object. They are the attributes of an object. All attributes combined defines an object's state.
+
+Instance methods are what an object capable of doing. Public instance methods are the public interfaces of an object. Users can store, extract and manipulate data through these interfaces. Prvate instance methods are usually an object's internal implementation.
+
+The scope for instance variables is at object level. They can be accessed any where inside a class, but not outside of it. They last as long as an object exists.
+
+### What is a class? What is the relationship between a class and an object? How is defining a class different from defining a method? 
+
+A class can be thought of a blueprint of an object. It defines what attributes and behaviors an object will have.
+
+A class is a mold or template for objects. It defines the attributes and behaviors of its objects. An object is an instance of the class.
+
+Defining a class is similar to defining a method, with the following difference:
+
+- To define a class, we start with the reserved word `class`, while we start with the reserved word `def` when defining a method.
+
+- To name a class, we use `CamelCase`, while we use `snake_case` when defining a method.
+
+### How do you see if an object has instance variables?
+
+To see if an object has instance variables, we can either invoke the `instance_variables` method on it, or inspect the string representation of the object.
+
 ## Polymorphism, Inheritance, Modules and Method Lookup Path
 
 ### Why should methods in mixin modules be defined without using `self.` in the definition?
