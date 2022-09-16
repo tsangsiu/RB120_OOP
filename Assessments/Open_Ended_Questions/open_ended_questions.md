@@ -35,8 +35,7 @@ A class is a mold or template for objects. It defines the attributes and behavio
 Defining a class is similar to defining a method, with the following difference:
 
 - To define a class, we start with the reserved word `class`, while we start with the reserved word `def` when defining a method.
-
-- To name a class, we use `CamelCase`, while we use `snake_case` when defining a method.
+- To name a class, we use `CamelCase`, while we use `snake_case` when naming a method.
 
 ### How do you see if an object has instance variables?
 
