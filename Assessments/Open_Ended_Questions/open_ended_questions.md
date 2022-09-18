@@ -26,7 +26,11 @@ Instance methods are what an object capable of doing. Public instance methods ar
 
 The scope for instance variables is at object level. They can be accessed any where inside a class, but not outside of it. They last as long as an object exists.
 
-### What is a class? What is the relationship between a class and an object? How is defining a class different from defining a method? 
+### How do you see if an object has instance variables?
+
+To see if an object has instance variables, we can either invoke the `instance_variables` method on it, or inspect the string representation of the object.
+
+### What is a class? What is the relationship between a class and an object? How is defining a class different from defining a method?
 
 A class can be thought of a blueprint of an object. It defines what attributes and behaviors an object will have.
 
@@ -37,9 +41,13 @@ Defining a class is similar to defining a method, with the following difference:
 - To define a class, we start with the reserved word `class`, while we start with the reserved word `def` when defining a method.
 - To name a class, we use `CamelCase`, while we use `snake_case` when naming a method.
 
-### How do you see if an object has instance variables?
+### How do objects encapsulate state?
 
-To see if an object has instance variables, we can either invoke the `instance_variables` method on it, or inspect the string representation of the object.
+### What is the difference between classes and objects?
+
+### How can we expose information about the state of the object using instance methods?
+
+By defining an instance method that returns certain instance variables.
 
 ## Polymorphism, Inheritance, Modules and Method Lookup Path
 

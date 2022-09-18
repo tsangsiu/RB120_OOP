@@ -430,7 +430,6 @@ puts truck1.start_engine('fast') # => "Ready to go! Drive fast, please!"
 
 When we call the `go_fast` method on an instance of the `Car` class (as shown below), you might have noticed that the string printed includes the name of the type of vehicle we are using. How is this be done?
 
-
 ````ruby
 module Speed
   def go_fast
