@@ -879,3 +879,56 @@ ade # => #<Student:0x00000002a88ef8 @grade=nil, @name="Adewale">     # 10
 On line 9, a new `Student` object is instantiated and is then assigned to the local variable `ade`.
 
 Upon the instantiation, the method `Student#initialize` is invoked with arguments `name` (which points to the string `Adewale`) and `grade` (which points to the default value `nil`). Upon the invocation of `Student#initialize`, the instance variable `@name` is assigned to `Adewale`, and the instance variable `@grade` is never initialized. Therefore the `Student` object referenced by `ade` only has the attribute `@name = "Adewale"`.
+
+## Fake Operators and Equality
+
+### 1
+
+What will the code below return and why?
+
+````ruby
+arr1 = [1, 2, 3]                                 # 1
+arr2 = [1, 2, 3]                                 # 2
+arr1.object_id == arr2.object_id     # => ??     # 3
+                                                 # 4
+sym1 = :something                                # 5
+sym2 = :something                                # 6
+sym1.object_id == sym2.object_id     # => ??     # 7
+                                                 # 8
+int1 = 5                                         # 9
+int2 = 5                                         # 10
+int1.object_id == int2.object_id     # => ??     # 11
+````
+
+On line 3 we are checking if the object IDs of the objects referenced by `arr1` and `arr2` are the same. As `arr1` and `arr2` point to different arrays, line 3 will return `false`.
+
+In Ruby, symbols and integers with the same value are actually the same object, as they are immutable. This is in fact the performance optimization done by Ruby. Therefore, if we compare the object IDs of two symbols or integers having the same value, they will be identical, and thus lines 7 and 11 will return `true`.
+
+### 2
+
+How can you make the code below function? How is this possible?
+
+````ruby
+class Person
+  attr_accessor :name, :age
+
+  def initialize(name, age)
+    @name = name
+    @age = age
+  end
+End
+
+bob = Person.new("Bob", 49)
+kim = Person.new("Kim", 33)
+puts "bob is older than kim" if bob > kim
+````
+
+We can make the above code function by defining the following `>` method in the `Person` class:
+
+````ruby
+def >(other_person)
+  age > other_person.age
+end
+````
+
+It is possible because `>` in Ruby is in fact a method. We can define our own `>` method to tell Ruby how to compare two `Person` objects. In this case, we compare two `Person` objects' ages.
