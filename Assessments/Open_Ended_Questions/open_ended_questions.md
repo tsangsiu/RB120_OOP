@@ -126,3 +126,108 @@ However, the commonly overridden behavior is the `to_s` method. Its invocation r
 When we call the `p` method on an object, Ruby automatically calls the `inspect` method on it and the return value is outputted to the console. Therefore `p obj` is equivalent to `puts p.inspect`.
 
 When we call the `puts` methods on an object, Ruby automatically call the `to_s` method on it and the return value is outputted to the console. Therefore, `puts obj` is equivalent to `puts obj.to_s`.
+
+## Fake Operators and Equality
+
+### What is a fake operator?
+
+### How does equivalence work in Ruby?
+
+### How do you determine if two variables actually point to the same object?
+
+There are two ways to do so in Ruby.
+
+First, we can check if the object IDs of the objects that the two variables point is the same:
+
+````ruby
+arr1 = [1, 2, 3]
+arr2 = arr1
+puts arr1.object_id == arr2.object_id # => true
+````
+
+Second, we can use the `equal?` method:
+
+````ruby
+arr1 = [1, 2, 3]
+arr2 = arr1
+puts arr1.equal? arr2 # => true
+````
+
+### What is `==` in Ruby? How does `==` know what value to use for comparison?
+
+`==` is a method originally defined in the `BasicObject` class. As all classes are subclasses of `BasicObject`, they all inherit the `==` method. The `BasicObject#==` method check if two objects are the same object by comparing their object IDs. In order to let Ruby know what value to use for comparison, we should define our own custom `==` method in our custom class.
+
+In the following example, two `Person` objects are said to be the same if they have the same name:
+
+````ruby
+class Person
+  attr_accessor :name
+
+  def initialize(name)
+    @name = name
+  end
+  
+  def ==(other_person)
+    @name == other_person.name
+  end
+end
+
+person1 = Person.new('Jason')
+person2 = Person.new('Jason')
+puts person1 == person2 # => true
+````
+
+### Is it possible to compare two objects of different classes?
+
+It is possible to compare two objects of different classes. It all depends on how we define the `==` method.
+
+For example, we can compare an integer and a float number:
+
+````ruby
+45 == 45.0 # => true
+45.0 == 45 # => true
+````
+
+### What do you get for free when you define a `==` method?
+
+When we define a `==` method, we get a `!=` method for free.
+
+````ruby
+class Person
+  attr_accessor :name
+
+  def initialize(name)
+    @name = name
+  end
+  
+  def ==(other_person)
+    @name == other_person.name
+  end
+end
+
+person1 = Person.new('Jason')
+person2 = Person.new('Jason')
+puts person1 != person2 # => false
+````
+
+### What is the `===` method?
+
+### What is the `equal?` method?
+
+### What is the `eql?` method?
+
+### What is interesting about the `object_id` method and its relation to symbols and integers?
+
+Unlike strings and many other mutable data types, if two symbols or integers have the same value, they are the same object. We can check this by comparing the object IDs:
+
+````ruby
+sym1 = :symbol
+sym2 = :symbol
+puts sym1.object_id == sym2.object_id # => true
+
+int1 = 8
+int2 = 8
+puts sym1.object_id == sym2.object_id # => true
+````
+
+This is so because symbols and integers are immutable in Ruby, and this is a performance optimisation done by Ruby.
