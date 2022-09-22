@@ -337,7 +337,108 @@ Therefore, before line 16, we should first execute the statement `teddy.enable_s
 
 ### 8
 
+What would the below code return? Why?
+
+````ruby
+class Vehicle                     # 1
+  @@wheels = 4                    # 2
+                                  # 3
+  def self.wheels                 # 4
+    @@wheels                      # 5
+  end                             # 6
+end                               # 7
+                                  # 8
+Vehicle.wheels        # => ??     # 9
+                                  # 10
+class Motorcycle < Vehicle        # 11
+  @@wheels = 2                    # 12
+end                               # 13
+                                  # 14
+Motorcycle.wheels     # => ??     # 15
+Vehicle.wheels        # => ??     # 16
+                                  # 17
+class Car < Vehicle               # 18
+end                               # 19
+                                  # 20
+Car.wheels            # => ??     # 21
+````
+
+On line 9, the class method `wheels` returns the class variable `@@wheels`, which is `4`.
+
+On lines 11 to 13, a subclass of `Vehicle` called `Motorcycle` is defined. Inside the class `Motorcycle`, a class variable `@@wheels` is defined. As a class and all its subclasses share only one copy of the class variable, this overrides the class variable in `Vehicle`. Therefore, lines 15 and 16 both return `2`.
+
+On lines 18 to 19, another subclass of `Vehicle` called `Car` is defined. The `Car` class also shares a copy of the class variable `@@wheels`, which at this point points to `2`. Therefore, line 21 returns `2`.
+
 ### 9
+
+Describe the error and provide two different ways to fix it.
+
+````ruby
+module Maintenance                  # 1
+  def change_tires                  # 2
+    "Changing #{WHEELS} tires."     # 3
+  end                               # 4
+end                                 # 5
+                                    # 6
+class Vehicle                       # 7
+  WHEELS = 4                        # 8
+end                                 # 9
+                                    # 10
+class Car < Vehicle                 # 11
+  include Maintenance               # 12
+end                                 # 13
+                                    # 14
+a_car = Car.new                     # 15
+a_car.change_tires                  # 16
+````
+
+Upon the invocation of `change_tires` on the `Car` object referenced by `a_car`, Ruby tries to resolve the constant reference `WHEELS`. It first searches the constant lexically, i.e., the enclosing structure of the constant reference. The constant is not found, and thus line 16 will throw `NameError`.
+
+Ruby first searches the constant lexically. If the constant is not found, it searches up the inheritance hierarchy from where the constant is referenced. And finally, the main scope.
+
+Therefore, in this case, there is no inheritance hierarchy from where the constant is referenced (line 3) To resolve the issue, we can either define the constant `WHEEL` in the module `Maintenance` or in the main scope:
+
+````ruby
+module Maintenance
+  WHEELS = 4
+
+  def change_tires
+    "Changing #{WHEELS} tires."
+  end
+end
+
+class Vehicle
+  WHEELS = 4
+end
+
+class Car < Vehicle
+  include Maintenance
+end
+
+a_car = Car.new
+a_car.change_tires # => 4
+````
+
+````ruby
+module Maintenance
+  def change_tires
+    "Changing #{WHEELS} tires."
+  end
+end
+
+class Vehicle
+  WHEELS = 4
+end
+
+class Car < Vehicle
+  include Maintenance
+end
+
+WHEELS = 4
+
+a_car = Car.new
+a_car.change_tires # => 4
+````
 
 ### 10
 
@@ -916,7 +1017,7 @@ class Person
     @name = name
     @age = age
   end
-End
+end
 
 bob = Person.new("Bob", 49)
 kim = Person.new("Kim", 33)
