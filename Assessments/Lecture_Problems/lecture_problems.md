@@ -1033,3 +1033,62 @@ end
 ````
 
 It is possible because `>` in Ruby is in fact a method. We can define our own `>` method to tell Ruby how to compare two `Person` objects. In this case, we compare two `Person` objects' ages.
+
+### 3
+
+What happens here, and why?
+
+````ruby
+my_hash = {a: 1, b: 2, c: 3}     # 1
+my_hash << {d: 4}                # 2
+````
+
+The above code attempts to add a key-value pair to the hash referenced by `my_hash` using the method `<<`. However, as the `<<` method is not defined in the `Hash` class, line 2 throws `NoMethodError`.
+
+### 4
+
+````ruby
+class Team
+  attr_accessor :name, :members
+
+  def initialize(name)
+    @name = name
+    @members = []
+  end
+
+  def <<(person)
+    members.push person
+  end
+
+  def +(other_team)
+    members + other_team.members
+  end
+end
+````
+
+We use the same `Person` class from earlier.
+
+````ruby
+cowboys = Team.new("Dallas Cowboys")
+cowboys << Person.new("Troy Aikman", 48)
+
+niners = Team.new("San Francisco 49ers")
+niners << Person.new("Joe Montana", 59)
+dream_team = cowboys + niners
+````
+
+What does the `Team#+` method return? What is the problem with this? How could you fix this problem?
+
+The `Team#+` method returns a new `Array` object.
+
+There is a consistency problem with this here. For the Ruby standard library, `String#+` returns a new `String` object, `Array#+` returns a new `Array` object, and `Integer#+` returns a new `Integer` object. Following the pattern, we would expect that `Team#+` would retrurn a new `Team` object.
+
+To fix the problem, we could redefine the `Team#+` method like this:
+
+````ruby
+def +(other_team)
+  temp_team = Team.new('Temporary Team')
+  temp_team.members = members + other_team.members
+  temp_team
+end
+````
