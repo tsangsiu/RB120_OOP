@@ -131,6 +131,10 @@ When we call the `puts` methods on an object, Ruby automatically call the `to_s`
 
 ### What is a fake operator?
 
+A fake operator in Ruby is actually a method. It looks like an operator because of Ruby's syntactical sugar.
+
+For example, considering the code snippet `1 + 1 == 2`, the `==` is actually a method in Ruby. Therefore `1 + 1 == 2` is equivalent to `(1 + 1).==(2)`. We can write `1 + 1 == 2` because of Ruby's syntactical sugar. It makes the code more natural to read.
+
 ### How does equivalence work in Ruby?
 
 ### How do you determine if two variables actually point to the same object?
@@ -231,3 +235,34 @@ puts sym1.object_id == sym2.object_id # => true
 ````
 
 This is so because symbols and integers are immutable in Ruby, and this is a performance optimisation done by Ruby.
+
+### When do shift method makes the most sense?
+
+The shift method make the most sense when working with collections like strings and arrays:
+
+````ruby
+# to add a character to a string
+'hello' << '!' # => 'hello!'
+
+# to add an element to an array
+[1, 2, 3, 4] << 5 # => [1, 2, 3, 4, 5]
+````
+
+### Explain how the element reference getter and element assignment setter methods work, and their corresponding syntactical sugar.
+
+Take an array, which is a kind of collection, as an example. To get and set its element, we can use the methods `Array#[]` and `Array#[]=` respectively.
+
+Let's say we have an array `arr = ['a', 'b', 'c', 'b', 'e']`. To get the second element, we can invoke the `Array#[]` method on `arr` like `arr.[](1)` which returns `'b'`. To set the fourth element (`'b'`) to `'d'`, we can invoke the `Array#[]=` method on `arr` like `arr.[]=(3, 'd')` which mutates `arr` to `['a', 'b', 'c', 'd', 'e']`.
+
+Thanks to Ruby's syntactical sugar, the above code can be more naturally written as:
+
+````ruby
+arr = ['a', 'b', 'c', 'b', 'e']
+
+# element reference getter
+arr[1] # => 'b'
+
+# element assignment setter
+arr[3] = 'd'
+arr # => ['a', 'b', 'c', 'd', 'e']
+````
