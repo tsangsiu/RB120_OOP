@@ -63,6 +63,57 @@ end
 
 ## `attr_*`, Getters and Setters, and Referencing and Setting Instance Variables
 
+### What is a getter method?
+
+A getter method is a method that returns the value referenced by an object's instance variable. The value could be modified by the getter method.
+
+By default, an object's attributes are not accessible outside of it thanks to encapsulation. If we want to access them, we need to define a getter method.
+
+Take the following code as an example, a `Person` object with an attribute `@name = 'Jason'` is instantiated. However, we cannot access the attribute unless a getter is defined.
+
+````ruby
+class Person
+  def initialize(n)
+    @name = n
+  end
+end
+
+jason = Person.new('Jason')
+p @name # => nil
+````
+
+When we have a getter method of the attribute `@name`, the attribute can then be accessed outside the object. In the following example, the getter method is provided by the method `attr_reader` on line 2:
+
+````ruby
+class Person                    # 1
+  attr_reader :name             # 2
+                                # 3
+  def initialize(n)             # 4
+    @name = n                   # 5
+  end                           # 6
+end                             # 7
+                                # 8
+jason = Person.new('Jason')     # 9
+p jason.name # => "Jason"       # 10
+````
+
+We can also define our own getter, in which we can modify the value reference by the instance variable. In practice, the name of the getter is usually the same as that of the instance variable:
+
+````ruby
+class Person
+  def initialize(n)
+    @name = n
+  end
+  
+  def name
+    @name.capitalize
+  end
+end
+
+jason = Person.new('jason')
+p jason.name # => "Jason"
+````
+
 ## Instance/Class Methods, `self` and `to_s`
 
 ### When would you call a method with `self`?

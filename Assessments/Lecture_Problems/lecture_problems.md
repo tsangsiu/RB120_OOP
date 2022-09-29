@@ -203,6 +203,8 @@ sir_gallant.name # => "Sir Gallant"                   # 20
 sir_gallant.speak # => "Sir Gallant is speaking."     # 21
 ````
 
+**First Attempt**
+
 The output by line 21 is unexpected.
 
 In order to get the expected output, we should change line 9 to `"#{name} is speaking".`.
@@ -212,6 +214,12 @@ On line 19, a new `Knight` object with an attribute `@name = "Gallant"` is insta
 On line 21, the `speak` method is called on the `Knight` object that `sir_gallant` references. As there is no `speak` method defined in the `Knight` class, Ruby looks for the method in the next class up in the hierarchy, which is `Character`. Ruby finds `Character#speak` and invokes it.
 
 Upon the invocation of `Character#speak`, it returns the string `"Gallant is speaking."`. Instead of the string referenced by `@name` (`"Gallant"`), we want the return value of `Knight#name` (`"Sir Gallant"`), so we should change `@name` to `name` on line 9.
+
+**Second Attempt**
+
+On line 19, a new `Knight` object is instantiated with an argument `"Gallant"`. As `Knight` is a subclass of `Character` and the `Knight` class does not have the `initialize` method defined, `Character#initialize` is invoked upon instantiation, which then gives us a `Knight` object with an attribute `@name = "Gallant"`. The object is then assigned to the local variable `sir_gallant`.
+
+When the `speak` method is invoked on `sir_gallant` on line 21, the `Character#speak` method is invoked and returns `"Gallant is speaking"`. However, we want `"Sir Gallant is speaking"`. To get the expected output, we can simply replace the instance variable reference `@name` on line 9 to `name`, where `name` here refers to the `Knight#name` method, which overrides `Character#name` and returns `Sir Gallant`.
 
 ### 4
 
