@@ -116,6 +116,75 @@ p jason.name # => "Jason"
 
 ## Instance/Class Methods, `self` and `to_s`
 
+### Explain what `self` is and how it’s used.
+
+In Ruby, `self` is a reserved keyword that acts as a variable. Depending on where it is referenced in code, `self` can mean different things.
+
+Inside an instance method, `self` references the object that calls the method, as demonstrated by the following example:
+
+````ruby
+class Person
+  def initialize(n)
+    @name = n
+  end
+  
+  def what_is_self
+    self
+  end
+end
+
+jason = Person.new('Jason')
+p jason.what_is_self # => #<Person:0x0000000000f2f760 @name="Jason">
+````
+
+Similarly, inside a class method, `self` references the class itself. Referring to the code snippet below, the `self` on line 3 inside the class method `Person::what_is_self` refers to the `Person` class, as illustrated on line 7.
+
+````ruby
+class Person                          # 1
+  def self.what_is_self               # 2
+    self                              # 3
+  end                                 # 4
+end                                   # 5
+                                      # 6
+p Person.what_is_self # => Person     # 7
+````
+
+Elsewhere outside an instance or a class method, `self` references the enclosing structure. Referring back to the code snippet above, the `self` on line 2 references the enclosing structure, which is the `Person` class.
+
+Let's look at one more example below. The `self` on line 2 is enclosed by the module `Swimmable`. Therefore, it references the `Swimmable` module.
+
+````ruby
+module Swimmable          # 1
+  def self.swimmable?     # 2
+    true                  # 3
+  end                     # 4
+end                       # 5
+````
+
+There are two scenarios when we have to use `self` as an explicit caller:
+
+The first is when we call a setter inside an instance method as in line 5. If we omit the `self`, Ruby will take regard it as a local variable initialization.
+
+````ruby
+class Person            # 1
+  attr_writer :name     # 2
+                        # 3
+  def initialize(n)     # 4
+    self.name = n       # 5
+  end                   # 6
+end                     # 7
+````
+
+The second is when we define a class method. If we omit the `self`, an instance method is defined instead. In the following example, a class method called `species` is defined in the `Person` class.
+
+````ruby
+class Person
+  def self.species
+    "Homo sapiens"
+  end
+end
+````
+
 ### When would you call a method with `self`?
 
 Inside an instance method, when we want to call a setter, we would call it with `self` so as to disambiguate that from local variable initialization.

@@ -661,6 +661,55 @@ def change_info(n, h, w)
 end
 ````
 
+### 1 Rephrased
+
+````ruby
+class GoodDog
+  attr_accessor :name, :height, :weight                    # 2
+
+  def initialize(n, h, w)
+    @name = n
+    @height = h
+    @weight = w
+  end
+
+  def speak
+    "#{name} says arf!"
+  end
+
+  def change_info(n, h, w)
+    name = n
+    height = h
+    weight = w
+  end
+
+  def info
+    "#{name} weighs #{weight} and is #{height} tall."
+  end
+end
+
+sparky = GoodDog.new ('Sparky', '12 inches', '10 lbs')     # 25
+sparky.change_info('Spartacus', '24 inches', '45 lbs')     # 26
+puts sparky.info                                           # 27
+# => Sparky weighs 10 lbs and is 12 inches tall.
+````
+
+On line 25, a new `GoodDog` object with attributes `@name = 'Sparky'`, `@height = '12 inches'` and `@height = '10 lbs'` is instantiated and assigned to the local variable `sparky`.
+
+On line 26, it attempts to alter the attributes by invoking the instance method `change_info`. However, as illustrated on line 27, the attributes remain unchanged.
+
+The issue comes to the instance method `change_info`. It attempts to change the attributes by calling their respective setters provided by the method `attr_accessor` on line 2. However, without the `self.`, Ruby will regard it as local variable initialisation. Therefore, `change_info` should be defined as follows:
+
+````ruby
+def change_info(n, h, w)
+  self.name = n
+  self.height = h
+  self.weight = w
+end
+````
+
+This demonstrates that when we invoke a setter inside an setter method, we have to use the explicit caller `self`.
+
 ### 2
 
 What code snippet can replace the "omitted code" comment to produce the indicated result?
