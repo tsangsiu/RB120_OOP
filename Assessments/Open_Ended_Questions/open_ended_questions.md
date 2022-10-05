@@ -6,9 +6,32 @@
 
 ### What is encapsulation? How does encapsulation relate to the public interface of a class?
 
-Encapsulation is to restrict access to certain instance methods, and only expose functionalities that users of the object need.
+Encapsulation means restricting access to an object's data (attributes and behaviors), and exposing only behaviors that users of the object need.
 
-Instance methods are encapsulated in an object by making them private. Instance methods that are public are what we called the public interfaces of a class. They are the channels through which users interact with the objects.
+One of the advantages of encapsulation is that it allows the hiding of complex implementation, and thus allows programmer to think at a new level of abstraction.
+
+Let's say we are building a game involving a player and an enemy, and the enemy has the ability to speak. Refer to the class definition of `Enemy` below, we have a public method `speak` defined. This is a public interface of the `Enemy` class. Everytime when a programmer wants the enemy to speak, he or she can simply invoke the `Enemy#speak` method, and the message `"I'm an ememy. You better run!"` is outputted to the console. 
+
+Here, we hide the way how the message is produced by making the `message` method private. In OOP terminology, the `message` method is *encapsulated* in an `Enemy` object. This allows programmers to think on a new level of abstraction. It is because what they care is that a message is outputted to the console when the `Enemy#speak` method is invoked. They do not care how the message is produced or outputted to the console. Here, the implementation of `message` could be `"I'm an enemy." + " " + "You better run!"`, but this is not what programmers concern.
+
+````ruby
+class Enemy
+  def speak
+    puts message
+  end
+  
+  private
+  
+  def message
+    "I'm an enemy. You better run!"
+  end
+end
+
+enemy = Enemy.new
+enemy.speak # => I'm an enemy. You better run!
+````
+
+Encapsulation allows programmers to expose methods that users of an object need by making those methods public. Those public methods are the public interfaces of the object. It also allows programmers to hide the implementation details by making the implementation-related methods private.
 
 ### What is an object? How do you initialize a new object/How do you create an instance of a class? What is instantiation? What is a constructor method? What is an instance variable, and how is it related to an object? What is an instance method? What is the scoping rule for instance variables?
 
@@ -51,6 +74,93 @@ By defining an instance method that returns certain instance variables.
 
 ## Polymorphism, Inheritance, Modules and Method Lookup Path
 
+### What is polymorphism? How does polymorphism work in relation to public interfaces?
+
+Polymorphism refers to the ability that objects of different types respond to the same method invocation.
+
+In the example below, we define four classes `Human`, `Dog`, `Fish` and `Car`. All classes have the `move` method defined but the implementation is different in each class.
+
+We then create an array containing objects of each class, iterate through it, and invoke the `move` method on each object. In this case, we don't care the type of the objects on which we invoke the `move` method, as long as that object has a compatible `move` method (i.e., a `move` method that takes no argument). Upon the invocation of the `move` method on each object, it prints a message to the console based on the type of the calling object.
+
+This is polymorphism in action. Objects of different types respond to a common method invocation, but in different ways.
+
+````ruby
+class Human
+  def move
+    puts "#{self.class} is walking..."
+  end
+end
+
+class Dog
+  def move
+    puts "#{self.class} is running..."
+  end
+end
+
+class Fish
+  def move
+    puts "#{self.class} is swimming..."
+  end
+end
+
+class Car
+  def move
+    puts "#{self.class} is moving..."
+  end
+end
+
+my_array = [Human.new, Dog.new, Fish.new, Car.new]
+my_array.each do |obj|
+  obj.move
+end
+# => Human is walking...
+# => Dog is running...
+# => Fish is swimming...
+# => Car is moving...
+````
+
+For polymorphism to work in the above example, each object type must have a public and compatible `move` method (i.e., a public `move` method that takes no arguments). If any of the object type does not have a public and compatible `move` method, it cannot respond to the `move` method invocation, and thus polymorphism will not work. This is how polymorphism works in relation to public interfaces.
+
+Let's say a `Human` object does not have a public `move` method. It raises `NoMethodError` when the `move` method is invoked on a `Human` object, i.e., a `Human` object does not respond to the method invocation of `move`, and thus polymorphism does not work:
+
+````ruby
+class Human
+  private
+
+  def move
+    puts "#{self.class} is walking..."
+  end
+end
+
+# other classes omitted for brevity
+
+my_array = [Human.new, Dog.new, Fish.new, Car.new]
+my_array.each do |obj|
+  obj.move
+end
+# => NoMethodError
+````
+
+Or if a `Human` object does not have a compatible `move` method. It raises `ArgumentError` when the `move` method is invoked on a `Human` object, and thus polymorphism does not work either:
+
+````ruby
+class Human
+  def move(name)
+    puts "#{name} is walking..."
+  end
+end
+
+# other class omitted for brevity
+
+my_array = [Human.new, Dog.new, Fish.new, Car.new]
+my_array.each do |obj|
+  obj.move
+end
+# => ArgumentError
+````
+
+### Explain two different ways to implement polymorphism.
+
 ### Why should methods in mixin modules be defined without using `self.` in the definition?
 
 Refer to the code below, if a method in a mixin module is defined with `self.` in the definition, it becomes a module method and can only be called by `Swimmable.swim` or `Swimmable::swim`. Furthermore, the method is not available to all instances of the class where the module is mixed in.
@@ -65,7 +175,7 @@ end
 
 ### What is a getter method?
 
-A getter method is a method that returns the value referenced by an object's instance variable. The value could be modified by the getter method.
+A getter method is a method that returns the value referenced by an object's instance variable. The value outputted could be modified by the getter method.
 
 By default, an object's attributes are not accessible outside of it thanks to encapsulation. If we want to access them, we need to define a getter method.
 
@@ -97,7 +207,7 @@ jason = Person.new('Jason')     # 9
 p jason.name # => "Jason"       # 10
 ````
 
-We can also define our own getter, in which we can modify the value reference by the instance variable. In practice, the name of the getter is usually the same as that of the instance variable:
+We can also define our own getter, in which we can modify the value reference by the instance variable when outputted. In practice, the name of the getter is usually the same as that of the instance variable:
 
 ````ruby
 class Person
@@ -112,6 +222,81 @@ end
 
 jason = Person.new('jason')
 p jason.name # => "Jason"
+````
+
+### What is a setter method?
+
+A setter method is a method that allows us to manipulate the value referenced by an object's instance variable.
+
+Thanks to encapsulation, the value referenced by an object's instance variable is not accessible and thus cannot be manipulated outside of the object. If we want to modify it outside of the object, we need a setter method.
+
+The easiest way to get a setter method is by the method invocation of `attr_accessor` or `attr_writer`. The `attr_accessor` method provides us with the getter and setter, while the `attr_writer` method only provides us with the setter method.
+
+In the example below, a `Person` object with an attribute `@name = 'Jayson'` is instantiated. Later when we need to amend the name, we can invoke the setter `Person#name=` provided by the `attr_writer` method on line 2. Thanks to Ruby's syntactical sugar, we can use a more natural syntax `jason.name = 'Jason'` instead of `jason.name=('Jason')`.
+
+````ruby
+class Person                                                 # 1
+  attr_writer :name                                          # 2
+                                                             # 3
+  def initialize(name)                                       # 4
+    @name = name                                             # 5
+  end                                                        # 6
+end                                                          # 7
+                                                             # 8
+jason = Person.new('Jayson')                                 # 9
+p jason # => #<Person:0x00000000014cdac8 @name="Jayson">     # 10
+                                                             # 11
+jason.name = 'Jason'                                         # 12
+p jason # => #<Person:0x00000000014cdac8 @name="Jason">      # 13
+````
+
+We can also write our own setter method. An advantage is that we can validate or manipulate the value passed in as an argument before assigning to the instance variable.
+
+In the example below, we have our custom setter for the attribute `name` defined. If the argument given is not a string, it won't be assigned to `@name`. If the argument given is a string, it will capitalize the string before assigning to `@name`. This illustrates how a custom setter can validate or manipulate the argument before assigning it to an instance variable.
+
+````ruby
+class Person                                                 # 1
+  def initialize(name)                                       # 2
+    @name = name                                             # 3
+  end                                                        # 4
+                                                             # 5
+  def name=(n)                                               # 6
+    @name = n.capitalize if n.class == String                # 7
+  end                                                        # 8
+end                                                          # 9
+                                                             # 10
+jason = Person.new('Jayson')                                 # 11
+p jason # => #<Person:0x000000000159b810 @name="Jayson">     # 12
+                                                             # 13
+jason.name = 12345                                           # 14
+p jason # => #<Person:0x000000000159b810 @name="Jayson">     # 15
+                                                             # 16
+jason.name = 'jason'                                         # 17
+p jason # => #<Person:0x000000000159b810 @name="Jason">      # 18
+````
+
+There is one gotcha for setter methods. Setter methods always return the value passed in as an argument. Therefore, on line 14 in the above example, even though `12345` is not assigned to `@name`, line 14 still returns `12345` instead of `nil`:
+
+````ruby
+p (jason.name = 12345) # => 12345
+````
+
+Setters always return the value passed in as an argument even when the last evaluated expression is a completely irrelevant string:
+
+````ruby
+class Person
+  def initialize(name)
+    @name = name
+  end
+  
+  def name=(n)
+    @name = n
+    "This string will not be returned."
+  end
+end
+
+jason = Person.new('Jayson')
+p (jason.name = 'Jason') # => "Jason"
 ````
 
 ## Instance/Class Methods, `self` and `to_s`
@@ -188,6 +373,36 @@ end
 ### When would you call a method with `self`?
 
 Inside an instance method, when we want to call a setter, we would call it with `self` so as to disambiguate that from local variable initialization.
+
+### Why private methods cannot have a caller?
+
+Private methods are methods that can only be invoked from within the class itself, they cannot be called outside of it. Therefore, for private methods, its caller is always the calling object itself, i.e., they are implicitly called on `self`. That's why we don't need to explicitly state a caller.
+
+There is one exception for this. When we call a setter method from within an instance method, we need to explicitly state the caller `self` so as to disambiguate it from local variable initialization. As illustrated in the code snippet below, the setter for the attribute `name` is private. When we call the private setter method `name=` from within the method `change_name`, we need to explicitly state the caller `self`. Otherwise, Ruby will regard it as local variable initialization.
+
+````ruby
+class Person
+  def initialize(name)
+    @name = name
+  end
+  
+  def change_name(name)
+    self.name = name.capitalize
+  end
+  
+  private
+  
+  attr_writer :name
+end
+
+jason = Person.new('Jayson')
+p jason # => #<Person:0x00000000027af420 @name="Jayson">
+
+jason.change_name('jason')
+p jason # => #<Person:0x00000000027af420 @name="Jason">
+````
+
+From Ruby 2.7 onwards, private methods can explicitly be called on `self`.
 
 ### What are class methods?
 
