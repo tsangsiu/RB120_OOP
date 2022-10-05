@@ -702,6 +702,8 @@ end
 
 ### 1 Rephrased
 
+What occurs on lines 25-27 and what does this demonstrate?
+
 ````ruby
 class GoodDog
   attr_accessor :name, :height, :weight                    # 2
@@ -1142,8 +1144,6 @@ my_hash << {d: 4}                # 2
 The above code attempts to add a key-value pair to the hash referenced by `my_hash` using the method `<<`. However, as the `<<` method is not defined in the `Hash` class, line 2 throws `NoMethodError`.
 
 ### 4
-
-What does the `Team#+` method currently return? What is the problem with this? How could you fix this problem?
 
 ````ruby
 class Team
