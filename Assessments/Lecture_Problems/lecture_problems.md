@@ -175,6 +175,45 @@ Upon the invocation of `Cow#sound`, the statement `super + "moooooooooooo!"` is 
 
 ### 2
 
+The below code would work, but it's problematic. What is wrong with this code, and how can you fix it?
+
+````ruby
+class Wedding
+  attr_reader :guests, :flowers, :songs
+
+  def prepare(preparers)
+    preparers.each do |preparer|
+      case preparer
+      when Chef
+        preparer.prepare_food(guests)
+      when Decorator
+        preparer.decorate_place(flowers)
+      when Musician
+        preparer.prepare_performance(songs)
+      end
+    end
+  end
+end
+
+class Chef
+  def prepare_food(guests)
+    # implementation
+  end
+end
+
+class Decorator
+  def decorate_place(flowers)
+    # implementation
+  end
+end
+
+class Musician
+  def prepare_performance(songs)
+    # implementation
+  end
+end
+````
+
 ### 3
 
 What change(s) do you need to make to the code below in order to get the expected output?
@@ -500,7 +539,7 @@ puts truck1.bed_type
 
 ### 11
 
-Given the following code, modify `start_engine` in `Truck` by appending `'Drive fast, please!'` to the return value of `start_engine` in Vehicle. The `'fast'` in `'Drive fast, please!'`` should be the value of `speed`.
+Given the following code, modify `start_engine` in `Truck` by appending `'Drive fast, please!'` to the return value of `start_engine` in Vehicle. The `'fast'` in `'Drive fast, please!'` should be the value of `speed`.
 
 ````ruby
 class Vehicle
@@ -1103,6 +1142,8 @@ my_hash << {d: 4}                # 2
 The above code attempts to add a key-value pair to the hash referenced by `my_hash` using the method `<<`. However, as the `<<` method is not defined in the `Hash` class, line 2 throws `NoMethodError`.
 
 ### 4
+
+What does the `Team#+` method currently return? What is the problem with this? How could you fix this problem?
 
 ````ruby
 class Team
