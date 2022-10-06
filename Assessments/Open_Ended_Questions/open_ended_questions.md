@@ -72,6 +72,62 @@ Defining a class is similar to defining a method, with the following difference:
 
 By defining an instance method that returns certain instance variables.
 
+### What are the two rules of protected methods?
+
+Like private methods, protected methods can only be invoked inside a class. But unlike private methods, they can be invoked on objects of the same kind inside the class.
+
+Take the following code as an example, the getter of the attribute `age` is a protected method. Therefore, when we call it on the `Person` object referenced by `jason` on line 13, it raises `NoMethodError`. The `Person#age` is a protected method and thus it cannot be called outside of the `Person` class like private methods. 
+
+````ruby
+class Person                        # 1
+  def initialize(name, age)         # 2
+    @name = name                    # 3
+    @age = age                      # 4
+  end                               # 5
+                                    # 6
+  protected                         # 7
+                                    # 8
+  attr_reader :age                  # 9
+end                                 # 10
+                                    # 11
+jason = Person.new('Jason', 30)     # 12
+p jason.age # => NoMethodError      # 13
+````
+
+Let's add a method called `same_age?` to the `Person` class to check if two persons have the same age.
+
+````ruby
+class Person                                 # 1
+  def initialize(name, age)                  # 2
+    @name = name                             # 3
+    @age = age                               # 4
+  end                                        # 5
+                                             # 6
+  def same_age?(other_person)                # 7
+    age == other_person.age                  # 8
+  end                                        # 9
+                                             # 10
+  protected                                  # 11
+                                             # 12
+  attr_reader :age                           # 13
+end                                          # 14
+                                             # 15
+jason = Person.new('Jason', 30)              # 16
+jack = Person.new('Jack', 30)                # 17
+                                             # 18
+p jason.same_age?(jack) # => true            # 19
+                                             # 20
+p jason.same_age?(30) # => NoMethodError     # 21
+````
+
+On lines 16 and 17, we instantiate two different `Person` objects. On line 19, the `same_age?` method is invoked on `jason` with the `Person` object referenced by `jack` passed in as an argument. As both `Person` objects have the same age `30`, line 19 returns `true`.
+
+Why is that? Let's consider the implementation of `same_age?`. The `same_age?` method checks if the age of the caller (age given by the value returned by the getter method `age`) is the same as that of the `Person` object passed in to the `same_age?` method (age given by the value returned by `other_person.age`). Here, we assumed that the argument `other_person` passed in to the `same_age?` method would be a `Person` object. Therefore, it is legal to call the protected getter method `age` on the argument `other_person`. As the age of both `Person` objects is the same, line 19 returns `true`.
+
+If the argument passed in to the `same_age?` method is not a `Person` object like on line 21, it will raise `NoMethodError`. It is because the protected method `age` can only be called on objects of the same kind (a `Person` object) inside the `same_age?` method.
+
+This illustrates that, unlike private methods, protected methods can be invoked on objects of the same kind inside a class.
+
 ## Polymorphism, Inheritance, Modules and Method Lookup Path
 
 ### What is polymorphism? How does polymorphism work in relation to public interfaces?
