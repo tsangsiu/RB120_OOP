@@ -214,6 +214,68 @@ class Musician
 end
 ````
 
+The problem with the above code is that the `Wedding#prepare` method has too many dependencies.
+
+Every time when there is a new preparer in the wedding, the `Wedding#prepare` method needs to be refactored: a new `when` clause needs to be added for that preparer. The `Wedding#prepare` needs to know the class name of the new preparer, the method name that is responsible for the preparation, and if that method takes any arguement. Also, the `Wedding#prepare` needs to know which 'prepare' method to call for each class. The `Wedding#prepare` method will be very long if there are many kinds of preparers in the wedding.
+
+To refactor the code, we can apply the concept of polymorphism:
+
+````ruby
+class Wedding
+  attr_reader :guests, :flowers, :songs
+
+  def prepare(preparers)
+    preparers.each do |preparer|
+      preparer.prepare_wedding(self)
+    end
+  end
+end
+
+class Chef
+  def prepare_wedding(wedding)
+    prepare_food(wedding.guests)  
+  end
+
+  def prepare_food(guests)
+    # implementation
+  end
+end
+
+class Decorator
+  def prepare_wedding(wedding)
+    decorate_place(wedding.flowers)  
+  end
+
+  def decorate_place(flowers)
+    # implementation
+  end
+end
+
+class Musician
+  def prepare_wedding(wedding)
+    prepare_performance(wedding.songs)  
+  end
+
+  def prepare_performance(songs)
+    # implementation
+  end
+end
+````
+
+Let's say we have another preparer cleaner in the wedding, all we need to do is to just create a `Cleaner` class with a `Cleaner#prepare_wedding` method defined:
+
+````ruby
+class Cleaner
+  def prepare_wedding(wedding)
+    clean_place
+  end
+  
+  def clean_place
+    # implementation
+  end
+end
+````
+
 ### 3
 
 What change(s) do you need to make to the code below in order to get the expected output?
