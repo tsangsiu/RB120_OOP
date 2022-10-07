@@ -72,6 +72,60 @@ Defining a class is similar to defining a method, with the following difference:
 
 By defining an instance method that returns certain instance variables.
 
+### What is a collaborator object and what is its purpose with regards to OOP?
+
+A collaborator object is an object that is stored as a state of another object. A collaborator object is usually a custom object, although objects of built-in types such as strings and arrays are technically collaborator objects.
+
+By creating collaborator objects, objects of different types can work together and build association. In other way, a problem can be broken down into cohesive pieces that work together.
+
+For example, in a library, there is a collection of books. We can consider `Book` objects to be collaborator objects to a `Library` object. It is because `Book` and `Library` are separate objects, and they work meaningfully in a collaborative way. When we need a `Book` object to perform some actions, we can go through a `Library` object and invoke the concerned method on the instance variable which stores the `Book` object or on each `Book` object in a collection.
+
+````ruby
+class Library
+  attr_accessor :books
+  
+  def initialize
+    @books = []
+  end
+  
+  def <<(book)
+    books << book
+  end
+  
+  def display_collection
+    books.each { |book| puts book }
+  end
+end
+
+class Book
+  attr_reader :title, :author
+
+  def initialize(title, author)
+    @title = title
+    @author = author
+  end
+  
+  def to_s
+    "#{title} by #{author}"
+  end
+end
+
+library = Library.new
+
+atomic_habits = Book.new('Atomic Habits', 'James Clear')
+rich_dad_poor_dad = Book.new('Rich Dad Poor Dad', 'Robert Kiyosaki')
+harry_potter = Book.new('Harry Potter', 'J.K. Rowling')
+
+library << atomic_habits
+library << rich_dad_poor_dad
+library << harry_potter
+
+library.books.each { |book| puts book }
+# => Atomic Habits by James Clear
+# => Rich Dad Poor Dad by Robert Kiyosaki
+# => Harry Potter by J.K. Rowling
+````
+
 ### What are the two rules of protected methods?
 
 Like private methods, protected methods can only be invoked inside a class. But unlike private methods, they can be invoked on objects of the same kind inside the class.
@@ -124,7 +178,7 @@ On lines 16 and 17, we instantiate two different `Person` objects. On line 19, t
 
 Why is that? Let's consider the implementation of `same_age?`. The `same_age?` method checks if the age of the caller (age given by the value returned by the getter method `age`) is the same as that of the `Person` object passed in to the `same_age?` method (age given by the value returned by `other_person.age`). Here, we assumed that the argument `other_person` passed in to the `same_age?` method would be a `Person` object. Therefore, it is legal to call the protected getter method `age` on the argument `other_person`. As the age of both `Person` objects is the same, line 19 returns `true`.
 
-If the argument passed in to the `same_age?` method is not a `Person` object like on line 21, it will raise `NoMethodError`. It is because the protected method `age` can only be called on objects of the same kind (a `Person` object) inside the `same_age?` method.
+If the argument passed in to the `same_age?` method is not a `Person` object like on line 21 (and that object does not have a public or protected `age` method), it will raise `NoMethodError`. It is because the protected method `age` can only be called on objects of the same kind (a `Person` object) inside the `same_age?` method.
 
 This illustrates that, unlike private methods, protected methods can be invoked on objects of the same kind inside a class.
 
