@@ -88,6 +88,8 @@ p Square.new.sides                                      # 26
 p Square.new.describe_shape                             # 27
 ````
 
+### Attempt 1
+
 The above code outputs the following to the console:
 
 ````text
@@ -103,6 +105,14 @@ Consider the constant reference `SIDES` on line 3, there is no constant definiti
 Consider the method calls on lines 25 and 26, both instruct Ruby to look for the constant in the `Square` class. As `Square` is a subclass of `Quadrilateral` where the constant `SIDES` is defined. Both lines 25 and 26 output `4` to the console.
 
 On lines 3 and 15, both `self` refer to the calling object of the method. While on 11, the `self` refers to the class.
+
+### Attempt 2
+
+on line 25, the class method `sides` is called on the `Square` class. As the `::sides` method is not defined in the `Square` class, Ruby looks for it up in the method lookup path and invokes `::sides` in the `Shape` class. Upon the invocation of `::sides`, it returns `self::SIDES`. As the `self` here is inside a class method, it refers to the calling class which calls the `::sides` method, which is `Square`. To resolve the constant `Square::SIDES`, Ruby first search for it in the lexical scope (in the `Square` class). As there is no `SIDES` constant defined in `Square` class, Ruby then looks for it up in the method lookup path and finds it in the `Quadrilateral` class. Therefore `self::SIDES` is resolved to `4`, which is then outputted to the console.
+
+On line 26, the instance method `sides` is called on a `Square` object. As the `#sides` method is not defined in the `Square` class, Ruby looks for it up in the method lookup path and invokes `#sides` in the `Shape` class. Upon the invocation of `#sides`, it returns `self.class::SIDES`. As the `self` here is inside an instance method, it refers to the calling object which calls the `#sides` method, and thus `self.class` returns the class of the calling object, which is `Square`. By the same token as above, `Square::SIDES` is resolved to `4`, which is then outputted to the console.
+
+On line 27, the instance method `describe_shape` is called on a `Square` object. As the `describe_shape` method is not defined in the `Square` class, Ruby looks for it up in the method lookup path and invokes the `describe_shape` method in the `Describable` module, which is mixed in the `Shape` class via mixin. Upon the invocation of `describe_shape`, it returns `"I am a #{self.class} and have #{SIDES} sides."`. As the `self` here is inside an instance method, it refers to the calling object which calls the `describe_shape` method. Therefore `self.class` resolves to `Square`. To resolve the constant `SIDES`, Ruby first looks for it in the lexical scope of where it is referenced (in the `Describable` module). As the constant is not defined in the `Describable` module, Ruby then looks for it up in the method lookup path of the `Describable` module and then finally in the main scope. As Ruby still cannot find the constant, it raises `NameError`, and thus line 27 raises `NameError`. 
 
 ## 4
 
@@ -149,6 +159,8 @@ some_animal_classes = mammals + birds     # 36
 p some_animal_classes                     # 38
 ````
 
+### Attempt 1
+
 The line 38 will outputs an array of `Animal` objects of size 6. The `Animal` objects have the `@name` attributes: `'Human'`, `'Dog'`, `'Cat'`, `'Eagle'`, `'Blue Jay'` and `'Penguin'` (in the same order).
 
 That is not what we would expect when using `AnimalClass#+`. It is because when we use the `+` method, we would expect it to return an object of the same type as the calling object and the argument, just like the built-in Ruby set-up. In the above code, the calling object (the object that `mammals` refers to) and the object that `birds` refers to are both `AnimalClass` objects, but the `AnimalClass#+` method returns an `Array` object.
@@ -160,6 +172,22 @@ def +(other_class)
   result_obj = AnimalClass.new('Result')
   result_obj.animals = self.animals + other_class.animals
   result_obj
+end
+````
+
+### Attempt 2
+
+The line 38 outputs an array of `Animal` objects to the console.
+
+Considering the return value of the `#+` method in other classes, `1 + 1` returns `2`, `"Hello" + " " + "World!"` returns `"Hello World!`, and `[1, 2, 3] + [4, 5]` returns `[1, 2, 3, 4, 5]`. We notice that the `+` method returns an object of the same type as the calling object and the arguments. So, we would expect the `AnimalClass#+` method return an `AnimalClass` object. However, the `+` method in the above code returns an object of a different type.
+
+In order to be more in line with what we'd expect the method to return, we could modify the `AnimalClass#+` method as follows:
+
+````ruby
+def +(other_class)
+  return_obj = AnimalClass.new('New Animal Class')
+  return_obj.animals = animals + other_class.animals
+  return_obj
 end
 ````
 
@@ -270,6 +298,8 @@ p Motorcycle.wheels            # 21
 p Car.wheels                   # 22
 ````
 
+### Attempt 1
+
 The above code will output:
 
 ````text
@@ -292,6 +322,16 @@ Therefore, when we call the class method `::wheels` on both the `Vehicle` and `M
 On line 18, the class `Car` is defined to be inherited from the `Vehicle` class, and thus the class `Car` has access to the class variable `@@wheels`. At this point, the value referenced by `@@wheels` is `2`. Therefore, lines 20 to 22 output `2` to the console.
 
 If a superclass has a class variable defined, all its subclasses share the same copy of that class variable. Therefore, when we alter the value it references in one of the subclasses, the change is reflected in all classes that have access to that class variable. Therefore we should avoid using class variables when working with inheritance.
+
+### Attempt 2
+
+On line 9, the class method `wheels` is invoked on the class `Vehicle`. Upon the invocation of `Vehicle::wheels`, it returns `@@wheels`, which is `4`. Therefore line 9 outputs `4` to the console.
+
+On lines 11 to 13, a subclass of `Vehicle` called `Motorcycle` is defined. As a class and all its subclasses share only one copy of class variable, inside the class `Motorcycle`, the class variable is re-assigned to `2`. Therefore, when the class method `wheels` is invoked on the classes `Motorcycle` and `Vehicle` on lines 15 and 16, they both return `2`. So, both lines 15 and 16 output `2` to the console.
+
+On line 18, a subclass of `Vehicle` called `Car` is defined. The `Car` can also access the same class variable `@@wheels`. At this point on line 18, the class variable `@@wheels` points to `2`. Therefore when the class method `::wheels` method (which returns `@@wheels`) is invoked on the classes `Vehicle`, `Motorcycle` and `Car` on lines 20 to 22, they all return `2`. So lines 20 to 22 output `2` to the console.
+
+As a class and all its subclasses share only one copy of a class variable, a class variable defined in a class can easily be overridden by its subclasses. Therefore, we should avoid using class variables when working with inheritance.
 
 ## 8
 
@@ -317,6 +357,8 @@ bruno = GoodDog.new("brown")     # 16
 p bruno                          # 17
 ````
 
+### Attempt 1
+
 The above code will output the information about the `GoodDog` object that `bruno` references, which includes the encoding of the object ID and the attributes of the `GoodDog` object. The attributes include two instance variables: `@name` and `@color`, where both reference the string `"brown"`.
 
 On line 16, a new `GoodDog` is instantiated with an argument `"brown"` and assigned to the local variable `bruno`.
@@ -324,6 +366,14 @@ On line 16, a new `GoodDog` is instantiated with an argument `"brown"` and assig
 Upon instantiation, the method `GoodDog#initialize` is invoked with an argument `"brown"`. The `super` keyword inside the method invokes the method of the same name up in the method lookup path, which is `Animal#initialize`, and passes all arguments to it. Therefore, the instance variable `@name` is assigned to the string `"brown"`. Back to the method `GoodDog#initialize`, the instance variable `@color` is assigned to the string `"brown"`.
 
 Hence the output follows.
+
+### Attempt 2
+
+The above code outputs a string representation of a `GoodDog` object, with attributes `@name = "brown"` and `@color = "brown"`.
+
+On line 16, a new `GoodDog` object is instantiated and assigned to the local variable `bruno`. The method invocation of `new` on the `GoodDog` class triggers the invocation of `GoodDog#initialize`. Upon the method invocation of `GoodDog#initialize` with an argument `"brown"`, the `super` keyword invokes the method of the same name in the superclass, which is `Animal#initialize`, and passes all arguments to it. The instance variable `@name` is then initialized to the string `"brown"`. On line 12, the instance variable `@color` is initialized to the string `"brown"`. Therefore, after instantiation, a new `GoodDog` object with attributes `@name = "brown"` and `@color = "brown"` is instantiated.
+
+With the only keyword `super`, it calls the method of the same name in the superclass and passes all arguments that are passed to the current method to it.
 
 ## 9
 
@@ -406,7 +456,7 @@ p good_dog.walk
 ````
 
 The method lookup path used when invoking `#walk` on `good_dog` is:
-`GoodAnimals::GoodDog`, `Danceable`, `Swimmable`, `Animal`, `Walkable`, `Object`, `Kernel`, `BasicObject`
+`GoodAnimals::GoodDog`, `Danceable`, `Swimmable`, `Animal`, and finally `Walkable` where the `#walk` method is found.
 
 ## 11
 
