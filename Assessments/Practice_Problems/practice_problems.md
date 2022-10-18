@@ -395,6 +395,8 @@ end                          # 11
 bear = Bear.new("black")     # 13
 ````
 
+### Attempt 1
+
 The above code will throw an `ArgumentError`.
 
 On line 13, a new `Bear` object is instantiated with an argument `"black"` and assigned to the local variable `bear`.
@@ -402,6 +404,14 @@ On line 13, a new `Bear` object is instantiated with an argument `"black"` and a
 Upon instantiation, the method `Bear#initialize` is invoked with an arguement `"black"` passed into it. The `super` keyword in the method invokes the method of the same name up in the method lookup path, which is `Animal#initialize`, and passes all arguments to it. As `Animal#initialize` does not accept any argument, Ruby throws an `ArgumentError`.
 
 By default, the `super` keyword invokes the method of the same name up in the method lookup path, and passes all arguments passed to the method where the `super` is called. If we do not want to pass any of the given argument, we should explicitly state that like so: `super()`.
+
+### Attempt 2
+
+The line 13 will raise `ArgumentError`.
+
+On line 13, a new `Bear` object is attempted to be instantiated. The class method `::new` is invoked on the class `Bear` with an argument `"black"`. The invocation of `::new` trigger the invocation of `Bear#initialize`. Upon the invocation of `Bear#initialize`, the keyword `super` invokes the method of the same name in the superclass, which is `Animal`, and passes all arguments that is passed to `Bear#initialize` (which is `"black"`) to `Animal#initialize`. However, `Animal#initialize` does not accept any arguments, hence raising `ArgumentError`.
+
+This demonstrates that the `super` keyword invokes the method of the same name in the superclass and passes all arguments that are passed to the current method to it. If we wish to pass no arguments to the method of the same name in the superclass, we should explicitly state like so: `super()`.
 
 ## 10
 
@@ -491,6 +501,8 @@ array_of_animals.each do |animal|                      # 24
 end                                                    # 26
 ````
 
+### Attempt 1
+
 The above code will output:
 ````text
 I eat.
@@ -509,6 +521,69 @@ For `Animal` objects, the `#eat` method outputs `I eat.` to the console. While f
 Hence the result follows.
 
 This code demonstrates polymorphism through inheritance. In the superclass `Animal`, a generic `#eat` method is defined. For the subclasses `Fish` and `Dog`, they override the generic `#eat` method with a more specific `#eat` method. Objects of these three types respond differently to the same method call `#eat`. That's polymorphism.
+
+### Attempt 2
+
+The above code will output the following to the console:
+
+````text
+I eat.
+I eat plankton.
+I eat kibble.
+````
+
+Polymorphism means objects of different types respond to the same method invocation.
+
+On line 23, an array containing objects of different types is initialized and assigned to the local variable `array_of_animals`. We then iterate through the array. Each object in the array is passed into the method `feed_animal`. Upon the method invocation of `feed_animal`, the `eat` method in called on the object that is passed into the `feed_animal` method.
+
+Let's consider each object in the array one by one. The first one is an `Animal` object. There is an `eat` method defined in the `Animal` class, which outputs `I eat.` to the console when invoked. The second one is a `Fish` object. The `Fish` class overrides the `eat` method in the `Animal` class, and the `Fish#eat` method outputs `I eat plankton.` to the console when invoked. The third one is a `Dog` object. The `Dog` class overrides the `eat` method in the `Animal` class, and the `Dog#eat` method outputs `I eat kibble.` to the console when invoked. Hence the output in the above follows.
+
+When we invoke the `eat` method on each of the object in the array referenced by `array_of_animals`, we do not care about the object type, as long as the object has the compatible `eat` method that accepts no argument. That is polymorphism in action. More specifically, that's polymorphism through inheritance. It is because the `Fish` and `Dog` classes override the `eat` method from their parent class: the `Animal` class.
+
+## 12
+
+The below code raises an error. Why? What do `kitty` and `bud` represent in relation to our `Person` object?
+
+````ruby
+class Person                     # 1
+  attr_accessor :name, :pets     # 2
+                                 # 3
+  def initialize(name)           # 4
+    @name = name                 # 5
+    @pets = []                   # 6
+  end                            # 7
+end                              # 8
+                                 # 9
+class Pet                        # 10
+  def jump                       # 11
+    puts "I'm jumping!"          # 12
+  end                            # 13
+end                              # 14
+                                 # 15
+class Cat < Pet; end             # 16
+                                 # 17
+class Bulldog < Pet; end         # 18
+                                 # 19
+bob = Person.new("Robert")       # 20
+                                 # 21
+kitty = Cat.new                  # 22
+bud = Bulldog.new                # 23
+                                 # 24
+bob.pets << kitty                # 25
+bob.pets << bud                  # 26
+                                 # 27
+bob.pets.jump                    # 28
+````
+
+On line 20, a new `Person` with the attributes `@bane = "Robert"` and `@pets = []` is instantiated and assigned to the local variable `bob`.
+
+On lines 22 and 23, a new `Cat` and a new `Bulldog` object are instantiated and assigned to the local variables `kitty` and `bud` respectively. Both objects inherit the `jump` method from their parent class `Pet`.
+
+On lines 25 and 26, the objects referenced by `kitty` and `bub` are appended to an empty array referenced by the instance variable `@pets` of the `Person` object referenced by `bob`. At this point, the instance variable `@pet` points to an array containing one `Cat` and one `BullDog` object.
+
+Therefore, when we invoke the `jump` method on the array returned by `bob.pets` (where `pets` is a getter of the instance variable `@pets`), it raises `NoMethodError` because there is no `jump` method defined in the `Array` class.
+
+In the above code example, the objects referenced by the local variables `kitty` and `bud` are stored as a state in an instance variable of a `Person` object `bob`. Therefore, `bob`, `kitty` and `bud` are collaborator objects.
 
 ## 13
 
@@ -533,8 +608,91 @@ teddy = Dog.new("Teddy")                   # 15
 puts teddy.dog_name                        # 16
 ````
 
+### Attempt 1
+
 The above code will output `bark! bark!  bark! bark!`.
 
 On line 15, a new `Dog` object is instantiated and assigned to the local variable `teddy`.
 
 On line 16, the `dog_name` method is called on the `Dog` object that `teddy` references. However, as the instance variable `@name` is never initialized, it references `nil` at the moment. Therefore the line 16 will output `bark! bark!  bark! bark!` to the console.
+
+### Attempt 2
+
+On line 15, the class method `::new` is invoked on the class `Dog`. This triggers the invocation of `Dog#initialize` with an argument `"Teddy"`. The `Dog` object is then assigned to the local variable `teddy`. The `Dog` object has no attributes initailized, because no instance variable is initialized in the `Dog#initialize` method.
+
+When we invoke `dog_name` on `teddy`, it returns `"bark! bark! #{@name} bark! bark!"`. As `@name` is not initialized, `@name` point to `nil`, and thus line 16 outputs `bark! bark!  bark! bark!` to the console.
+
+## 14
+
+In the below code, we want to compare whether the two objects have the same name. The line 11 currently returns `false`. How could we return `true` on line 11?
+
+Further, since `al.name == alex.name` returns `true`, does this mean the `String` objects referenced by `al` and `alex`'s `@name` instance variables are the same object? How could we prove our case?
+
+````ruby
+class Person                       # 1
+  attr_reader :name                # 2
+                                   # 3
+  def initialize(name)             # 4
+    @name = name                   # 5
+  end                              # 6
+end                                # 7
+                                   # 8
+al = Person.new('Alexander')       # 9
+alex = Person.new('Alexander')     # 10
+p al == alex # => true             # 11
+````
+
+On line 11, the `#==` method is the method inherits from the `BasicObject` class which compares if the two objects in question are the same object. As `al` and `alex` point to different objects, `al == alex` returns `false`. To make it return `true` on line 11, we can compare the `@name` attributes of both objects, which have the same name. This leads us to define our own `#==` method in the `Person` class which compares the instance variables `@name`. The following `#==` method can be added to the `Person` class:
+
+````ruby
+def ==(other_person)
+  @name == other_person.name
+end
+````
+The fact that `al.name == alex.name` returns `true` does not mean that the `String` objects referenced by `al` and `alex`'s `@name` instance variables are the same object. It is because the `String#==` method overrides the `BasicObject#==` method. The `String#==` is defined to compare if the two `String` objects have the same value, rather than if they are the same `String` object. The following code snippet can be used to prove our case:
+
+````ruby
+al.name == alex.name # => true
+
+al.name.object_id == alex.name.object_id # => false
+al.name.equal?(alex.name) # => name
+````
+
+## 15
+
+What are the outputs on lines 14, 15 and 16, and why?
+
+````ruby
+class Person                          # 1
+  attr_reader :name                   # 2
+                                      # 3
+  def initialize(name)                # 4
+    @name = name                      # 5
+  end                                 # 6
+                                      # 7
+  def to_s                            # 8
+    "My name is #{name.upcase!}."     # 9
+  end                                 # 10
+end                                   # 11
+                                      # 12
+bob = Person.new('Bob')               # 13
+puts bob.name                         # 14
+puts bob                              # 15
+puts bob.name                         # 16
+````
+
+The following will output to the console:
+
+````text
+Bob
+My name is BOB.
+BOB
+````
+
+On line 13, a new `Person` object with an attribute `@name = 'Bob'` is instantiated and assigned to the local variable `bob`.
+
+On line 14, the getter of the instance variable `@name` is called on `bob`. Therefore `bob.name` returns `'Bob'`, and hence it is outputted to the console by the `puts` method.
+
+On line 15, the `puts` method is invoked with the `Person` object referenced by `bob` as an argument. The `puts` implicitly invokes `to_s` on its argument before outputting the return value to the console. When `to_s` is invoked on `bob`, the instance variable `@name` is mutated to `'BOB'` and returns `"My name is BOB."`, and hence it is outputted to the console by the `puts` method.
+
+At this point, the instance variable `@name` points to the string `'BOB'`. Therefore, when we invoke the getter of `@name` on `bob`, it returns `'BOB'`, and hence it is outputted to the console by the `puts` method.
