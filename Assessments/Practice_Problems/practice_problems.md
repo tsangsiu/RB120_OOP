@@ -696,3 +696,160 @@ On line 14, the getter of the instance variable `@name` is called on `bob`. Ther
 On line 15, the `puts` method is invoked with the `Person` object referenced by `bob` as an argument. The `puts` implicitly invokes `to_s` on its argument before outputting the return value to the console. When `to_s` is invoked on `bob`, the instance variable `@name` is mutated to `'BOB'` and returns `"My name is BOB."`, and hence it is outputted to the console by the `puts` method.
 
 At this point, the instance variable `@name` points to the string `'BOB'`. Therefore, when we invoke the getter of `@name` on `bob`, it returns `'BOB'`, and hence it is outputted to the console by the `puts` method.
+
+## 16
+
+Why is it generally safer to invoke a setter method than to reference the instance variable directly when trying to set an instance variable within the class? Give an example.
+
+When trying to set an instance variable within a class, it is generally safer to invoke a setter method than to reference the instance variable directly because a setter allows us to perform data check. That being said, invoking a setter when assigning a value to an instance variable can make sure that the value assigned is valid.
+
+Take the following code snippet as an example, when we attempt to assign a negative value to the age of a person, the value is not assigned to `@age` as negative values fail the data check. The value is successfully assigned to `@age` when it passes the data check.
+
+````ruby
+class Person
+  attr_accessor :name
+  attr_reader :age
+
+  def initialize(name)
+    @name = name
+  end
+  
+  def age=(age)
+    @age = age if age >= 0 && age <= 120
+  end
+end
+
+jason = Person.new('Jason')
+
+jason.age = -1
+p jason.age # => nil
+
+jason.age = 30
+p jason.age # => 30
+````
+
+If we do not use a setter, we can then assign any value we want to `@age`. Therefore, it is generally safer to invoke a setter method than to reference the instance variable directly when trying to set an instance variable within the class.
+
+````ruby
+class Person
+  attr_accessor :name, :age
+
+  def initialize(name)
+    @name = name
+  end
+end
+
+jason = Person.new('Jason')
+
+jason.age = -1
+p jason.age # => -1
+
+jason.age = 'age'
+p jason.age # => 'age'
+````
+
+## 17
+
+Given an example of when it would make sense to manually write a custom getter method than to use `attr_reader`.
+
+A custom getter method can give us control over the return value, while the getter method given by `attr_reader` cannot.
+
+Sometimes when accessing sensitive data like ID number, it would make sense to hide some of the digits. We can write our custom getter method to do so:
+
+````ruby
+class Person
+  attr_accessor :name
+
+  def initialize(name, id)
+    @name = name
+    @id = id
+  end
+  
+  def id
+    "#{@id[0..2]}#{'X' * @id[3..].length}"
+  end
+end
+
+jason = Person.new('Jason', 'A123456789')
+p jason.id # => 'A12XXXXXXX'
+````
+
+Also, we only mask the ID number once in the custom getter method of `@id`, instead of masking it every time when it is referecend.
+
+If we use the getter given by `attr_reader`, the unmasked ID will be returned, which is not ideal:
+
+````ruby
+class Person
+  attr_accessor :name, :id
+
+  def initialize(name, id)
+    @name = name
+    @id = id
+  end
+end
+
+jason = Person.new('Jason', 'A123456789')
+p jason.id # => 'A123456789'
+````
+
+## 18
+
+What does executing `Triangle.sides` return? What does executing `Triangle.new.sides` return? What does this demonstrate about class variables?
+
+````ruby
+class Shape                     # 1
+  @@sides = nil                 # 2
+                                # 3
+  def self.sides                # 4
+    @@sides                     # 5
+  end                           # 6
+                                # 7
+  def sides                     # 8
+    @@sides                     # 9
+  end                           # 10
+end                             # 11
+                                # 12
+class Triangle < Shape          # 13
+  def initialize                # 14
+    @@sides = 3                 # 15
+  end                           # 16
+end                             # 17
+                                # 18
+class Quadrilateral < Shape     # 19
+  def initialize                # 20
+    @@sides = 4                 # 21
+  end                           # 22
+end                             # 23
+````
+
+Executing `Triangle.sides` will return `nil`.
+
+Executing `Triangle.new.sides` will return `3`.
+
+In the above code, a class named `Shape` is defined. Two subclasses of `Shaped`, naming `Triangle` and `Quadrilateral`, are also defined.
+
+When we invoke the class method `sides` on the class `Triangle`, `Shape::sides` is invoked as there is no `::sides` method defined in the `Triangle` class and Ruby then looks for the method up in the method lookup path. The `Shape::sides` returns `@@sides` which points to `nil` at the moment.
+
+When we invoke the instance method `sides` on a `Triangle.new`, the method `Triangle#initialize` is triggered to be invoked which re-assigns the class variable `@@sides` to `3`. As a superclass and all its subclasses share the same copy of class variable, when we call the instance method `sides` on a `Triangle` object which returns `@@sides`, it returns `3`.
+
+The above code demonstrates that a superclass and all its subclasses share the same copy of class variable, and thus the value referenced by a class variable in a superclass can be manipulated by its subclasses.
+
+## 19
+
+What is the `attr_accessor` method, and why wouldn’t we want to just add `attr_accessor` methods for every instance variable in our class? Give an example.
+
+## 20
+
+What is the difference between states and behaviors?
+
+A state of an object tracks its attributes, while behaviors are what an object capable of doing.
+
+Different objects have different states, but objects of the same type share the same behaviors.
+
+## 21 
+
+What is the difference between instance methods and class methods?
+
+An instance method is a method invoked on an object. They can access and manipulate the caller object's states, and even class variables.
+
+In contrast, a class method can be invoked on the class itself, without instantiating any objects. They can access and manipulate class variables, but not for instance variables.

@@ -1,16 +1,18 @@
 # Assessments
 
-## [Lecture Problems](https://github.com/tsangsiu/RB120_OOP/blob/main/Assessments/Lecture_Problems/lecture_problems.md)
+## Lecture Problems (Completed)
 
-- [Lecture Problems](https://docs.google.com/document/d/1Oyp7LaIggM2YU2jAWl58eq3W-S1PlfUOa3OdoRMK09A/edit)
+- [Questions](https://docs.google.com/document/d/1Oyp7LaIggM2YU2jAWl58eq3W-S1PlfUOa3OdoRMK09A/edit)
+- [My Answers](https://github.com/tsangsiu/RB120_OOP/blob/main/Assessments/Lecture_Problems/lecture_problems.md)
 
-## [Open-Ended Questions](https://github.com/tsangsiu/RB120_OOP/blob/main/Assessments/Open_Ended_Questions/open_ended_questions.md)
+## Open-Ended Questions
 
-- [Open-Ended Questions](https://docs.google.com/document/d/10Lg5TfMMqtADcHlPKiDUBqPDMB6Q63_Fs_uVGQG3ybQ/edit)
+- [Questions](https://docs.google.com/document/d/10Lg5TfMMqtADcHlPKiDUBqPDMB6Q63_Fs_uVGQG3ybQ/edit)
+- [My Answers](https://github.com/tsangsiu/RB120_OOP/blob/main/Assessments/Open_Ended_Questions/open_ended_questions.md)
 
-## [Practice Problems](https://github.com/tsangsiu/RB120_OOP/blob/main/Assessments/Practice_Problems/practice_problems.md)
+## Practice Problems
 
-- [Practice Problems](https://docs.google.com/document/d/10JvX-ArkfF8fIWQu8wPaYt7JJHrv_5E0gM0I2uPirwI/edit)
+- [Questions](https://docs.google.com/document/d/10JvX-ArkfF8fIWQu8wPaYt7JJHrv_5E0gM0I2uPirwI/edit)
 
 | # | Done? |
 | --- | --- |
@@ -29,6 +31,12 @@
 | [13](https://github.com/tsangsiu/RB120_OOP/blob/main/Assessments/Practice_Problems/practice_problems.md#13) | :white_check_mark: |
 | [14](https://github.com/tsangsiu/RB120_OOP/blob/main/Assessments/Practice_Problems/practice_problems.md#14) | :white_check_mark: |
 | [15](https://github.com/tsangsiu/RB120_OOP/blob/main/Assessments/Practice_Problems/practice_problems.md#15) | :white_check_mark: |
+| [16](https://github.com/tsangsiu/RB120_OOP/blob/main/Assessments/Practice_Problems/practice_problems.md#16) | :white_check_mark: |
+| [17](https://github.com/tsangsiu/RB120_OOP/blob/main/Assessments/Practice_Problems/practice_problems.md#17) | :white_check_mark: |
+| [18](https://github.com/tsangsiu/RB120_OOP/blob/main/Assessments/Practice_Problems/practice_problems.md#18) | :white_check_mark: |
+| [19](https://github.com/tsangsiu/RB120_OOP/blob/main/Assessments/Practice_Problems/practice_problems.md#19) | |
+| [20](https://github.com/tsangsiu/RB120_OOP/blob/main/Assessments/Practice_Problems/practice_problems.md#20) | :white_check_mark: |
+| [21](https://github.com/tsangsiu/RB120_OOP/blob/main/Assessments/Practice_Problems/practice_problems.md#21) | :white_check_mark: |
 
 ## Resources
 
