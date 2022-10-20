@@ -156,3 +156,88 @@ puts Foo.method_b(Foo)
 
 On the second last line, the class method `method_a` is invoked on the class `Foo`. Upon the invocation of `method_a`, Ruby resolves `all`. As there is no local variable `all` defined in the method, Ruby looks for a class method named `all` as `all` is referenced inside a class method. Therefore, `all` is resolved to `' for all'`, and hence `Foo.method_a` returns `"Justice for all"` which is then outputted to the console.
 
+On the last line, the class method `method_b` is invoked on the class `Foo` with an argument `Foo`. Upon the invocation of `method_b`, Ruby resolves `Foo.exclamate` to `' for all!!!'` by the same token as stated above. Hence, `Foo.method_b(Foo)` returns `"Justice for all!!!"` which is then outputted to the console.
+
+## 6
+
+Will the following code execute? What will be the output?
+
+````ruby
+class Person
+  attr_reader :name
+
+  def initialize(name)
+    @name = name
+  end
+
+  def greet
+     "Hello! they call me #{name}"
+  end
+end
+
+class Puppet < Person
+  def initialize(name)
+    super
+  end
+
+  def greet(message)
+    puts super + message
+  end
+end
+
+puppet = Puppet.new("Cookie Monster")
+puppet.greet(" and I love cookies!")
+````
+
+The above code will raise `ArgumentError`.
+
+On the last line, the `greet` method is invoked on the `Puppet` object referenced by `puppet` with an argument `" and I love cookies"`. Upon the method invocation of `Puppet#greet`, the `super` keyword invokes the method of the same name in the superclass, which is `Person#greet`, and passes the argument that is passed to `Puppet#greet` to `Person#greet`. However, as `Person#greet` does not accept any argument, it raises `ArgumentError`.
+
+## 7
+
+What concept does this code demonstrate? What will be the output?
+
+````ruby
+class Bird
+  def fly
+    p "#{self.class} is flying!"
+  end
+end
+
+class Pigeon < Bird; end
+class Duck < Bird; end
+
+birds = [Bird.new, Pigeon.new, Duck.new].each(&:fly)
+````
+
+The above code will output the following to the console:
+
+````text
+"Bird is flying!"
+"Pigeon is flying"
+"Duck is flying!"
+````
+
+The above code demonstrates the concept of polymorphism through inheritance. Polymorphism means objects of different types respond to the same method invocation.
+
+In the above code, a `Bird` class with an instance method `fly` is defined. Two subclasses of `Bird`, namely `Pigeon` and `Duck`, are then defined. Both subclasses inherit the `fly` method from their superclass `Bird`. Therefore, when we iterate an array containing a `Bird`, a `Pigeon` and a `Duck` object and invoke the `fly` on each of them, they all can respond to it, albeit differently.
+
+## 8
+
+What does the `self` keyword refer to in the `good` method?
+
+````ruby
+class Dog
+  attr_accessor :name
+
+  def good
+    self.name + " is a good dog"
+  end
+end
+
+bandit = Dog.new
+bandit.name = "Bandit"
+p bandit.good
+````
+
+The `self` keyword in the `good` method refers to the calling object of the `good` method, because that `self` keyword is in an instance method.

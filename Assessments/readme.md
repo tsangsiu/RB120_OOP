@@ -48,7 +48,10 @@
 | [2](https://github.com/tsangsiu/RB120_OOP/blob/main/Assessments/Practice_Problems_Marwan_Z/practice_problems_marwan_z.md#2) | :white_check_mark: |
 | [3](https://github.com/tsangsiu/RB120_OOP/blob/main/Assessments/Practice_Problems_Marwan_Z/practice_problems_marwan_z.md#3) | :white_check_mark: |
 | [4](https://github.com/tsangsiu/RB120_OOP/blob/main/Assessments/Practice_Problems_Marwan_Z/practice_problems_marwan_z.md#4) | :white_check_mark: |
-| [5](https://github.com/tsangsiu/RB120_OOP/blob/main/Assessments/Practice_Problems_Marwan_Z/practice_problems_marwan_z.md#5) | |
+| [5](https://github.com/tsangsiu/RB120_OOP/blob/main/Assessments/Practice_Problems_Marwan_Z/practice_problems_marwan_z.md#5) | :white_check_mark: |
+| [6](https://github.com/tsangsiu/RB120_OOP/blob/main/Assessments/Practice_Problems_Marwan_Z/practice_problems_marwan_z.md#6) | :white_check_mark: |
+| [7](https://github.com/tsangsiu/RB120_OOP/blob/main/Assessments/Practice_Problems_Marwan_Z/practice_problems_marwan_z.md#7) | :white_check_mark: |
+| [8](https://github.com/tsangsiu/RB120_OOP/blob/main/Assessments/Practice_Problems_Marwan_Z/practice_problems_marwan_z.md#8) | :white_check_mark: |
 
 ## Resources
 
