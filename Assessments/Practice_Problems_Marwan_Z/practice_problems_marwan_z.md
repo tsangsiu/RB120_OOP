@@ -241,3 +241,61 @@ p bandit.good
 ````
 
 The `self` keyword in the `good` method refers to the calling object of the `good` method, because that `self` keyword is in an instance method.
+
+## 9
+
+What will the last three lines of code print to the console? After `song.artist` is called, what would be returned if we inspect the `Song` object referenced by `song`?
+
+````ruby
+class Song                            # 1
+  attr_reader :title, :artist         # 2
+                                      # 3
+  def initialize(title)               # 4
+    @title = title                    # 5
+    @artist                           # 6
+  end                                 # 7
+                                      # 8
+  def artist=(name)                   # 9
+    @artist = name.upcase             # 10
+  end                                 # 11
+end                                   # 12
+                                      # 13
+p song = Song.new("Superstition")     # 14
+p song.artist = "Stevie Wonder"       # 15
+p song.artist                         # 16
+````
+
+On line 14, a new `Song` object is instantiated. The `new` class method invoked on the `Song` class with an argument `"Superstition"` triggers the invocation of `Song#initialize`. Upon the invocation, the instance variable `@title` is initialized to `"Superstition"` and `@artist` remains uninitialized. Therefore, `song = Song.new("Superstition")` returns a `Song` object with an attribute `@title = "Superstition"`. When it is outputted to the console by the `p` method, it outputs to the console the class of the object, the encoding of the object ID, and the only attribute `@title = "Superstition"`.
+
+On line 15, the setter method of `@artist` is called on `song` which assigns the string `"Stevie Wonder"` to the instance variable `@artist`. At this point, the `Song` object referenced by `song` has two attributes: `@title = "Superstition"` and `@artist = "STEVIE WONDER"`. As a setter always returns the value passed in as an argument, `song.artist = "Stevie Wonder"` returns `"Stevie Wonder"`, and hence it is outputted to the console by the `p` method.
+
+On line 16, the getter method of `@artist` is called on `song` which returns the value referenced by `@artist`. As `@artist` points to the string `"STEVIE WONDER"`, it is outputted to the console by the `p` method.
+
+## 10
+
+What will the last 2 lines output in this case?
+
+````ruby
+class Song                          # 1
+  attr_reader :title, :artist       # 2
+                                    # 3
+  def initialize(title)             # 4
+    @title = title                  # 5
+  end                               # 6
+                                    # 7
+  def artist=(name)                 # 8
+    @artist = name                  # 9
+    name.upcase!                    # 10
+  end                               # 11
+end                                 # 12
+                                    # 13
+song = Song.new("Superstition")     # 14
+p song.artist = "Stevie Wonder"     # 15
+p song.artist                       # 16
+````
+
+On line 14, a new `Song` object is instantiated with an attribute `@title = "Superstition"` and is assigned to the local variable `song`.
+
+On line 15, the setter method of `artist` is invoked on `song`. The instance variable `@artist` is asssigned to the value that `name` is referencing, which is `"Stevie Wonder"`. At this point, both `@artist` and `name` point to the same string `"Stevie Wonder"`. The destructive method `upcase!` is then called on `name` which mutates the string to `"STEVIE WONDER"`. This change also refects in `@artist` which points to `"STEVIE WONDER"`. For a setter method, it always returns the argument passed in as an argment. However, the argument is modified in place to `"STEVIE WONDER"`. Therefore, `song.artist = "Stevie Wonder"` returns `"STEVIE WONDER"`, which is then outputted to the console by the `p` method.
+
+On line 16, the getter method of `@artist` is called on `song` which returns the value referenced by `@artist`. As `@artist` points to the string `"STEVIE WONDER"`, it is outputted to the console by the `p` method.
