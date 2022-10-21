@@ -299,3 +299,160 @@ On line 14, a new `Song` object is instantiated with an attribute `@title = "Sup
 On line 15, the setter method of `artist` is invoked on `song`. The instance variable `@artist` is asssigned to the value that `name` is referencing, which is `"Stevie Wonder"`. At this point, both `@artist` and `name` point to the same string `"Stevie Wonder"`. The destructive method `upcase!` is then called on `name` which mutates the string to `"STEVIE WONDER"`. This change also refects in `@artist` which points to `"STEVIE WONDER"`. For a setter method, it always returns the argument passed in as an argment. However, the argument is modified in place to `"STEVIE WONDER"`. Therefore, `song.artist = "Stevie Wonder"` returns `"STEVIE WONDER"`, which is then outputted to the console by the `p` method.
 
 On line 16, the getter method of `@artist` is called on `song` which returns the value referenced by `@artist`. As `@artist` points to the string `"STEVIE WONDER"`, it is outputted to the console by the `p` method.
+
+## 11
+
+What would `cat.name` return after the last line of code is executed?
+
+````ruby
+class Cat                 # 1
+  attr_accessor :name     # 2
+                          # 3
+  def set_name            # 4
+    name = "Cheetos"      # 5
+  end                     # 6
+end                       # 7
+                          # 8
+cat = Cat.new             # 9
+cat.set_name              # 10
+````
+
+On line 9, a new `Cat` object is instantiated and assigned to the local variable `cat`.
+
+On line 10, the `set_name` method is called on `cat`. Upon the method invocation, the local variable `name` is assigned to the string `"Cheetos"`. The instance variable `@name` remains uninitialized.
+
+Therefore, when we invoke the getter method of `@name` on `cat` (`cat.name`), it returns `nil`.
+
+## 12
+
+What will the last two lines of code output?
+
+````ruby
+module Walk
+  STR = "Walking"
+end
+
+module Run
+  STR = "Running"
+end
+
+module Jump
+  STR = "Jumping"
+end
+
+class Bunny
+  include Jump
+  include Walk
+  include Run
+end
+
+class Bugs < Bunny; end
+
+p Bugs.ancestors
+p Bugs::STR
+````
+
+The second last line will output `[Bugs, Bunny, Run, Walk, Jump, Object, Kernel, BasicObject]` to the console.
+
+The last line will output `"Running"` to the console.
+
+## 13
+
+What will be returned by the `value1` and `value2` method calls?
+
+````ruby
+VAL = 'Global'            # 1
+                          # 2
+module Foo                # 3
+  VAL = 'Local'           # 4
+                          # 5
+  class Bar               # 6
+    def value1            # 7
+      VAL                 # 8
+    end                   # 9
+  end                     # 10
+end                       # 11
+                          # 12
+class Foo::Bar            # 13
+  def value2              # 14
+    VAL                   # 15
+  end                     # 16
+end                       # 17
+                          # 18
+p Foo::Bar.new.value1     # 19
+p Foo::Bar.new.value2     # 20
+````
+
+On line 19, the `value1` method is invoked on a `Foo::Bar` object and returns the constant referenced by `VAL`. To resolve the constant, Ruby first looks for it in the lexical scope, i.e., the enclosing structure of where the constant is referenced which is on line 8. Ruby then finds the constant on line 4. The constant `VAL` is then resolved to `'Local'`, and is outputted to the console by the method `p`.
+
+On line 20, the `value2` method is invoked on another `Foo::Bar` object and returns the constant referenced by `VAL` (line 15). Ruby cannot find the constant in the lexical scope. Ruby then looks for the constant up in the method lookup path from where it is referenced. As there is no inheritance involved, Ruby at last looks for the constant in the main scope on line 1. The constant `VAL` is resolved to `'Glibal'`, and is outputted to the console by the method `p`.
+
+## 14
+
+Write 3 methods inside the `Person` class that would return the outputs shown on lines 23 and 24.
+
+````ruby
+class Person                             # 1
+  attr_reader :friends                   # 2
+                                         # 3
+  def initialize                         # 4
+    @friends = []                        # 5
+  end                                    # 6
+end                                      # 7
+                                         # 8
+class Friend                             # 9
+  attr_reader :name                      # 10
+                                         # 11
+  def initialize(name)                   # 12
+    @name = name                         # 13
+  end                                    # 14
+end                                      # 15
+                                         # 16
+tom = Person.new                         # 17
+john = Friend.new('John')                # 18
+amber = Friend.new('Amber')              # 19
+                                         # 20
+tom << amber                             # 21
+tom[1] = john                            # 22
+p tom[0]      # => Amber                 # 23
+p tom.friends # => ["Amber", "John"]     # 24
+````
+
+````ruby
+class Person
+  attr_reader :friends
+
+  def initialize
+    @friends = []
+  end
+  
+  def <<(friend)
+    friends << friend.name
+  end
+  
+  def []=(index, friend)
+    friends[index] = friend.name
+  end
+  
+  def [](index)
+    friends[index]
+  end
+end
+
+class Friend
+  attr_reader :name
+
+  def initialize(name)
+    @name = name
+  end
+end
+
+tom = Person.new
+john = Friend.new('John')
+amber = Friend.new('Amber')
+
+tom << amber
+tom[1] = john
+p tom[0]      # => Amber
+p tom.friends # => ["Amber", "John"]
+````
