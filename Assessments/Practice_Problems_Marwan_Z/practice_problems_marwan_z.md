@@ -456,3 +456,80 @@ tom[1] = john
 p tom[0]      # => Amber
 p tom.friends # => ["Amber", "John"]
 ````
+
+## 15
+
+What will be output when the last 2 lines of code get executed?
+
+````ruby
+class Foo           # 1
+  @@var = 1         # 2
+                    # 3
+  def self.var      # 4
+    @@var           # 5
+  end               # 6
+end                 # 7
+                    # 8
+class Bar < Foo     # 9
+  @@var = 2         # 10
+end                 # 11
+                    # 12
+puts Foo.var        # 13
+puts Bar.var        # 14
+````
+
+On lines 1 to 7, a class named `Foo` is defined with a class variable `@@var = 1`.
+
+On lines 9 to 11, a class named `Bar` which inherits the class `Foo` is defined with a class variable `@@var = 2`.
+
+As a superclass and its subclasses share only one copy of the class variable, both class variables `@@var` in the classes `Foo` and `Bar` both point to `2`. Therefore, when we invoke the class method `var` on `Foo` and `Bar`, they both return `2` and are ouputted to the console by the `puts` method.
+
+## 16
+
+Update the `Human` class to have lines 9 and 12 return the desired output.
+
+````ruby
+class Human                                                     # 1
+    attr_reader :name                                           # 2
+                                                                # 3
+  def initialize(name="Dylan")                                  # 4
+    @name = name                                                # 5
+  end                                                           # 6
+end                                                             # 7
+                                                                # 8
+puts Human.new("Jo").hair_color("blonde")                       # 9
+# Should output "Hi, my name is Jo and I have blonde hair."     # 10
+                                                                # 11
+puts Human.hair_color("")                                       # 12
+# Should "Hi, my name is Dylan and I have blonde hair."         # 13
+````
+
+````ruby
+class Human 
+  attr_reader :name
+
+  def initialize(name = "Dylan")
+    @name = name
+  end
+
+  def hair_color(hair_color)
+    @hair_color = hair_color
+    self
+  end
+
+  def to_s
+    "Hi, my name is #{@name} and I have #{@hair_color} hair."
+  end
+
+  def self.hair_color(hair_color)
+    hair_color = "blonde" if hair_color == ""
+    "Hi, my name is #{self.new.name} and I have #{hair_color} hair."
+  end
+end
+
+puts Human.new("Jo").hair_color("blonde")  
+# Should output "Hi, my name is Jo and I have blonde hair."
+
+puts Human.hair_color("")
+# Should "Hi, my name is Dylan and I have blonde hair."
+````
