@@ -533,3 +533,52 @@ puts Human.new("Jo").hair_color("blonde")
 puts Human.hair_color("")
 # Should "Hi, my name is Dylan and I have blonde hair."
 ````
+
+## 17
+
+What does each `self` refer to in the code snippet below?
+
+````ruby
+class MeMyselfAndI       # 1
+  self                   # 2
+                         # 3
+  def self.me            # 4
+    self                 # 5
+  end                    # 6
+                         # 7
+  def myself             # 8
+    self                 # 9
+  end                    # 10
+end                      # 11
+                         # 12
+i = MeMyselfAndI.new     # 13
+````
+
+Inside an instance method, `self` refers to the object that calls the method. Inside a class method, `self` refers to the class itself. Elsewhere, `self` refers to the enclosing structure.
+
+Therefore, the `self` on lines 2, 4 and 5 refer to the class `MeMyselfAnI`, and the `self` on line 9 refers to the object that calls the method.
+
+## 18
+
+What are some of the characteristics of instance variables?
+
+- They cannot be accessed outside of the class without defining methods to interact with them (however, as Alex Scout pointed out, you can still indirectly access them by using `#instance_variable_get`). :white_check_mark:
+
+````ruby
+class Person
+  def initialize(name)
+    @name = name
+  end
+end
+
+jason = Person.new('Jason')
+
+puts jason.instance_variable_get('@name') # => 'Jason'
+puts jason.instance_variable_get(:@name) # => 'Jason'
+````
+
+- They are flexible and do not need to be initialized - in which case they would return `nil`. :white_check_mark:
+- They are dynamically appended to an object upon assignment/initialization. :white_check_mark:
+- They belong to the object - each object gains its own copy of every instance variable defined in a class. :white_check_mark:
+- Their *value* are not inheritable - modifying one value in a particular instance does not affect other instances. :white_check_mark:
+- THey are scoped at object level and accessible in all instance methods, i.e. they do not need to be passed in as arguments prior to being referred to. :white_check_mark:

@@ -39,7 +39,7 @@
 | [20](https://github.com/tsangsiu/RB120_OOP/blob/main/Assessments/Practice_Problems/practice_problems.md#20) | :white_check_mark: |
 | [21](https://github.com/tsangsiu/RB120_OOP/blob/main/Assessments/Practice_Problems/practice_problems.md#21) | :white_check_mark: |
 
-## Practice Problems by Marwan Zaarab
+## Practice Problems by Marwan Zaarab (Completed)
 
 - [Questions](https://medium.com/@marwan.zaarab/rb129-interview-assessment-prep-e2f120330240)
 - [My Answers](https://github.com/tsangsiu/RB120_OOP/blob/main/Assessments/Practice_Problems_Marwan_Z/practice_problems_marwan_z.md)
@@ -62,6 +62,8 @@
 | [14](https://github.com/tsangsiu/RB120_OOP/blob/main/Assessments/Practice_Problems_Marwan_Z/practice_problems_marwan_z.md#14) | :white_check_mark: | |
 | [15](https://github.com/tsangsiu/RB120_OOP/blob/main/Assessments/Practice_Problems_Marwan_Z/practice_problems_marwan_z.md#15) | :white_check_mark: | |
 | [16](https://github.com/tsangsiu/RB120_OOP/blob/main/Assessments/Practice_Problems_Marwan_Z/practice_problems_marwan_z.md#16) | :white_check_mark: | :star: |
+| [17](https://github.com/tsangsiu/RB120_OOP/blob/main/Assessments/Practice_Problems_Marwan_Z/practice_problems_marwan_z.md#17) | :white_check_mark: | |
+| [18](https://github.com/tsangsiu/RB120_OOP/blob/main/Assessments/Practice_Problems_Marwan_Z/practice_problems_marwan_z.md#18) | :white_check_mark: | |
 
 ## Resources
 
