@@ -38,6 +38,7 @@
 | [19](https://github.com/tsangsiu/RB120_OOP/blob/main/Assessments/Practice_Problems/practice_problems.md#19) | |
 | [20](https://github.com/tsangsiu/RB120_OOP/blob/main/Assessments/Practice_Problems/practice_problems.md#20) | :white_check_mark: |
 | [21](https://github.com/tsangsiu/RB120_OOP/blob/main/Assessments/Practice_Problems/practice_problems.md#21) | :white_check_mark: |
+| [22](https://github.com/tsangsiu/RB120_OOP/blob/main/Assessments/Practice_Problems/practice_problems.md#22) | :white_check_mark: |
 
 ## Practice Problems by Marwan Zaarab (Completed)
 

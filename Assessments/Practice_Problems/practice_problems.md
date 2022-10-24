@@ -846,10 +846,66 @@ A state of an object tracks its attributes, while behaviors are what an object c
 
 Different objects have different states, but objects of the same type share the same behaviors.
 
-## 21 
+## 21
 
 What is the difference between instance methods and class methods?
 
 An instance method is a method invoked on an object. They can access and manipulate the caller object's states, and even class variables.
 
 In contrast, a class method can be invoked on the class itself, without instantiating any objects. They can access and manipulate class variables, but not for instance variables.
+
+## 22
+
+What are collaborator objects, and what is the purpose of using them in OOP? Given an example of how we would work with one.
+
+A collaborator object is an object that is stored as a state of another object. A collaborator object is usually a custom object, although objects of built-in types such as strings and arrays are technically collaborator objects.
+
+By creating collaborator objects, objects of different types can work together and build association. In other way, a problem can be broken down into cohesive pieces that work together.
+
+For example, in a library, there is a collection of books. We can consider `Book` objects to be collaborator objects to a `Library` object. It is because `Book` and `Library` are separate objects, and they work meaningfully in a collaborative way. When we need a `Book` object to perform some actions, we can go through a `Library` object and invoke the concerned method on the instance variable which stores the `Book` object or on each `Book` object in a collection.
+
+````ruby
+class Library
+  attr_accessors :books
+
+  def initialize
+    @books = []
+  end
+
+  def <<(book)
+    books << book
+  end
+
+  def display_collection
+    books.each { |book| puts book}
+  end
+end
+
+class Book
+  attr_reader :title, :author
+
+  def initialize(title, author)
+    @title = title
+    @author = author
+  end
+
+  def to_s
+    "#{title} by #{author}"
+  end
+end
+
+library = Library.new
+
+atomic_habits = Book.new('Atomic Habits', 'James Clear')
+rich_dad_poor_dad = Book.new('Rich Dad Poor Dad', 'Robert Kiyosaki')
+harry_potter = Book.new('Harry Potter', 'J.K. Rowling')
+
+library << atomic_habits
+library << rich_dad_poor_dad
+library << harry_potter
+
+library.books.each { |book| puts book }
+# => Atomic Habits by James Clear
+# => Rich Dad Poor Dad by Robert Kiyosaki
+# => Harry Potter by J.K. Rowling
+````
