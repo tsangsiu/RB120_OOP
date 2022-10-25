@@ -909,3 +909,371 @@ library.books.each { |book| puts book }
 # => Rich Dad Poor Dad by Robert Kiyosaki
 # => Harry Potter by J.K. Rowling
 ````
+
+## 25
+
+What does the below code demonstrate about how instance variables are scoped?
+
+````ruby
+class Person
+  def initialize(n)
+    @name = n
+  end
+  
+  def get_name
+    @name
+  end
+end
+
+bob = Person.new('bob')
+joe = Person.new('joe')
+
+puts bob.inspect # => #<Person:0x000055e79be5dea8 @name="bob">
+puts joe.inspect # => #<Person:0x000055e79be5de58 @name="joe">
+
+p bob.get_name # => "bob"
+````
+
+In the above code, two `Person` objects with attributes `@name = 'bob'` and `@name = 'joe'` are instantiated and assigned to the local variables `bob` and `joe` respectively.
+
+When we invoke the `get_name` method on `bob`, it returns `'bob'` which is the value referenced by `@name` of the `Person` object referenced by `bob`. This shows that instance variables are scoped at object level. The same instance variable of different objects are not cross over from each other.
+
+## 28
+
+````ruby
+class GoodDog
+  DOG_YEARS = 7
+
+  attr_accessor :name, :age
+
+  def initialize(n, a)
+    self.name = n
+    self.age  = a * DOG_YEARS
+  end
+end
+
+sparky = GoodDog.new("Sparky", 4)
+puts sparky
+````
+
+What is the output and why? How could we output a message of our choice instead?
+
+How is the output above different than the output of the code below, and why?
+
+````ruby
+class GoodDog
+  DOG_YEARS = 7
+
+  attr_accessor :name, :age
+
+  def initialize(n, a)
+    @name = n
+    @age  = a * DOG_YEARS
+  end
+end
+
+sparky = GoodDog.new("Sparky", 4)
+p sparky
+````
+
+For the first code snippet, it outputs the string representation of the `GoodDog` object referced by `sparky`, which by default contains the class name `GoodDog` and the encoding object ID.
+
+To output a message of our choice instead, we should define our custom `to_s` method which returns the message of our choice in the `GoodDog` class.
+
+For the second code snippet, besides the class name `GoodDog` and the encoding object ID, it also outputs the state of the `GoodDog` object referenced by `sparky` (`@name = 'Sparky'` and `@age = 28`). It is because while the `puts` method implicitly invoke `to_s` on the argument before outputting the result to the console, the `p` method implicitly invoke `inspect` on the argument.
+
+## 34
+
+````ruby
+module Walkable
+  def walk
+    "#{name} #{gait} forward"
+  end
+end
+
+class Person
+  include Walkable
+
+  attr_reader :name
+
+  def initialize(name)
+    @name = name
+  end
+
+  private
+
+  def gait
+    "strolls"
+  end
+end
+
+class Cat
+  include Walkable
+
+  attr_reader :name
+
+  def initialize(name)
+    @name = name
+  end
+
+  private
+
+  def gait
+    "saunters"
+  end
+end
+
+mike = Person.new("Mike")
+p mike.walk
+
+kitty = Cat.new("Kitty")
+p kitty.walk
+````
+
+What is returned/output in the code? Why did it make more sense to use a module as a mixin than defining a parent class and using class inheritance?
+
+The above code outputs the following to the console:
+
+````text
+"Mike strolls forward"
+"Kitty saunters forward"
+````
+
+It makes more sense to use a module as a mixin here (interface inheritance) because both `Person` and `Cat` *has* the ability to walk, and they do not have a meaningful parent class to inherit from.
+
+## 38
+
+````ruby
+class Cat
+end
+
+whiskers = Cat.new
+ginger = Cat.new
+paws = Cat.new
+````
+
+If we use `==` to compare the individual `Cat` objects in the code above, will the return value be `true`? Why or why not? What does this demonstrate about classes and objects in Ruby, as well as the `==` method?
+
+By default, the `==` method (inherited from the `BasicObject` class) compares the object IDs of the calling object and the argument. As `whiskers`, `ginger` and `paws` reference three distinct `Cat` object, if we use `==` to compare the individual `Cat` objects, the return value will not be `true`.
+
+The above code demonstrates that classes are like molds which can create many objects of the same kind. Also, the above code demonstrates that if we do not have our custom `==` method defined in a class, the class inherits the `==` method from the `BasicObject` class which compares the objects' object IDs.
+
+## 39
+
+````ruby
+class Thing
+end
+
+class AnotherThing < Thing
+end
+
+class SomethingElse < AnotherThing
+end
+````
+
+Describe the inheritance structure in the code above, and identify all the superclasses.
+
+The class `SomethingElse` inherits the class `AnotherThing`, which inherts the class `Thing`.
+
+There are two superclasses, namely `AnotherThing` and `Thing`.
+
+## 40
+
+````ruby
+module Flight
+  def fly; end
+end
+
+module Aquatic
+  def swim; end
+end
+
+module Migratory
+  def migrate; end
+end
+
+class Animal
+end
+
+class Bird < Animal
+end
+
+class Penguin < Bird
+  include Aquatic
+  include Migratory
+end
+
+pingu = Penguin.new
+pingu.fly
+````
+
+What is the method lookup path that Ruby will use as a result of the call to the `fly` method? Explain how we can verify this.
+
+The method lookup path that Ruby will use when we call the `fly` method is `[Penguin, Migratory, Aquatic, Bird, Animal, Object, Kernel, BasicObject]`.
+
+To verify this, we can ruby the below code:
+
+````ruby
+p Penguin.ancestor
+# => [Penguin, Migratory, Aquatic, Bird, Animal, Object, Kernel, BasicObject]
+````
+
+## 41
+
+````ruby
+class Animal                     # 1
+  def initialize(name)           # 2
+    @name = name                 # 3
+  end                            # 4
+                                 # 5
+  def speak                      # 6
+    puts sound                   # 7
+  end                            # 8
+                                 # 9
+  def sound                      # 10
+    "#{@name} says "             # 11
+  end                            # 12
+end                              # 13
+                                 # 14
+class Cow < Animal               # 15
+  def sound                      # 16
+    super + "moooooooooooo!"     # 17
+  end                            # 18
+end                              # 19
+                                 # 20
+daisy = Cow.new("Daisy")         # 21
+daisy.speak                      # 22
+````
+
+What does this code output and why?
+
+The above code will output `Daisy says moooooooooooo!` to the console.
+
+On line 21, a new `Cow` object is instantiated and assigned to the local variable `daisy`. The invocation of the class method `new` on the class `Cow` triggers the invocation of `Animal#initialize` (as the `initialize` method is not defined in the `Cow` class) and the instance variable `@name` is initialized to `"Daisy"`.
+
+On line 22, the method `speak` is invoked on the `Cow` object referenced by `daisy`. As there is no `speak` method defined in the `Cow` class, Ruby looks for the method in its superclass and invokes `Animal#speak`. The `Animal#speak` method outputs the value returned by `sound` to the console. Ruby then invokes `Cow#sound`. Upon invocation, the `super` keyword call the method of the same name in the superclass, which is the `Animal#sound` method. The `Animal#sound` method returns `"Daisy says "`. Appended `"moooooooooooo!"`, `"Daisy says moooooooooooo!"` is the return string by the `Animal#sound` method. Therefore, line 22 outputs `"Daisy says moooooooooooo!"` to the console.
+
+## 42
+
+````ruby
+class Cat
+  def initialize(name, coloring)
+    @name = name
+    @coloring = coloring
+  end
+
+  def purr; end
+
+  def jump; end
+
+  def sleep; end
+
+  def eat; end
+end
+
+max = Cat.new("Max", "tabby")
+molly = Cat.new("Molly", "gray")
+````
+
+Do `molly` and `max` have the same states and behaviors in the code above? Explain why or why not, and what this demonstrates about objects in Ruby.
+
+In Ruby, objects of the same class share the same behaviours, while they could have different states.
+
+A state of an object is the combination of all attributes. In the above code example, the `Cat` object referenced by `max` has the state of `@name = 'Max'` and `@coloring = 'tabby'`, while that by `molly` has the state of `@name = 'Molly` and `@coloring = 'gray'`. Those two objects have different states.
+
+However, as `max` and `molly` are `Cat` objects, they share the same behaviors. They have access to the `purr`, `jump`, `sleep` and `eat` methods.
+
+# 43
+
+````ruby
+class Student                     # 1
+  attr_accessor :name, :grade     # 2
+                                  # 3
+  def initialize(name)            # 4
+    @name = name                  # 5
+    @grade = nil                  # 6
+  end                             # 7
+                                  # 8
+  def change_grade(new_grade)     # 9
+    grade = new_grade             # 10
+  end                             # 11
+end                               # 12
+                                  # 13
+priya = Student.new("Priya")      # 14
+priya.change_grade('A')           # 15
+priya.grade                       # 16
+````
+
+In the above code snippet, we want to return `"A"`. What is actually returned and why? How could we adjust the code to produce the desired result?
+
+On line 14, a new `Student` object with an attributes `@name = Priya'` and `@grade = nil` is instantiated and assigned to the local variable `priya`.
+
+On line 15, the `change_grade` method is invoked on `priya` with an argument `'A'`. The intention is the change the value referenced by the instance variable `@grade` to `'A'` by utilizing its setter method provided by `attr_accessor`. However, without the prefix `self.`, Ruby will take it as local variable initialization rather than calling the setter method. Therefore, the value referenced by `@grade` remains unchanged.
+
+When the getter of `@grade` is called on `priya` on line 16, it therefore returns `nil`.
+
+To produce the desired result, we should modify the `change_grade` method as follows:
+
+````ruby
+def change_grade(new_grade)
+  self.grade = new_grade
+end
+````
+
+## 44
+
+````ruby
+class MeMyselfAndI       # 1
+  self                   # 2
+                         # 3
+  def self.me            # 4
+    self                 # 5
+  end                    # 6
+                         # 7
+  def myself             # 8
+    self                 # 9
+  end                    # 10
+end                      # 11
+                         # 12
+i = MeMyselfAndI.new     # 13
+````
+
+What does each `self` refer to in the above code snippet?
+
+Inside a class method, `self` refers to the class. Inside an instance method, `self` refers to the object that calls the method. Elsewhere, `self` refers to the enclosing structure.
+
+On line 5, the `self` refers to the class `MeMyselfAndI`.
+
+On line 9, the `self` refers to the object that calls the `myself` method.
+
+On lines 2 and 4, the `self` refers to the enclosing structure which is the class `MeMyselfAndI`.
+
+## 45
+
+Running the following code will not produce the output shown on the last line. Why not? What would we need to change, and what does this demonstrate about instance variables?
+
+````ruby
+class Student
+  attr_accessor :grade
+
+  def initialize(name, grade=nil)
+    @name = name
+  end 
+end
+
+ade = Student.new('Adewale')
+p ade # => #<Student:0x00000002a88ef8 @grade=nil, @name="Adewale">
+````
+
+In the above code, a new `Student` object is instantiated. The `new` method is invoked on the class `Student` with an argument `'Adewale'`. This triggers the method invocation of `Student#initialize`. Upon the invocation of `Student#initialize`, the method parameter `name` is assigned to `'Adewale'` and `grade` is defaulted to `nil`. The instance variable `@name` is then initialized and assigned to the value that `name` is referencing, which is `'Adewale'`. The value referenced by `grade` (`nil`) is not used by the method, and the instance variable `@grade` is not initialized. Therefore, when we inspect the `Student` object referenced by `ade`, `@grade` is not an attribute of the object.
+
+In Ruby, in order to let an object to have an attribute. The method that initializes the attribute (or instance variable) must first be invoked.
+
+Therefore, in order to produce the output as shown, we should amend the `initialize` method as follows:
+
+````ruby
+def initialize(name, grade = nil)
+  @name = name
+  @grade = grade
+end
+````

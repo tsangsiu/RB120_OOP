@@ -387,7 +387,7 @@ p Foo::Bar.new.value2     # 20
 
 On line 19, the `value1` method is invoked on a `Foo::Bar` object and returns the constant referenced by `VAL`. To resolve the constant, Ruby first looks for it in the lexical scope, i.e., the enclosing structure of where the constant is referenced which is on line 8. Ruby then finds the constant on line 4. The constant `VAL` is then resolved to `'Local'`, and is outputted to the console by the method `p`.
 
-On line 20, the `value2` method is invoked on another `Foo::Bar` object and returns the constant referenced by `VAL` (line 15). Ruby cannot find the constant in the lexical scope. Ruby then looks for the constant up in the method lookup path from where it is referenced. As there is no inheritance involved, Ruby at last looks for the constant in the main scope on line 1. The constant `VAL` is resolved to `'Glibal'`, and is outputted to the console by the method `p`.
+On line 20, the `value2` method is invoked on another `Foo::Bar` object and returns the constant referenced by `VAL` (line 15). Ruby cannot find the constant in the lexical scope. Ruby then looks for the constant up in the method lookup path from where it is referenced. As there is no inheritance involved, Ruby at last looks for the constant in the main scope on line 1. The constant `VAL` is resolved to `'Global'`, and is outputted to the console by the method `p`.
 
 ### Attempt 2
 

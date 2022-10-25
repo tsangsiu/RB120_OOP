@@ -39,6 +39,29 @@
 | [20](https://github.com/tsangsiu/RB120_OOP/blob/main/Assessments/Practice_Problems/practice_problems.md#20) | :white_check_mark: |
 | [21](https://github.com/tsangsiu/RB120_OOP/blob/main/Assessments/Practice_Problems/practice_problems.md#21) | :white_check_mark: |
 | [22](https://github.com/tsangsiu/RB120_OOP/blob/main/Assessments/Practice_Problems/practice_problems.md#22) | :white_check_mark: |
+| 23 | |
+| 24 | |
+| [25](https://github.com/tsangsiu/RB120_OOP/blob/main/Assessments/Practice_Problems/practice_problems.md#25) | :white_check_mark: |
+| 26 | |
+| 27 | |
+| [28](https://github.com/tsangsiu/RB120_OOP/blob/main/Assessments/Practice_Problems/practice_problems.md#28) | :white_check_mark: |
+| 29 | |
+| 30 | |
+| 31 | |
+| 32 | |
+| 33 | |
+| [34](https://github.com/tsangsiu/RB120_OOP/blob/main/Assessments/Practice_Problems/practice_problems.md#34) | :white_check_mark: |
+| 35 | |
+| 36 | |
+| 37 | |
+| [38](https://github.com/tsangsiu/RB120_OOP/blob/main/Assessments/Practice_Problems/practice_problems.md#38) | :white_check_mark: |
+| [39](https://github.com/tsangsiu/RB120_OOP/blob/main/Assessments/Practice_Problems/practice_problems.md#39) | :white_check_mark: |
+| [40](https://github.com/tsangsiu/RB120_OOP/blob/main/Assessments/Practice_Problems/practice_problems.md#40) | :white_check_mark: |
+| [41](https://github.com/tsangsiu/RB120_OOP/blob/main/Assessments/Practice_Problems/practice_problems.md#41) | :white_check_mark: |
+| [42](https://github.com/tsangsiu/RB120_OOP/blob/main/Assessments/Practice_Problems/practice_problems.md#42) | :white_check_mark: |
+| [43](https://github.com/tsangsiu/RB120_OOP/blob/main/Assessments/Practice_Problems/practice_problems.md#43) | :white_check_mark: |
+| [44](https://github.com/tsangsiu/RB120_OOP/blob/main/Assessments/Practice_Problems/practice_problems.md#44) | :white_check_mark: |
+| [45](https://github.com/tsangsiu/RB120_OOP/blob/main/Assessments/Practice_Problems/practice_problems.md#45) | :white_check_mark: |
 
 ## Practice Problems by Marwan Zaarab (Completed)
 
