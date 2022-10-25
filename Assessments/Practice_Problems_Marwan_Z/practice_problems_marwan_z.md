@@ -383,9 +383,19 @@ p Foo::Bar.new.value1     # 19
 p Foo::Bar.new.value2     # 20
 ````
 
+### Attempt 1
+
 On line 19, the `value1` method is invoked on a `Foo::Bar` object and returns the constant referenced by `VAL`. To resolve the constant, Ruby first looks for it in the lexical scope, i.e., the enclosing structure of where the constant is referenced which is on line 8. Ruby then finds the constant on line 4. The constant `VAL` is then resolved to `'Local'`, and is outputted to the console by the method `p`.
 
 On line 20, the `value2` method is invoked on another `Foo::Bar` object and returns the constant referenced by `VAL` (line 15). Ruby cannot find the constant in the lexical scope. Ruby then looks for the constant up in the method lookup path from where it is referenced. As there is no inheritance involved, Ruby at last looks for the constant in the main scope on line 1. The constant `VAL` is resolved to `'Glibal'`, and is outputted to the console by the method `p`.
+
+### Attempt 2
+
+On lines 6 to 10, the class `Foo::Bar` is defined. The `Foo::Bar` is then re-defined on lines 13 to 17. Also, the constant `VAL` on line 4 is defined in the module `Foo`, but not in the class `Foo::Bar`.
+
+On line 19, the `value1` method is invoked on a `Foo::Bar` object and returns the constant referenced by `VAL`. To resolve the constant, Ruby first looks for it in the lexical scope, i.e., the enclosing structure.of where the constant is referenced which is on line 8. Ruby then finds the constant on line 4. The constant `VAL` is then resolved to `'Local'`, and is outputted to the console by the method `p`.
+
+On line 20, the `value2` method is invoked on another `Foo::Bar` object and returns the constant referenced by `VAL` (line 15). For Ruby, the constant `VAL` defined on line 4 is not considered to be in lexical scope of the re-defined class `Foo::Bar` on lines 13 to 17. Ruby then looks for the constant up in the method loopup path from where `VAL` is referenced. As there is no inheritance involved, Ruby at last looks for the constant in the main scope on line 1. The constant `VAL` is resolved to `Global`, and is outputted to the console by the method `p`.
 
 ## 14
 
