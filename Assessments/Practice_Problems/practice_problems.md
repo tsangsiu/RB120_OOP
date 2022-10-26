@@ -1277,3 +1277,93 @@ def initialize(name, grade = nil)
   @grade = grade
 end
 ````
+
+## 46
+
+````ruby
+class Character                         # 1
+  attr_accessor :name                   # 2
+                                        # 3
+  def initialize(name)                  # 4
+    @name = name                        # 5
+  end                                   # 6
+                                        # 7
+  def speak                             # 8
+    "#{@name} is speaking."             # 9
+  end                                   # 10
+end                                     # 11
+                                        # 12
+class Knight < Character                # 13
+  def name                              # 14
+    "Sir " + super                      # 15
+  end                                   # 16
+end                                     # 17
+                                        # 18
+sir_gallant = Knight.new("Gallant")     # 19
+p sir_gallant.name                      # 20
+p sir_gallant.speak                     # 21
+````
+
+What is output and return value, and why? What would we need to change so that the last line outputs `"Sir Gallant is speaking."`?
+
+On line 19, a new `Knight` object is instantiated and assigned to the local variable `sir_gallant`. The class method `new` is invoked on the class `Knight` with an argument `"Gallant"`. This triggers the method invocation of `Character#initialize` as there is no `initialize` method defined in the `Knight` class. Upon the invocation of `Character#initialize`, the instance variable `@name` is initialized to `"Gallant"`.
+
+On line 20, the `name` method is invoked on `sir_gallant`. Upon the invocation of `Knight#name`, the `super` keyword calls the method of the same name in the superclass, which is `Character#name`. The method `Character#name` is a getter of `@name` given by `attr_accessor` and thus returns `"Gallant`. Prefixed by `"Sir "`, `sir_gallant.name` returns `"Sir Gallant"` and is then outputted to the console by the `p` method.
+
+On line 21, the `speak` method is invoked on `sir_gallant`. Upon the invocation of `Character#speak` (as there is no `speak` method defined in the `Knight` class), it returns `"Gallant is speaking."` as `@name` points to `"Gallant"` at the moment. The string `"Gallant is speaking."` is then outputted to the console by the `p` method.
+
+To change the code so that the last line outputs `"Sir Gallant is speaking."`, we can amend the `Character#speak` method as follows:
+
+````ruby
+def speak
+  "#{name} is speaking."
+end
+````
+
+It is because we know that `sir_gallant.name` returns `"Sir Gallant"`.
+
+## 47
+
+What is the output and why?
+
+````ruby
+class FarmAnimal             # 1
+  def speak                  # 2
+    "#{self} says "          # 3
+  end                        # 4
+end                          # 5
+                             # 6
+class Sheep < FarmAnimal     # 7
+  def speak                  # 8
+    super + "baa!"           # 9
+  end                        # 10
+end                          # 11
+                             # 12
+class Lamb < Sheep           # 13
+  def speak                  # 14
+    super + "baaaaaaa!"      # 15
+  end                        # 16
+end                          # 17
+                             # 18
+class Cow < FarmAnimal       # 19
+  def speak                  # 20
+    super + "mooooooo!"      # 21
+  end                        # 22
+end                          # 23
+                             # 24
+p Sheep.new.speak            # 25
+p Lamb.new.speak             # 26
+p Cow.new.speak              # 27
+````
+
+The following is outputted to the console:
+
+````ruby
+"#<Sheep:0x000000000294a3e8> says baa!"
+"#<Lamb:0x000000000294a1e0> says baa!baaaaaaa!"
+"#<Cow:0x000000000294a000> says mooooooo!"
+````
+
+On line 25, the `speak` method is invoked on the `Sheep` object `Sheep.new`. Upon the method invocation of `Sheep#speak`, the `super` keyword calls the method of the same name in the superclass `FarmAnimal`. The `FarmAnimal#speak` method returns `#{self} says `. As the `self` here is inside an instance method, it refers to the object that call the method, which is the `Sheep` object `Sheep.new`. In order to get `self` interpolated into a string, the `to_s` method is invoked on `self`. As there is no `to_s` method defined in the `Sheep` and `FarmAnimal` class, by default, `to_s` returns the class of the calling object and the encoding of its object ID. Therefore, `FarmAnimal#speak` returns `"#<Sheep:0x000000000294a3e8> says "`. Appended with `"baa!"`, `Sheep.new.speak` returns `""#<Sheep:0x000000000294a3e8> says baa!""`, which is then outputted to the console by the `p` method.
+
+By the same token, lines 26 and 27 output `"#<Lamb:0x000000000294a1e0> says baa!baaaaaaa!"` and `"#<Cow:0x000000000294a000> says mooooooo!"` respectively to the console.
