@@ -1367,3 +1367,86 @@ The following is outputted to the console:
 On line 25, the `speak` method is invoked on the `Sheep` object `Sheep.new`. Upon the method invocation of `Sheep#speak`, the `super` keyword calls the method of the same name in the superclass `FarmAnimal`. The `FarmAnimal#speak` method returns `#{self} says `. As the `self` here is inside an instance method, it refers to the object that call the method, which is the `Sheep` object `Sheep.new`. In order to get `self` interpolated into a string, the `to_s` method is invoked on `self`. As there is no `to_s` method defined in the `Sheep` and `FarmAnimal` class, by default, `to_s` returns the class of the calling object and the encoding of its object ID. Therefore, `FarmAnimal#speak` returns `"#<Sheep:0x000000000294a3e8> says "`. Appended with `"baa!"`, `Sheep.new.speak` returns `""#<Sheep:0x000000000294a3e8> says baa!""`, which is then outputted to the console by the `p` method.
 
 By the same token, lines 26 and 27 output `"#<Lamb:0x000000000294a1e0> says baa!baaaaaaa!"` and `"#<Cow:0x000000000294a000> says mooooooo!"` respectively to the console.
+
+## 48
+
+````ruby
+class Person
+  def initialize(name)
+    @name = name
+  end
+end
+
+class Cat
+  def initialize(name, owner)
+    @name = name
+    @owner = owner
+  end
+end
+
+sara = Person.new("Sara")
+fluffy = Cat.new("Fluffy", sara)
+````
+
+What are the collaborator objects in the above code snippet, and what makes them collaborator objects?
+
+In the above code, the `Person` object referenced by `sara` is a collaborator object. It is a collaborator object because it is stored as a state in other object referenced by `fluffy`.
+
+Technically, the strings `"Sara"` and `"Fluffy"` are also collaborator objects, but by collaborator objects we usually refer to custom objects.
+
+## 50
+
+````ruby
+class Person
+  TITLES = ['Mr', 'Mrs', 'Ms', 'Dr']
+
+  @@total_people = 0
+
+  def initialize(name)
+    @name = name
+  end
+
+  def age
+    @age
+  end
+end
+````
+
+What are the scopes of each of the different variables in the above code?
+
+## 52
+
+````ruby
+class Cat
+  attr_accessor :type, :age
+
+  def initialize(type)
+    @type = type
+    @age  = 0
+  end
+
+  def make_one_year_older
+    self.age += 1
+  end
+end
+````
+
+In the `make_one_year_older` method we have used `self`. What is another way we could write this method so we don't have to use the `self` prefix? Which use case would be preferred according to best practices in Ruby, and why?
+
+## 53
+
+````ruby
+module Drivable
+  def self.drive
+  end
+end
+
+class Car
+  include Drivable
+end
+
+bobs_car = Car.new
+bobs_car.drive
+````
+
+What is the output and why? What does this demonstrate about how methods need to be defined in modules, and why?
