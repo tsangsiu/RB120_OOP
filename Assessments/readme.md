@@ -66,7 +66,7 @@
 | [47](https://github.com/tsangsiu/RB120_OOP/blob/main/Assessments/Practice_Problems/practice_problems.md#47) | :white_check_mark: |
 | [48](https://github.com/tsangsiu/RB120_OOP/blob/main/Assessments/Practice_Problems/practice_problems.md#48) | :white_check_mark: |
 | 49 | |
-| 50 | |
+| [50](https://github.com/tsangsiu/RB120_OOP/blob/main/Assessments/Practice_Problems/practice_problems.md#50) | :white_check_mark: |
 | 51 | |
 | 52 | |
 | 53 | |

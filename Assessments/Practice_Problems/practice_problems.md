@@ -1414,6 +1414,10 @@ end
 
 What are the scopes of each of the different variables in the above code?
 
+For the constant `TITLES` and class variable `@@total_people`, they are available anywhere in the class `Person`.
+
+For the instance variables `@name` and `@age`, they are available to the instance methods of a `Person` obejct. If they are not initialized to a value, they points to `nil`.
+
 ## 52
 
 ````ruby
