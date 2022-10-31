@@ -582,6 +582,8 @@ For example, considering the code snippet `1 + 1 == 2`, the `==` is actually a m
 
 ### How does equivalence work in Ruby?
 
+--
+
 ### How do you determine if two variables actually point to the same object?
 
 There are two ways to do so in Ruby.
@@ -661,9 +663,79 @@ puts person1 != person2 # => false
 
 ### What is the `===` method?
 
+The `===` method is implicitely used by the `case` statement.
+
+Consider the following example:
+
+````ruby
+case score
+when 90..100
+  puts 'A'
+when 70...90
+  puts 'B'
+when 50...70
+  puts 'C'
+when 30...50
+  puts 'D'
+else
+  puts 'U'
+end
+````
+
+The above `case` statement can be translated into the following `if` statement:
+
+````ruby
+if (90..100) === score
+  puts 'A'
+elsif (70...90) === score
+  puts 'B'
+elsif (50...70) === score
+  puts 'C'
+elsif (30...50) === score
+  puts 'D'
+else
+  puts 'U'
+end
+````
+
+The `if` clause `(90...100) == score` can be interpreted as: is the object referenced by `score` a member of the group `90..100`?
+
+````ruby
+(90..100) === 90 # => true
+(90..100) === 99.9 # => true
+(90..100) === 101 # => false
+````
+
 ### What is the `equal?` method?
 
+The `equal?` method check if the two objects in question are the same object. Take the following as an example:
+
+````ruby
+str1 = 'This is a string.'
+str2 = 'This is a string.'
+str1_copy = str1
+
+str1.equal?(str2) # => false
+str1.equal?(str1_copy) # => true
+````
+
+Although `str1` and `str2` are strings with the same value `'This is a string.'`, they are actually two different objects. Therefore `str1.equal?(str2)` returns `false`.
+
+Both `str1` and `str1_copy` point to the same `String` object. Therefore `str1.equal?(str1_copy)` returns `true`.
+
 ### What is the `eql?` method?
+
+The `eql?` method checks if two objects have the same value and are of the same type. The `eql?` method is implicitely used by `Hash` to determine the equality among its members.
+
+````ruby
+str1 = 'This is a string.'
+str2 = 'This is a string.'
+str1.eql?(str2) # => true
+
+num1 = 9
+num2 = 9.0
+num1.eql?(num2) # => false
+````
 
 ### What is interesting about the `object_id` method and its relation to symbols and integers?
 
