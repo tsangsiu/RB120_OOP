@@ -522,6 +522,16 @@ Class methods are functionalities that are related to the class, instead of its 
 
 Class variables are used to keep track of a class's information as a whole, instead of its instances.
 
+### What is a constant variable?
+
+A constant variable is a constant that is not supposed to be re-assigned to a new value after initialization. Although Ruby allows us to change a constant, it just warns us without raising an error.
+
+To define a constant variable in Ruby, choose a variable name that starts with a capital letter or with full capital letters like so:
+
+````ruby
+PI = 3.14
+````
+
 ### What is the default `to_s` method that comes with Ruby, and how do you override this? What are some important attributes of the `to_s` method?
 
 The `to_s` method returns a string representation of the calling object. By default, the string representation includes the class name of the calling object and its encoding of the object ID. To override the default `to_s` method, we can define our own custom `to_s` method in our class.
@@ -558,7 +568,8 @@ Typically there are two situations where we need to use `self`:
 Depending on the scope where `self` is used in, `self` can reference different things:
 
 - Inside an instance method, `self` references the calling object.
-- Inside a class but outside an instance method, `self` references the class itself.
+- Inside a class method, `self` references the class itself.
+- Elsewhere, `self` references the enclosing structure.
 
 ### Why is it generally a bad idea to override methods from the `Object` class, and which method is commonly overridden?
 
@@ -571,6 +582,59 @@ However, the commonly overridden behavior is the `to_s` method. Its invocation r
 When we call the `p` method on an object, Ruby automatically calls the `inspect` method on it and the return value is outputted to the console. Therefore `p obj` is equivalent to `puts p.inspect`.
 
 When we call the `puts` methods on an object, Ruby automatically call the `to_s` method on it and the return value is outputted to the console. Therefore, `puts obj` is equivalent to `puts obj.to_s`.
+
+### What are the scoping rules for class variables? What are the two main behaviors of class variables?
+
+Class variables are scoped at the class level. Once they are defined, they can be referenced and manipulated in class methods and instance methods.
+
+There are two main behaviors of class variables:
+
+- All objects of the class share the same copy of class variables
+- Class methods and instance methods can access class variables, regardless of where the class variables are initialized.
+
+### What are the scoping rules for constant variables?
+
+Constant variables are scoped lexically. That means where a constant is defined determines its availability.
+
+When Ruby resolves a constant, it first searches the surrounding structure (i.e., the lexical scope). If the constant is not found, Ruby then looks it up in the inheritance chain, and finally in the main scope.
+
+### How does sub-classing affect instance variables?
+
+Unlike instance methods, instance variables and their values are not inherited.
+
+An instance can access an instance variable when the instance method that initializes the instance variable is executed.
+
+### How do you print the object so you can see the instance variables and their values along with the object?
+
+We can do so by invoking the `p` method with the object as an argument. The `p` method implicitly calls the `inspect` method on the object so that we can see the instance variables and their values along with the object.
+
+### How do you override the `to_s` method? What does the `to_s` method have to do with `puts`?
+
+All custom classes inherit the `to_s` method from the `Object` class. To override the `to_s` method, we can define our own `to_s` method in our custom class.
+
+When we invoke the `puts` method with an argument, the `puts` method implicitly calls the `to_s` method on its argument.
+
+### What is the default return value of `to_s` when invoked on an object? Where could you go to find out if you want to be sure?
+
+The `to_s` method returns a string representation of the calling object which, by default, consists of the name of the object's class and the encoding of the object ID.
+
+This can be shown by the following snippet:
+
+````ruby
+class Person
+  def initialize(name, age)
+    @name = name
+    @age = age
+  end
+end
+
+jason = Person.new('Jason', 30)
+puts jason.to_s # => #<Person:0x0000000001f47c10>
+````
+
+### Why is it generally safer to use an explicit `self.` caller when you have a setter method unless you have a good reason to use the instance variable directly?
+
+It is generally safer to use a setter method because in the setter there could be a value check or operation performed. If we use the instance variable directly, it may be assigned some undesired values.
 
 ## Fake Operators and Equality
 
