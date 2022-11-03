@@ -2,6 +2,28 @@
 
 ## Reading OO Code
 
+### What is OOP and why is it important?
+
+Object-oriented programming (OOP) is a programming paradigm that makes use of objects and their interaction to design computer programs.
+
+It is important because of the following points:
+
+- Large, complex programs can be difficult to maintain due to dependencies throughout the program. OOP lets programmers write programs in which different parts of the program interact, thus reducing dependencies and facilitating maintenance.
+- Coding in a non-OO way often means writing code that is useful solely within a single context. Defining basic classes and leveraging concepts like inheitance to introduce more detailed behaviors provides a greater level of reusability and flexibility.
+- Complex coding problems are often difficult to break down an solve in a clear and systematic way. Using OOP to model classes appropriate to the problem, and using real-world nouns to represent objects, lets programmers think at a higher level of abstraction that helps them break down and solve problems.
+
+### What is a spike?
+
+A spike is an initial exploratory code to play around with a problem. It can help validate our initial hypotheses.
+
+### When writing a program, what is a sign that you’re missing a class?
+
+Repetitive nouns in a method is the sign.
+
+### What are some rules/guidelines when writing programs in OOP?
+
+[Guidelines](https://launchschool.com/lessons/dfff5f6b/assignments/d632a90f)
+
 ## Classes and Objects, Encapsulation, Collaborator Objects and Public/Private/Protected Methods
 
 ### What is encapsulation? How does encapsulation relate to the public interface of a class?
