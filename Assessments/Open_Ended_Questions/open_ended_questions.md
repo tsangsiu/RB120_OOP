@@ -305,6 +305,12 @@ end
 
 ## `attr_*`, Getters and Setters, and Referencing and Setting Instance Variables
 
+### What are accessor methods?
+
+The accessor methods of an instance variable include its getter and setter.
+
+We can have the accessor methods by writing our own getter and setter or by invoking the `attr_accessor` method.
+
 ### What is a getter method?
 
 A getter method is a method that returns the value referenced by an object's instance variable. The value outputted could be modified by the getter method.
@@ -339,14 +345,14 @@ jason = Person.new('Jason')     # 9
 p jason.name # => "Jason"       # 10
 ````
 
-We can also define our own getter, in which we can modify the value reference by the instance variable when outputted. In practice, the name of the getter is usually the same as that of the instance variable:
+We can also define our own getter, where we can modify the value reference by the instance variable when outputted. In practice, the name of the getter is usually the same as that of the instance variable:
 
 ````ruby
 class Person
   def initialize(n)
     @name = n
   end
-  
+
   def name
     @name.capitalize
   end
@@ -407,11 +413,7 @@ jason.name = 'jason'                                         # 17
 p jason # => #<Person:0x000000000159b810 @name="Jason">      # 18
 ````
 
-There is one gotcha for setter methods. Setter methods always return the value passed in as an argument. Therefore, on line 14 in the above example, even though `12345` is not assigned to `@name`, line 14 still returns `12345` instead of `nil`:
-
-````ruby
-p (jason.name = 12345) # => 12345
-````
+### What does a setter method return?
 
 Setters always return the value passed in as an argument even when the last evaluated expression is a completely irrelevant string:
 
@@ -430,6 +432,10 @@ end
 jason = Person.new('Jayson')
 p (jason.name = 'Jason') # => "Jason"
 ````
+
+### What is `attr_accessor`?
+
+The `attr_accessor` method is a method that accepts symbols representing the names of instance variables. By invoking it, Ruby automatically create the instance variable and its getter and setter.
 
 ## Instance/Class Methods, `self` and `to_s`
 
