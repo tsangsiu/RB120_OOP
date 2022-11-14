@@ -390,7 +390,7 @@ p jason # => #<Person:0x00000000014cdac8 @name="Jason">      # 13
 
 We can also write our own setter method. An advantage is that we can validate or manipulate the value passed in as an argument before assigning to the instance variable.
 
-In the example below, we have our custom setter for the attribute `name` defined. If the argument given is not a string, it won't be assigned to `@name`. If the argument given is a string, it will capitalize the string before assigning to `@name`. This illustrates how a custom setter can validate or manipulate the argument before assigning it to an instance variable.
+In the example below, we have our custom setter for the attribute `@name` defined. If the argument given is not a string, it won't be assigned to `@name`. If the argument given is a string, it will capitalize the string before assigning to `@name`. This illustrates how a custom setter can validate or manipulate the argument before assigning it to an instance variable.
 
 ````ruby
 class Person                                                 # 1
@@ -415,7 +415,7 @@ p jason # => #<Person:0x000000000159b810 @name="Jason">      # 18
 
 ### What does a setter method return?
 
-Setters always return the value passed in as an argument even when the last evaluated expression is a completely irrelevant string:
+A setter method always returns the value passed in as an argument even when the last evaluated expression is a completely irrelevant string:
 
 ````ruby
 class Person
@@ -435,7 +435,29 @@ p (jason.name = 'Jason') # => "Jason"
 
 ### What is `attr_accessor`?
 
-The `attr_accessor` method is a method that accepts symbols representing the names of instance variables. By invoking it, Ruby automatically create the instance variable and its getter and setter.
+`attr_accessor` is a method that accepts one or more symbols (separated by commas) representing the names of instance variables. By invoking it, Ruby automatically creates the instance variables and their getters and setters.
+
+### When using getters and setters, in what scenario might you decide to only use a getter, and why is this important?
+
+When using getters and setters, in scenarios when we don't want an instance variable to be modified, we can decide to only use a getter.
+
+Take the following `Person` class as an example, the ID of every `Person` object should not be modified. Hence, we should only use a getter.
+
+````ruby
+class Person
+  attr_accessor :name
+  attr_reader :id
+
+  def initialize(name, id)
+    @name = name
+    @id = id
+  end
+end
+
+jason = Person.new('Jason', 123456789)
+puts jason.id # => 123456789
+jason.id = 111111111 # => NoMethodError
+````
 
 ## Instance/Class Methods, `self` and `to_s`
 
