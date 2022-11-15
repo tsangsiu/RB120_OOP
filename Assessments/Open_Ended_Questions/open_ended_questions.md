@@ -437,6 +437,48 @@ p (jason.name = 'Jason') # => "Jason"
 
 `attr_accessor` is a method that accepts one or more symbols (separated by commas) representing the names of instance variables. By invoking it, Ruby automatically creates the instance variables and their getters and setters.
 
+### How do you decide whether to reference an instance variable or a getter method?
+
+Generally we prefer getters to direct access to instance variables, because instance variables may contain sensitive information that we would like them to be manipulated before exposing them. By doing the manipulation once in getters, every time when we would like to get the information tied to an instance variable, we just need to invoke its getter method.
+
+In the example code below, we define a `Person` class. Every time when we instantiate a `Person` object, we need to supply an ID for that object as an attribute. As ID is a sensitive data, we don't want to directly expose the instance variable `@id`. Instead, we define our own getter method which only returns the first three characters and hides the rest. This shows that using getters is more preferable, because we have control of what to expose to users, and the manipulation of sensitive information can be done in one place and used everywhere.
+
+````ruby
+class Person
+  def initialize(id)
+    @id = id
+  end
+  
+  def id
+    "#{@id[0..2]}#{'X' * (@id[3..].length)}"
+  end
+end
+
+jason = Person.new('123456789')
+puts jason.id # => 123XXXXXX
+````
+
+### What are the two different ways that getter methods allow us to invoke them in order to access instance variables?
+
+Take the following code as an example. Inside the class, we can invoke the getter by `name`. Outside the class, we can invoke the getter on the object (`jason.name`).
+
+````ruby
+class Person
+  attr_reader :name
+
+  def initialize(name)
+    @name = name
+  end
+  
+  def greet
+    puts "Hi! My name is #{name}"
+  end
+end
+
+jason = Person.new('Jason')
+puts jason.name # => Jason
+````
+
 ### When using getters and setters, in what scenario might you decide to only use a getter, and why is this important?
 
 When using getters and setters, in scenarios when we don't want an instance variable to be modified, we can decide to only use a getter.
