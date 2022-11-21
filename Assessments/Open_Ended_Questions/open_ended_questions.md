@@ -323,13 +323,13 @@ Modules can act as containers to house methods that seem out-of-place within the
 
 ````ruby
 module MyModule
-  def self.some_of_out_place_methods(num)
+  def self.some_out_of_place_methods(num)
     Math.sqrt(num)
   end
 end
 ````
 
-The method `some_of_out_place_methods` here is a module method. To invoke it, we can do so by either `MyModule.some_of_out_place_methods(num)` or `MyModule::some_of_out_place_methods(num)`.
+The method `some_out_of_place_methods` here is a module method. To invoke it, we can do so by either `MyModule.some_out_of_place_methods(num)` or `MyModule::some_out_of_place_methods(num)`.
 
 ### How does Ruby provide the functionality of multiple inheritance?
 
@@ -359,6 +359,48 @@ module Swimmable
   def self.swim; end
 end
 ```
+
+## What is a method lookup path? How is the method look up path affected by module mixins and class inheritance? How do you find the lookup path for a class?
+
+A method lookup path is a list of classes and modules that Ruby traverses when it looks for a method.
+
+When Ruby looks for a method, Ruby first looks for it in the class of the calling object. If the method is not found and there are included modules, Ruby will then go to the last included module, then the second-last included module, and so on to the first included module. If the method is not found, Ruby will then go to the parent class and repeat in the same fashion until the method is found or the end of the method lookup path is reached.
+
+To find the method lookup path for a class, we can invoke the `ancestors` method on the class name like so:
+
+````ruby
+p String.ancestors # => [Array, Enumerable, Object, PP::ObjectMixin, Kernel, BasicObject]
+````
+
+## Are class variables accessible to subclasses? Why is it recommended to avoid the use of class variables when working with inheritance?
+
+Class variables are accessible to subclasses. In fact, a class and all its subclasses share the same copy of class variables. Therefore, when the value of a class variable is re-assigned, the change is reflected in all other related classes, which we might do not want. Therefore it's recommended to avoid the use of class variables when working with inheritance.
+
+## Is it possible to reference a constant defined in a different class?
+
+It is possible to reference a constant defined in a different class by using the scope resolution operator `::`.
+
+## What is lexical scope?
+
+The lexical scope means the position of the code determines where it is available.
+
+## When dealing with code that has modules and inheritance, where does constant resolution look first?
+
+To resolve a constant, Ruby first looks for it in the lexical scope, i.e. the surrounding structure. If the constant is not found, Ruby will then searches for it up in the inheritance hierarchy, and finally the main scope.
+
+## What is the namespace resoution operator?
+
+The namespace resolution operator (`::`) is used to specify a scope.
+
+For example, in the code below, the resolution operator `::` on line 5 tells Ruby to look for the constant `CONST` in the scope of `MyClass`.
+
+````ruby
+class MyClass                             # 1
+  CONST = 'Hello World!'                  # 2
+end                                       # 3
+                                          # 4
+puts MyClass::CONST # => Hello World!     # 5
+````
 
 ## `attr_*`, Getters and Setters, and Referencing and Setting Instance Variables
 
