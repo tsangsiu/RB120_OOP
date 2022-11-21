@@ -293,6 +293,63 @@ end
 
 ### Explain two different ways to implement polymorphism.
 
+### What is a module?
+
+A module can be considered as a named 'wrapper' that groups codes (e.g. constants, instance methods and module methods) into one place.
+
+### What is a mixin?
+
+A mixin is a module that is mixed in a class by the method invocation of `include`. After the mixing in, instance methods in the modules are available to the class that includes the module.
+
+### When creating a hierarchical structure, under what circumstance would a module be useful?
+
+When creating a hierarchical structure, sometimes several unrelated (non-parent-child relationship) classes share the same set of behaviours. In that case, a module would be useful.
+
+### What is interface inheritance, and under what circumstance would it be useful in comparison to class inheritance?
+
+In Ruby, a class can only have one immediate parent. Interface inheritance is the Ruby way to implement multiple inheritance. For interface inheritance, a class doesn't inherit from another class, but instead inherits the interfaces provided by mixin modules.
+
+To implement interface inheritance in Ruby, one or more modules can be mixed in a class by the method invocation of `include`. After the mixing in, the instance methods in the modules are available to the class.
+
+For hierarchical structure, sometimes only some of the child classes share the same set of behaviors. If we implement class inheritance, all of the child classes would have access to same set of behaviours. In this circumstance, it would be useful to implement interface inheritance in comparison to class inheritance.
+
+### What is namespacing?
+
+Namespacing means organizing similar codes under a module. The various bits of code inside the module share the same namespace, so they are all visible to each other but are not visible to code outside the module.
+
+### Describe the use of modules as containers.
+
+Modules can act as containers to house methods that seem out-of-place within the code. For example:
+
+````ruby
+module MyModule
+  def self.some_of_out_place_methods(num)
+    Math.sqrt(num)
+  end
+end
+````
+
+The method `some_of_out_place_methods` here is a module method. To invoke it, we can do so by either `MyModule.some_of_out_place_methods(num)` or `MyModule::some_of_out_place_methods(num)`.
+
+### How does Ruby provide the functionality of multiple inheritance?
+
+Ruby provides the functionality of multiple inheritance by interface inheritance. For interface inheritance, a class doesn't inherit from another class, but instead inherits the interfaces provided by mixin modules.
+
+To implement interface inheritance in Ruby, one or more modules can be mixed in a class by the method invocation of `include`. After the mixing in, the instance methods in the modules are available to the class.
+
+### How do you instantiate an object from a class contained in a module?
+
+To instatiate an object from a class contained in a module, we use the scope resolution operator `::` like so:
+
+````ruby
+module MyModule
+  class MyClass
+  end
+end
+
+obj = MyModule::MyClass.new
+````
+
 ### Why should methods in mixin modules be defined without using `self.` in the definition?
 
 Refer to the code below, if a method in a mixin module is defined with `self.` in the definition, it becomes a module method and can only be called by `Swimmable.swim` or `Swimmable::swim`. Furthermore, the method is not available to all instances of the class where the module is mixed in.
