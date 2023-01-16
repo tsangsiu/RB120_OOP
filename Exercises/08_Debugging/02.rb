@@ -34,7 +34,7 @@ end
 
 class SongBird < Bird
   def initialize(diet, superpower, song)
-    super(diet, superpower)
+    super
     @song = song
   end
 
@@ -50,14 +50,33 @@ penguin = FlightlessBird.new(:carnivore, 'drink sea water')
 robin = SongBird.new(:omnivore, 'sing', 'chirp chirrr chirp chirp chirrrr')
 
 =begin
+Line 50 raises `ArgumentError`.
 
-# Further Exploration
+On line 50, a new `SongBird` object is instantiated with three arguments passed
+in to the `SongBird::new` method. The `SongBird::new` method triggers the
+invocation of `SongBird#initialize`. Upon its invocation, the `super` keyword
+invokes the method of the same name in its parent class (which is `Animal#initialize`)
+and pass all arguments that are passed to `SongBird#initialize` to `Animal#initialize`.
+As `Animal#initialize` only accepts two arguments, hence raising `ArgumentError`.
 
-The `FlightlessBird#initialize` method is not necessary. When it is called, by
-the method lookup chain, the `super` keyword will eventually lead to invocation
-of `Animal#initialize` method with all arguments pass to it.
+To alter the code so that it runs without error, we can alter line 37 as follows:
+`super(diet, superpower)`
+=end
 
-Without the `FlightlessBird` method, Ruby will still invoke `Animal#initialize`
-by the method lookup chain.
+=begin
+Further Exploration
 
+The `FlightlessBird#initialize` method is not necessary.
+
+When the method is invoked, the `super` keyword invokes the method of the same
+name up in the method lookup path, which is `Animal#initialize`, and passes all
+arguments that are passed to `FlightlessBird#initialize` to `Animal#initialize`.
+This initializes the two instance variables `@diet` and `@superpower` to the
+objects referenced by `diet` and `superpower` respectively.
+
+However, without the `FlightlessBird#initialize` method, Ruby will look for the
+`initialize` method up in the method lookup path when a new `FlightlessBird`
+object is instantiated. It turns out that the `Animal#initialize` is invoked
+when there is no `FlightlessBird` method. Hence, `FlightlessBird#initialize`
+is not necessary.
 =end

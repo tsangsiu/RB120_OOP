@@ -42,14 +42,17 @@ community_library.check_in(wrinkle_in_time)
 # community_library.books.display_data
 
 =begin
+On line 42, when we invoke the getter method of `@books` on the `Library` object
+referenced by `community_library`, it returns an array of `Book` objects. As the 
+`display_data` method is not defined in the `Array` class, but the `Book` class,
+line 42 raises `NoMethodError`.
 
-On line 42, it is intended to display information regarding the books currently
-checked in to the current library. `community_library.books` returns an array
-of `Book` object. However, the method `display_data` is a book's behaviour, not
-array's. In order to display the information of each book, we should do:
-  
+To fix the code, we should iterate through the array and invoke the `display_data`
+method on each `Book` object like so:
+
+````ruby
+community_library.books.each(&:display_data)
+````
 =end
 
-community_library.books.each do |book|
-  book.display_data
-end
+community_library.books.each(&:display_data)
