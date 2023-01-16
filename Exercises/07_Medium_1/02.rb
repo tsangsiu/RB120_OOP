@@ -1,31 +1,26 @@
 class FixedArray
   def initialize(size)
-    @fixed_array = [nil] * size
-    @size = size
+    @array = [nil] * size
   end
 
   def [](index)
-    raise IndexError if index_error?(index)
-    @fixed_array[index]
-  end
-  
-  def []=(index, element)
-    raise IndexError if index_error?(index)
-    @fixed_array[index] = element
+    # `array[index]` returns `nil` if `index` is out-of-bound
+    # `array.fetch(index)` raises `IndexError` if `index` is out-of-bound
+    @array.fetch(index)
   end
 
+  def []=(index, new_value)
+    self[index]
+    @array[index] = new_value
+  end
+
+  # use `#clone` to avoid object mutation
   def to_a
-    @fixed_array.clone
+    @array.clone
   end
 
   def to_s
-    @fixed_array.to_s
-  end
-
-  private
-
-  def index_error?(index)
-    index < -@size || index > @size - 1
+    to_a.to_s
   end
 end
 

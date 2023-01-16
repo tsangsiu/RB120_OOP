@@ -1,6 +1,6 @@
 class Machine
   def start
-    # The self. here refer to an instance of the class.
+    # The `self.`` here refers to an instance of the class.
     # After the method `flip_switch` is made private,
     # `self.flip_switch` will raise `NoMethodError`.
     # For the method to work, `self.` should be removed.
@@ -17,23 +17,34 @@ class Machine
   def stop
     flip_switch(:off)
   end
-  
+
+  private
+
+  attr_writer :switch
+
+  def flip_switch(desired_state)
+    # But here, `self.` is necessary.
+    # Otherwise, Ruby will treat it as a local variable.
+    self.switch = desired_state
+  end
+end
+
+# Further Exploration
+
+class Machine
   def status
     switch
   end
 
   private
 
-  attr_accessor :switch
-
-  def flip_switch(desired_state)
-    # But here, `self.` is necessary.
-    # Otherwise, Ruby will treat it as a local variable.
-    
-    self.switch = desired_state
-  end
+  attr_reader :switch
 end
 
 machine = Machine.new
+
 machine.start
-p machine.status
+puts machine.status
+
+machine.stop
+puts machine.status
