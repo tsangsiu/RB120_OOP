@@ -1,62 +1,90 @@
-# My original solution, which happens to be the solution for Further Exploration
-
-# class CircularQueue
-#   def initialize(size)
-#     @circular_queue = []
-#     @size = size
-#   end
-
-#   def dequeue
-#     return nil if @circular_queue.empty?
-#     @circular_queue.shift
-#   end
-
-#   def enqueue(element)
-#     dequeue if @circular_queue.size >= @size
-#     @circular_queue << element
-#   end
-# end
-
+# Solution 1: @st and @en are the indices of the first and last objects
 class CircularQueue
   def initialize(size)
-    @queue = Array.new(size)
-    @size = size
-    @start = 0
-    @end = 0
-  end
-
-  def dequeue
-    return nil if empty?
-    element_dequeued = @queue[@start]
-    @queue[@start] = nil
-    @start = next_index(@start)
-    element_dequeued
+    @queue = Array.new(size, nil)
+    @st = 0; @en = 0
   end
 
   def enqueue(element)
-    if empty?
-      @queue[@start] = element
-    else
-      @end = next_index(@end)
-      @queue[@end] = element
-      if @end == @start && @queue[next_index(@start)] != nil
-        @start = next_index(@start)
-      end
-    end
+    @en = next_idx(@en) unless @queue[@en].nil?
+    @st = next_idx(@st) if @st == @en && !@queue[@st].nil?
+    @queue[@en] = element    
+    @queue
   end
 
-  def empty?
-    @queue.all?(&:nil?)
+  def dequeue
+    element_dequeued = @queue[@st]
+    @queue[@st] = nil
+    @st = next_idx(@st) unless element_dequeued.nil? || @queue.all?(&:nil?)
+    element_dequeued
   end
 
-  def to_s
-    @queue.to_s
+  def queue
+    @queue.clone
   end
 
   private
+  
+  def next_idx(idx)
+    (idx + 1) % @queue.size
+  end
+end
 
-  def next_index(index)
-    (index + 1) % @size
+# Solution 2: @old, @next are the indices of the oldest object and the position of the next object to be added
+class CircularQueue
+  attr_reader :old, :next
+  
+  def initialize(size)
+    @queue = Array.new(size, nil)
+    @old = 0; @next = 0
+  end
+  
+  def dequeue
+    element_dequeued = @queue[@old]
+    @queue[@old] = nil
+    @old = next_idx(@old) unless element_dequeued.nil?
+    element_dequeued
+  end
+  
+  def enqueue(element)
+    @old = next_idx(@old) unless @queue[@next].nil?
+    @queue[@next] = element
+    @next = next_idx(@next)
+    @queue
+  end
+  
+  def queue
+    @queue.clone
+  end
+
+  private
+  
+  def next_idx(idx)
+    (idx + 1) % @queue.size
+  end
+end
+
+# Further Exploration
+# (my original, easier-to-implement solution)
+
+class CircularQueue
+  def initialize(size)
+    @size = size
+    @queue = []
+  end
+
+  def enqueue(element)
+    @queue.shift if @queue.size >= @size
+    @queue << element
+    @queue
+  end
+  
+  def dequeue
+    @queue.shift
+  end
+  
+  def queue
+    @queue.clone
   end
 end
 
