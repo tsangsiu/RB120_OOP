@@ -360,7 +360,7 @@ module Swimmable
 end
 ```
 
-## What is a method lookup path? How is the method look up path affected by module mixins and class inheritance? How do you find the lookup path for a class?
+### What is a method lookup path? How is the method look up path affected by module mixins and class inheritance? How do you find the lookup path for a class?
 
 A method lookup path is a list of classes and modules that Ruby traverses when it looks for a method.
 
@@ -372,23 +372,23 @@ To find the method lookup path for a class, we can invoke the `ancestors` method
 p String.ancestors # => [Array, Enumerable, Object, PP::ObjectMixin, Kernel, BasicObject]
 ````
 
-## Are class variables accessible to subclasses? Why is it recommended to avoid the use of class variables when working with inheritance?
+### Are class variables accessible to subclasses? Why is it recommended to avoid the use of class variables when working with inheritance?
 
 Class variables are accessible to subclasses. In fact, a class and all its subclasses share the same copy of class variables. Therefore, when the value of a class variable is re-assigned, the change is reflected in all other related classes, which we might do not want. Therefore it's recommended to avoid the use of class variables when working with inheritance.
 
-## Is it possible to reference a constant defined in a different class?
+### Is it possible to reference a constant defined in a different class?
 
 It is possible to reference a constant defined in a different class by using the scope resolution operator `::`.
 
-## What is lexical scope?
+### What is lexical scope?
 
 The lexical scope means the position of the code determines where it is available.
 
-## When dealing with code that has modules and inheritance, where does constant resolution look first?
+### When dealing with code that has modules and inheritance, where does constant resolution look first?
 
 To resolve a constant, Ruby first looks for it in the lexical scope, i.e. the surrounding structure. If the constant is not found, Ruby will then searches for it up in the inheritance hierarchy, and finally the main scope.
 
-## What is the namespace resoution operator?
+### What is the namespace resoution operator?
 
 The namespace resolution operator (`::`) is used to specify a scope.
 
